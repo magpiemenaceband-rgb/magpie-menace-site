@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Magpie Menace</title>
+  <meta name="description" content="Magpie Menace — music, videos, merch, news, and the Magpie Militia fan club." />
+
+  <style>
+    :root{
+      /* light grey with a subtle reddish tint */
+      --bg:#f3eeee;
+      --panel: rgba(255,255,255,.72);
+      --panel-2: rgba(255,255,255,.86);
+      --ink:#1e1e22;
+      --muted:#5a5a66;
+      --accent:#b43a3a;
+      --stroke: rgba(20,20,26,.10);
+      --shadow: 0 18px 60px rgba(20,20,26,.12);
+      --shadow-soft: 0 10px 30px rgba(20,20,26,.10);
+      --radius: 22px;
+      --radius-sm: 16px;
+
+      /* Cursor images (replace with your own PNGs, ideally 64–128px)
+         Provide at least magpie.png; the “active” cursor swaps on hover.
+      */
+      
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--ink);
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(180,58,58,.10), transparent 55%),
+                  radial-gradient(900px 600px at 80% 30%, rgba(180,58,58,.08), transparent 60%),
+                  var(--bg);
+      overflow-x:hidden;
+      /* We render a custom cursor element so we can animate/scale it */
+      cursor: none;
+    }
+    
+	body, a, button, img, .tile, .pill, .btn { cursor: none !important; }
+
+    /* Slightly interactive “sparkle” noise layer */
+    .grain{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      opacity:.22;
+      mix-blend-mode:multiply;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,.55) 0 1px, transparent 2px),
+        radial-gradient(circle at 60% 30%, rgba(255,255,255,.35) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,.35) 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 80%, rgba(255,255,255,.35) 0 1px, transparent 2px);
+      background-size: 280px 280px;
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift{ from{ transform:translate3d(0,0,0);} to{ transform:translate3d(-140px,-140px,0);} }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(14px);
+      background: rgba(243,238,238,.70);
+      border-bottom:1px solid var(--stroke);
+    }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:18px 18px; }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      user-select:none;
+    }
+
+    .logo{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background: linear-gradient(135deg, rgba(180,58,58,.25), rgba(180,58,58,.06));
+      border:1px solid rgba(180,58,58,.25);
+      box-shadow: var(--shadow-soft);
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      letter-spacing:.5px;
+      color: var(--accent);
+    }
+
+    .brand h1{ margin:0; font-size:18px; line-height:1.1; }
+    .brand .tag{ margin:0; color:var(--muted); font-size:12px; }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.72);
+      padding:10px 12px;
+      border-radius: 999px;
+      text-decoration:none;
+      color: var(--ink);
+      font-weight:650;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow: 0 10px 22px rgba(20,20,26,.08);
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .pill:hover{ transform: translateY(-1px); background: rgba(255,255,255,.88); }
+	
+	/* Stop pill enhancements */
+.stop-pill{
+  gap:10px;
+}
+
+.stop-pill:not(.live){
+  opacity:.85;
+}
+
+.stop-pill[aria-disabled="true"]{
+  opacity:.7;
+}
+
+.stop-pill[aria-disabled="true"] .wave i{
+  animation:none !important;
+}
+
+.stop-label{
+  display:inline-block;
+  transition: opacity 160ms ease;
+}
+
+.stop-label.fading{
+  opacity:.35;
+}
+
+/* Waveform icon */
+.wave{
+  display:inline-flex;
+  align-items:flex-end;
+  gap:2px;
+  height:14px;
+}
+
+.wave i{
+  display:block;
+  width:2px;
+  height:6px;
+  background: rgba(90,90,102,.8);
+  border-radius: 2px;
+  transform-origin: bottom;
+  opacity:.85;
+}
+
+.stop-pill.live .wave i{
+  background: rgba(180,58,58,.95);
+}
+
+/* Animate the bars only when live */
+.stop-pill.live .wave i:nth-child(1){ animation: wave 700ms ease-in-out infinite; }
+.stop-pill.live .wave i:nth-child(2){ animation: wave 520ms ease-in-out infinite; }
+.stop-pill.live .wave i:nth-child(3){ animation: wave 610ms ease-in-out infinite; }
+
+@keyframes wave{
+  0%,100%{ transform: scaleY(.6); }
+  50%{ transform: scaleY(1.6); }
+}
+
+/* Pulsing red “Stop” when live */
+.stop-pill.live{
+  border-color: rgba(180,58,58,.35);
+  background: rgba(180,58,58,.10);
+  animation: stopPulse 1100ms ease-in-out infinite;
+}
+
+@keyframes stopPulse{
+  0%,100%{ box-shadow: 0 10px 22px rgba(20,20,26,.08), 0 0 0 0 rgba(180,58,58,.18); }
+  50%{ box-shadow: 0 10px 22px rgba(20,20,26,.08), 0 0 0 6px rgba(180,58,58,.10); }
+}
+    .pill:active{ transform: translateY(0px); }
+
+    main .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      padding:18px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    @media (max-width: 980px){
+      main .grid{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: var(--panel);
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* “Shiny object” background per section (replace with your images) */
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      opacity:.30;
+      background-position: right 12px bottom 12px;
+      background-repeat:no-repeat;
+      background-size: 220px;
+      filter: saturate(1.05) contrast(1.05);
+      pointer-events:none;
+      transform: rotate(-2deg);
+    }
+
+    .panel-inner{ position:relative; padding:18px; }
+
+    .hero{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      padding:22px 22px 10px;
+    }
+
+    .hero h2{ margin:0; font-size:28px; letter-spacing:-.4px; }
+    .hero p{ margin:8px 0 0; color:var(--muted); max-width:62ch; }
+
+    .now-playing{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.70);
+      box-shadow: 0 10px 22px rgba(20,20,26,.08);
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(180,58,58,.70);
+      box-shadow: 0 0 0 5px rgba(180,58,58,.12);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse{ 0%,100%{ transform:scale(.95); opacity:.7;} 50%{ transform:scale(1.15); opacity:1; } }
+
+    /* Section tiles */
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      padding: 12px 18px 18px;
+    }
+
+    @media (max-width: 520px){
+      .tiles{ grid-template-columns: 1fr; }
+    }
+
+    .tile{
+      position:relative;
+      border-radius: var(--radius-sm);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.62);
+      box-shadow: 0 10px 22px rgba(20,20,26,.08);
+      padding:14px;
+      cursor: none;
+      overflow:hidden;
+      transition: transform .14s ease, background .14s ease;
+      min-height:92px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    /* Subtle “peck” animation on hover */
+    @keyframes peck{
+      0%{ transform: translateY(0) rotate(0); }
+      30%{ transform: translateY(2px) rotate(-.4deg); }
+      55%{ transform: translateY(-1px) rotate(.2deg); }
+      100%{ transform: translateY(0) rotate(0); }
+    }
+
+    .tile:hover{ animation: peck 220ms ease-out 1; }
+
+    .tile::before{
+      content:"";
+      position:absolute;
+      inset:-6px;
+      background-repeat:no-repeat;
+      background-position: right 10px bottom 10px;
+      background-size: 140px;
+      opacity:.30;
+      filter: saturate(1.08) contrast(1.08);
+      transform: rotate(-4deg);
+      pointer-events:none;
+      transition: opacity .14s ease, transform .14s ease;
+    }
+
+    .tile:hover{ transform: translateY(-2px); background: rgba(255,255,255,.80); }
+    .tile:hover::before{ opacity:.42; transform: rotate(-2deg) scale(1.01); }
+    .tile:focus-visible{ outline: 3px solid rgba(180,58,58,.35); outline-offset: 2px; }
+
+    .tile .kicker{ font-size:12px; color:var(--muted); }
+    .tile .title{ font-size:16px; margin:0; font-weight:800; letter-spacing:-.2px; }
+
+    /* Right-side details panel */
+    .detail-card{
+      background: var(--panel-2);
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:sticky;
+      top:86px;
+    }
+
+    .detail-head{
+      padding:18px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .detail-head h3{ margin:0; font-size:18px; }
+    .detail-head p{ margin:6px 0 0; color:var(--muted); font-size:13px; }
+
+    .detail-body{ padding:18px; }
+    .detail-body ul{ margin:0; padding:0 0 0 18px; color:var(--muted); }
+    .detail-body li{ margin: 8px 0; }
+
+    .cta-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+
+    .btn{
+      border:1px solid rgba(180,58,58,.25);
+      background: rgba(180,58,58,.12);
+      color: var(--ink);
+      padding:10px 12px;
+      border-radius: 999px;
+      text-decoration:none;
+      font-weight:750;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .btn:hover{ transform: translateY(-1px); background: rgba(180,58,58,.18); }
+
+    .qr{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin-top:16px;
+      padding:14px;
+      border-radius: 18px;
+      border:1px dashed rgba(180,58,58,.35);
+      background: rgba(255,255,255,.55);
+    }
+
+    .qr img{ width:140px; height:140px; border-radius: 14px; border:1px solid var(--stroke); background:#fff; }
+
+    footer{ padding:28px 18px 40px; color: var(--muted); text-align:center; }
+    footer a{ color: var(--accent); text-decoration:none; font-weight:700; }
+
+    /* Reduce motion preference */
+    @media (prefers-reduced-motion: reduce){
+      .grain{ animation:none; }
+      .dot{ animation:none; }
+      .tile,.pill,.btn{ transition:none; }
+      .tile:hover{ animation:none; }
+      .mm-cursor{ transition:none; }
+      .sparkle{ animation:none; }
+    }
+
+    /* Custom cursor */
+    .mm-cursor{
+      position:fixed;
+      left:0; top:0;
+      width:56px;
+      height:56px;
+      transform: translate3d(-9999px,-9999px,0);
+      pointer-events:none;
+      z-index:9999;
+      will-change: transform;
+      transition: width 120ms ease, height 120ms ease;
+      filter: drop-shadow(0 10px 18px rgba(20,20,26,.18));
+    }
+    .mm-cursor.big{ width:72px; height:72px; }
+    .mm-cursor img{ width:100%; height:100%; display:block; }
+
+   /* Cursor “peck” */
+	.mm-cursor.pecking img { animation: cursorImgPeck 220ms ease-out 1; }
+
+@keyframes cursorImgPeck{
+  0%{ transform: rotate(0deg) translateY(0) scale(1); }
+  35%{ transform: rotate(-6deg) translateY(4px) scale(.99); }
+  65%{ transform: rotate(2deg) translateY(-2px) scale(1.01); }
+  100%{ transform: rotate(0deg) translateY(0) scale(1); }
+}
+
+    /* Sparkles */
+    .sparkle{
+      position:fixed;
+      width:10px; height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.95);
+      box-shadow:
+        0 0 0 3px rgba(180,58,58,.16),
+        0 0 18px rgba(180,58,58,.20);
+      pointer-events:none;
+      z-index:9998;
+      will-change: transform, opacity;
+      opacity:0;
+      animation: sparklePop 520ms ease-out forwards;
+    }
+    @keyframes sparklePop{
+      0%{ opacity:0; transform: translate3d(var(--sx), var(--sy), 0) scale(0.6); }
+      20%{ opacity:1; }
+      100%{ opacity:0; transform: translate3d(calc(var(--sx) + var(--dx)), calc(var(--sy) + var(--dy)), 0) scale(1.0); }
+    }
+    .sparkle::before,
+    .sparkle::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      margin:auto;
+      width:2px;
+      height:12px;
+      background: rgba(255,255,255,.9);
+      border-radius:2px;
+      transform: rotate(45deg);
+    }
+    .sparkle::after{ transform: rotate(-45deg); }
+      
+  </style>
+</head>
+
+<body>
+  <!-- Custom animated cursor -->
+  <div class="mm-cursor" id="mmCursor" aria-hidden="true"><img id="mmCursorImg" alt="" /></div>
+  <div class="grain"></div>
+
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand" aria-label="Magpie Menace">
+          <div class="logo">MM</div>
+          <div>
+            <h1>Magpie Menace</h1>
+            <p class="tag">Shiny things. Loud songs. Friendly chaos.</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="pill" href="#" id="tipLink">Tip Jar</a>
+		  <a class="pill stop-pill" href="#" id="stopAudio" aria-live="polite">
+  <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="stop-label" id="stopLabel">Stopped</span>
+</a>
+          <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
+          <a class="pill" href="#" id="bookUs">Book Us</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="panel" id="leftPanel">
+        <div class="hero">
+          <div>
+            <h2 id="heroTitle">Welcome to the nest.</h2>
+            <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
+          </div>
+          <div class="now-playing" aria-live="polite">
+            <div class="dot" aria-hidden="true"></div>
+            <span id="nowPlaying">Hover a section to play a preview</span>
+          </div>
+        </div>
+
+        <div class="tiles" id="tiles" aria-label="Site sections">
+          <!-- Tiles are injected by JS -->
+        </div>
+      </section>
+
+      <aside class="detail-card" aria-label="Section details">
+        <div class="detail-head">
+          <div>
+            <h3 id="detailTitle">Magpie Menace</h3>
+            <p id="detailSubtitle">Choose a section to explore.</p>
+          </div>
+          <a class="btn" href="#" id="primaryCta">Start Here</a>
+        </div>
+        <div class="detail-body">
+          <div id="detailContent">
+            <ul>
+              <li>Add your music links, video embeds, social handles, merch store, and fan club perks.</li>
+              <li>Replace the shiny-object background images and magpie cursor PNGs in <code>/assets</code>.</li>
+              <li>Swap the sample audio files in <code>/audio</code> (10–20s previews work best).</li>
+            </ul>
+
+            <div class="qr" id="tipJarBlock">
+              <img id="qrImg" alt="Tip jar QR code" />
+              <div>
+                <div style="font-weight:850; margin-bottom:6px;">Tip Jar (scan me)</div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.35;">
+                  Replace <code>TIP_JAR_URL</code> in the script with your PayPal/Venmo/Ko‑fi link.
+                </div>
+                <div class="cta-row">
+                  <a class="btn" id="tipButton" href="#" target="_blank" rel="noopener">Open Tip Jar</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Audio elements (JS will control playback) -->
+    <div style="display:none" aria-hidden="true" id="audioRack"></div>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Magpie Menace · Built with love and stolen sparkle.
+  </footer>
+
+  <script>
+    // ============================
+    // 1) CONFIG — update these
+    // ============================
+
+    const TIP_JAR_URL = "https://example.com/tip"; // <-- replace (PayPal.me / Venmo / Ko-fi / etc.)
+
+    // Replace these placeholders with your real links and preview audio files.
+    // Put shiny object PNGs/JPGs under /assets and audio previews under /audio.
+    const SECTIONS = [
+      {
+        id: "music",
+        title: "Music",
+        kicker: "Downloads • Streaming",
+        shinyBg: "assets/shiny-record.png",
+        cursorSrc: "assets/cursor-magpie-music.png",
+        previewSrc: "audio/music-preview.mp3",
+        subtitle: "Stream it, buy it, steal it (legally).",
+        bullets: [
+          "Spotify / Apple Music / Bandcamp links",
+          "Direct downloads (MP3/FLAC)",
+          "Lyric sheets + credits"
+        ],
+        ctaText: "Listen",
+        ctaHref: "#"
+      },
+      {
+        id: "videos",
+        title: "Videos",
+        kicker: "Clips • Live • Official",
+        shinyBg: "assets/shiny-camera.png",
+        cursorSrc: "assets/cursor-magpie-videos.png",
+        previewSrc: "audio/videos-preview.mp3",
+        subtitle: "Music videos, live cuts, and questionable decisions.",
+        bullets: [
+          "YouTube embeds",
+          "Live session highlights",
+          "Behind-the-scenes"
+        ],
+        ctaText: "Watch",
+        ctaHref: "#"
+      },
+      {
+        id: "social",
+        title: "Social Media",
+        kicker: "Follow the chaos",
+        shinyBg: "assets/shiny-social.png",
+        cursorSrc: "assets/cursor-magpie-social.png",
+        previewSrc: "audio/social-preview.mp3",
+        subtitle: "Announcements, clips, memes, and shinies.",
+        bullets: [
+          "Instagram / TikTok",
+          "Facebook / X",
+          "Discord (optional)"
+        ],
+        ctaText: "Follow",
+        ctaHref: "#"
+      },
+      {
+        id: "merch",
+        title: "Merch",
+        kicker: "Tees • Stickers • Trinkets",
+        shinyBg: "assets/shiny-shirt.png",
+        cursorSrc: "assets/cursor-magpie-merch.png",
+        previewSrc: "audio/merch-preview.mp3",
+        subtitle: "Wear the omen.",
+        bullets: [
+          "Shopify / Bandcamp merch",
+          "Limited drops",
+          "Tour leftovers"
+        ],
+        ctaText: "Shop",
+        ctaHref: "#"
+      },
+      {
+        id: "news",
+        title: "News",
+        kicker: "Updates • Tour • Press",
+        shinyBg: "assets/shiny-newspaper.png",
+        cursorSrc: "assets/cursor-magpie-news.png",
+        previewSrc: "audio/news-preview.mp3",
+        subtitle: "What we’re up to (and why it’s probably loud).",
+        bullets: [
+          "Upcoming shows",
+          "Press mentions",
+          "Studio updates"
+        ],
+        ctaText: "Read",
+        ctaHref: "#"
+      },
+      {
+        id: "releases",
+        title: "Releases",
+        kicker: "Singles • EPs • Albums",
+        shinyBg: "assets/shiny-vinyl.png",
+        cursorSrc: "assets/cursor-magpie-releases.png",
+        previewSrc: "audio/releases-preview.mp3",
+        subtitle: "A timeline of shiny noise.",
+        bullets: [
+          "Release artwork + credits",
+          "Links to listen/buy",
+          "Release notes"
+        ],
+        ctaText: "Browse",
+        ctaHref: "#"
+      },
+      {
+        id: "militia",
+        title: "Magpie Militia",
+        kicker: "Fan club",
+        shinyBg: "assets/shiny-badge.png",
+        cursorSrc: "assets/cursor-magpie-militia.png",
+        previewSrc: "audio/militia-preview.mp3",
+        subtitle: "Join the flock. Get perks. Be first to the shinies.",
+        bullets: [
+          "Early demos + secret videos",
+          "Discount codes",
+          "Private announcements"
+        ],
+        ctaText: "Join",
+        ctaHref: "#"
+      }
+    ];
+
+    // ============================
+    // 2) RENDER
+    // ============================
+
+    const tilesEl = document.getElementById('tiles');
+    const audioRack = document.getElementById('audioRack');
+
+    const heroTitle = document.getElementById('heroTitle');
+    const heroText = document.getElementById('heroText');
+    const nowPlaying = document.getElementById('nowPlaying');
+
+    const detailTitle = document.getElementById('detailTitle');
+    const detailSubtitle = document.getElementById('detailSubtitle');
+    const detailContent = document.getElementById('detailContent');
+    const primaryCta = document.getElementById('primaryCta');
+
+	// Custom cursor state
+const cursorEl = document.getElementById('mmCursor');
+const cursorImg = document.getElementById('mmCursorImg');
+let cursorX = -9999, cursorY = -9999;
+
+function setCursorSrc(src){
+  cursorImg.src = src || 'assets/cursor-magpie.png';
+}
+
+// Set default cursor
+setCursorSrc('assets/cursor-magpie.png');
+
+function moveCursor(x, y){
+  cursorX = x; cursorY = y;
+  // Vars used by peck animation
+  cursorEl.style.setProperty('--x', `${x}px`);
+  cursorEl.style.setProperty('--y', `${y}px`);
+  cursorEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+}
+
+window.addEventListener('pointermove', (e)=>{
+  // Slight offset so the image isn't under the pointer tip
+  moveCursor(e.clientX + 6, e.clientY + 6);
+});
+
+function cursorPeck(){
+  cursorEl.classList.remove('pecking');
+  // force reflow so animation retriggers
+  void cursorEl.offsetWidth;
+  cursorEl.classList.add('pecking');
+  cursorEl.addEventListener('animationend', () => cursorEl.classList.remove('pecking'), { once:true });
+}
+
+function setCursorBig(isBig){
+  cursorEl.classList.toggle('big', !!isBig);
+}
+
+function spawnSparkles(x, y){
+  const count = 7;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 26 + Math.random() * 28;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    s.style.setProperty('--sx', `${x}px`);
+    s.style.setProperty('--sy', `${y}px`);
+    s.style.setProperty('--dx', `${dx}px`);
+    s.style.setProperty('--dy', `${dy}px`);
+    document.body.appendChild(s);
+    s.addEventListener('animationend', () => s.remove(), { once:true });
+  }
+}
+
+    // Tip jar block
+    const tipLink = document.getElementById('tipLink');
+    const tipButton = document.getElementById('tipButton');
+    const qrImg = document.getElementById('qrImg');
+
+    function safeUrl(u){
+      try{
+        const url = new URL(u);
+        return url.toString();
+      }catch{
+        return '#';
+      }
+    }
+
+    function buildQr(url){
+      // Simple hosted QR generator (swap to a local QR image later if you prefer)
+      const data = encodeURIComponent(url);
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${data}`;
+      tipLink.href = url;
+      tipButton.href = url;
+    }
+
+    buildQr(safeUrl(TIP_JAR_URL));
+
+    // Create audio elements
+    const audios = new Map();
+let activeAudioId = null;
+let fadeToken = 0;
+
+// Create audio elements
+SECTIONS.forEach(s => {
+  const a = document.createElement('audio');
+  a.src = s.previewSrc;
+  a.preload = 'auto';
+  a.loop = true;
+  a.volume = 0; // start muted; we'll fade in
+  audioRack.appendChild(a);
+  audios.set(s.id, a);
+});
+
+function fadeTo(audio, target, ms=220){
+  if(!audio) return Promise.resolve();
+  const start = audio.volume;
+  const delta = target - start;
+  const startTime = performance.now();
+  return new Promise((resolve)=>{
+    function tick(now){
+      const t = Math.min(1, (now - startTime) / ms);
+      audio.volume = Math.max(0, Math.min(1, start + delta * t));
+      if(t < 1) requestAnimationFrame(tick);
+      else resolve();
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+async function crossfade(toId){
+  const myToken = ++fadeToken;              // <-- add
+  if(activeAudioId === toId) return;
+
+  const from = activeAudioId ? audios.get(activeAudioId) : null;
+  const to = audios.get(toId);
+  activeAudioId = toId;
+
+  if(to){
+    try{ await to.play(); } catch {}
+  }
+
+  await Promise.all([
+    fadeTo(from, 0, 260).then(()=>{ if(from){ from.pause(); from.currentTime = 0; } }),
+    fadeTo(to, 0.75, 260)
+  ]);
+
+  if(myToken !== fadeToken) return;         // <-- add (ignore stale fades)
+  updateStopButton();
+}
+
+    function stopAll(exceptId=null){
+  audios.forEach((a, id) => {
+    if(exceptId && id === exceptId) return;
+    a.pause();
+    a.currentTime = 0;
+    a.volume = 0;
+  });
+  if(!exceptId) activeAudioId = null;
+  updateStopButton();
+}
+
+    function setDetails(section){
+      detailTitle.textContent = section.title;
+      detailSubtitle.textContent = section.subtitle;
+
+      const list = document.createElement('ul');
+      section.bullets.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        list.appendChild(li);
+      });
+
+      const ctaRow = document.createElement('div');
+      ctaRow.className = 'cta-row';
+      const cta = document.createElement('a');
+      cta.className = 'btn';
+      cta.href = section.ctaHref;
+      cta.textContent = section.ctaText;
+      ctaRow.appendChild(cta);
+
+      // Keep tip jar visible everywhere
+      const tip = document.getElementById('tipJarBlock');
+
+      detailContent.innerHTML = '';
+      detailContent.appendChild(list);
+      detailContent.appendChild(ctaRow);
+      detailContent.appendChild(tip);
+
+      primaryCta.textContent = section.ctaText;
+      primaryCta.href = section.ctaHref;
+    }
+
+    function setNowPlaying(section){
+      nowPlaying.textContent = `Now playing: ${section.title} preview`;
+    }
+
+function updateStopButton(){
+  const stopBtn = document.getElementById('stopAudio');
+  const label = document.getElementById('stopLabel');
+  if(!stopBtn || !label) return;
+
+  const isLive = !!activeAudioId;
+  const nextText = isLive ? 'Stop' : 'Stopped';
+
+  stopBtn.classList.toggle('live', isLive);
+  
+  stopBtn.setAttribute('aria-disabled', isLive ? 'false' : 'true');
+
+  if(label.textContent === nextText) return; // no change, no fade
+
+  label.classList.add('fading');
+  setTimeout(() => {
+    label.textContent = nextText;
+    label.classList.remove('fading');
+  }, 90);
+}
+
+    function activate(section){
+  // Cursor per section + slightly larger on hover
+  setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
+  setCursorBig(true);
+
+  // Peck + sparkle on switch
+  cursorPeck();
+  spawnSparkles(cursorX, cursorY);
+
+  setDetails(section);
+  setNowPlaying(section);
+
+  // Smooth audio crossfade
+  activeAudioId = section.id;
+  updateStopButton();
+  crossfade(section.id);
+
+  heroTitle.textContent = section.title;
+  heroText.textContent = section.subtitle;
+}
+
+// Render tiles
+SECTIONS.forEach(section => {
+  const btn = document.createElement('button');
+  btn.className = 'tile';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', section.title);
+
+  // Background image for the tile
+  btn.dataset.bg = section.shinyBg;
+
+  btn.innerHTML = `
+    <div class="kicker">${section.kicker}</div>
+    <p class="title">${section.title}</p>
+  `;
+
+  // OPTION B: Keep playing until another section is hovered/clicked
+  btn.addEventListener('mouseenter', () => {
+    activate(section);
+    cursorPeck();
+  });
+
+  // Mobile / touch
+  btn.addEventListener('click', () => activate(section));
+
+  tilesEl.appendChild(btn);
+});
+
+// Cursor shrink when leaving the tiles area (does NOT stop audio)
+tilesEl.addEventListener('mouseleave', () => {
+  setCursorBig(false);
+  setCursorSrc('assets/cursor-magpie.png');
+});
+
+// Make tile ::before use each tile's dataset bg
+const style = document.createElement('style');
+style.textContent = `.tile::before{ background-image: var(--tileimg, none); }`;
+document.head.appendChild(style);
+
+document.querySelectorAll('.tile').forEach((el) => {
+  const bg = el.dataset.bg;
+  el.style.setProperty('--tileimg', `url('${bg}')`);
+});
+
+// Top CTA placeholders
+document.getElementById('joinMailing').addEventListener('click', (e)=>{
+  e.preventDefault();
+  alert('Hook this up to Mailchimp/Bandcamp/your newsletter form.');
+});
+document.getElementById('bookUs').addEventListener('click', (e)=>{
+  e.preventDefault();
+  alert('Hook this up to your booking email or form.');
+});
+document.getElementById('stopAudio').addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  if(!activeAudioId) return;
+
+  const a = audios.get(activeAudioId);
+  await fadeTo(a, 0, 260);
+  if(a){
+    a.pause();
+    a.currentTime = 0;
+  }
+  
+  fadeToken++; 
+  activeAudioId = null;
+  nowPlaying.textContent = 'Stopped';
+  setCursorBig(false);
+  setCursorSrc('assets/cursor-magpie.png');
+
+  updateStopButton();
+});
+
+// Footer year
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Autoplay policy hint: first user interaction can unlock audio on iOS/Safari
+window.addEventListener('pointerdown', () => {
+  const first = audios.get(SECTIONS[0].id);
+  if(first){
+    const vol = first.volume;
+    first.volume = 0;
+    first.play().then(()=>{
+      first.pause();
+      first.currentTime = 0;
+      first.volume = vol;
+    }).catch(()=>{});
+  }
+}, { once:true });
+updateStopButton();
+  </script>
+</body>
+</html>
