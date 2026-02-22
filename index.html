@@ -28,7 +28,7 @@
     }
 
     *{ box-sizing:border-box; }
-    html, body{
+  html,body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   color:var(--ink);
@@ -40,13 +40,17 @@
 body{
   /* Your EP-color background */
   background:
-    radial-gradient(1400px 900px at 5% 10%, #f2a23c 0%, transparent 50%),
-    radial-gradient(1100px 900px at 45% 40%, #b51f38 0%, transparent 60%),
-    radial-gradient(1200px 900px at 80% 60%, #1b2655 0%, transparent 65%),
-    linear-gradient(140deg, #5c1a1a 0%, #5b2d6f 50%, #0c1635 100%);
+    radial-gradient(1200px 800px at 10% 20%, #f4b24f 0%, transparent 55%),
+    radial-gradient(1000px 700px at 35% 60%, #c94a32 0%, transparent 60%),
+    radial-gradient(900px 700px at 55% 30%, #c0253a 0%, transparent 60%),
+    radial-gradient(900px 700px at 70% 70%, #b53f7c 0%, transparent 60%),
+    radial-gradient(1000px 800px at 85% 40%, #2a356e 0%, transparent 65%),
+    radial-gradient(1200px 900px at 95% 80%, #0f1a3a 0%, transparent 70%),
+    linear-gradient(135deg, #f4b24f 0%, #c0253a 40%, #5b2d6f 70%, #0f1a3a 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
+
 
   /* Drift */
   animation: bgDrift 40s ease-in-out infinite alternate;
