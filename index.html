@@ -816,6 +816,9 @@ footer a{
   justify-content: center;
 }
 
+html{
+  scroll-behavior: smooth;
+}
 
 
 /* Make tiles “album card” sized for a top row */
@@ -1570,7 +1573,19 @@ tilesEl.addEventListener('mouseleave', () => {
 // Top CTA placeholders
 document.getElementById('joinMailing').addEventListener('click', (e)=>{
   e.preventDefault();
-  alert('Hook this up to Mailchimp/Bandcamp/your newsletter form.');
+
+  // Find the Militia section config
+  const militiaSection = SECTIONS.find(s => s.id === 'militia');
+  if(!militiaSection) return;
+
+  // Activate it (same behavior as clicking the tile)
+  activate(militiaSection);
+
+  // Scroll to the center stage detail panel
+  const centerStage = document.querySelector('.center-stage');
+  if(centerStage){
+    centerStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 });
 document.getElementById('bookUs').addEventListener('click', (e)=>{
   e.preventDefault();
