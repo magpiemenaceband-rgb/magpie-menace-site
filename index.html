@@ -376,26 +376,6 @@ button.stop-pill{
     }
 
     .tile:hover{ animation: peck 220ms ease-out 1; }
-
-    .tile::before{
-  content:"";
-  position:absolute;
-  inset:10px;                     
-  background-repeat:no-repeat;
-  background-position: right center;
-  background-size: contain;       
-  opacity:.40;
-  pointer-events:none;
-  transform:none;                
-  filter: saturate(1.05) contrast(1.05);
-  transition: opacity .14s ease, transform .14s ease;
-}
-
-.tile:hover::before{
-  opacity:.55;
-  transform: scale(1.02);
-}
-
     .tile:hover{ transform: translateY(-2px); background: rgba(255,255,255,.80); }
     .tile:hover::before{ opacity:.42; transform: rotate(-2deg) scale(1.01); }
     .tile:focus-visible{ outline: 3px solid rgba(180,58,58,.35); outline-offset: 2px; }
@@ -584,6 +564,50 @@ footer{
 
 footer a{
   color: #1a1a1a;
+}
+
+/* Tile layout */
+.tile{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  padding:18px;
+  gap:10px;
+}
+
+/* Image container */
+.tile-img-wrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* The shiny image */
+.tile-img{
+  max-width:120px;
+  height:auto;
+  object-fit:contain;
+  opacity:.9;
+  transition: transform .18s ease;
+}
+
+.tile:hover .tile-img{
+  transform: scale(1.05);
+}
+
+/* Title */
+.tile .title{
+  font-size:18px;
+  font-weight:800;
+  margin:0;
+}
+
+/* Subtitle / kicker */
+.tile .kicker{
+  font-size:13px;
+  opacity:.75;
 }
   </style>
 </head>
@@ -1096,9 +1120,12 @@ SECTIONS.forEach(section => {
   btn.dataset.bg = section.shinyBg;
 
   btn.innerHTML = `
-    <div class="kicker">${section.kicker}</div>
-    <p class="title">${section.title}</p>
-  `;
+  <div class="tile-img-wrap">
+    <img class="tile-img" src="${section.shinyBg}" alt="">
+  </div>
+  <p class="title">${section.title}</p>
+  <div class="kicker">${section.kicker}</div>
+`;
 
   // OPTION B: Keep playing until another section is hovered/clicked
   btn.addEventListener('mouseenter', () => {
@@ -1118,15 +1145,6 @@ tilesEl.addEventListener('mouseleave', () => {
   setCursorSrc('assets/cursor-magpie.png');
 });
 
-// Make tile ::before use each tile's dataset bg
-const style = document.createElement('style');
-style.textContent = `.tile::before{ background-image: var(--tileimg, none); }`;
-document.head.appendChild(style);
-
-document.querySelectorAll('.tile').forEach((el) => {
-  const bg = el.dataset.bg;
-  el.style.setProperty('--tileimg', `url('${bg}')`);
-});
 
 // Top CTA placeholders
 document.getElementById('joinMailing').addEventListener('click', (e)=>{
