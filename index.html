@@ -771,11 +771,13 @@ function spawnSparkles(x, y){
 
     buildQr(safeUrl(TIP_JAR_URL));
 
-    // Create audio elements
-    const audios = new Map();
+
+// Create audio elements
+const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
+let audioEnabled = true; 
 
 async function armAudioOnce(){
   if(audioArmed) return true;
@@ -896,14 +898,24 @@ function updateStopButton(){
   const label = document.getElementById('stopLabel');
   if(!stopBtn || !label) return;
 
-  const isLive = !!activeAudioId;
-  const nextText = isLive ? 'Stop' : 'Stopped';
+  // State logic:
+  // - If audioEnabled is false -> show "Enable Audio" (and NOT live)
+  // - Else if activeAudioId exists -> show "Stop" + live pulsing
+  // - Else -> show "Stopped"
+  const isLive = audioEnabled && !!activeAudioId;
+
+  let nextText = 'Stopped';
+  if(!audioEnabled) nextText = 'Enable Audio';
+  else if(activeAudioId) nextText = 'Stop';
 
   stopBtn.classList.toggle('live', isLive);
-  
-  stopBtn.setAttribute('aria-disabled', isLive ? 'false' : 'true');
 
-  if(label.textContent === nextText) return; // no change, no fade
+  // treat as disabled only when: audio enabled but nothing playing
+  // (Enable Audio should still be clickable)
+  const ariaDisabled = (audioEnabled && !activeAudioId) ? 'true' : 'false';
+  stopBtn.setAttribute('aria-disabled', ariaDisabled);
+
+  if(label.textContent === nextText) return;
 
   label.classList.add('fading');
   setTimeout(() => {
@@ -913,6 +925,10 @@ function updateStopButton(){
 }
 
 async function activate(section){
+if(!audioEnabled){
+  nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
+  return;
+}
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
 
@@ -991,18 +1007,35 @@ document.getElementById('bookUs').addEventListener('click', (e)=>{
 document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
 
+  // If audio is disabled, this button acts as "Enable Audio"
+  if(!audioEnabled){
+    audioEnabled = true;
+
+    // try to arm immediately (needs gesture; this click counts)
+    await armAudioOnce();
+
+    nowPlaying.textContent = 'Hover a section to play a preview';
+    updateStopButton();
+    return;
+  }
+
+  // If audio is enabled but nothing is playing, do nothing
   if(!activeAudioId) return;
 
+  // "Stop": fade out current audio, then DISABLE hover audio globally
   const a = audios.get(activeAudioId);
   await fadeTo(a, 0, 260);
   if(a){
     a.pause();
     a.currentTime = 0;
   }
-  
-  fadeToken++; 
+
+  fadeToken++;
   activeAudioId = null;
-  nowPlaying.textContent = 'Stopped';
+
+  audioEnabled = false; // <-- key change (disables hover audio)
+stopAll();
+  nowPlaying.textContent = 'Audio disabled';
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
 
