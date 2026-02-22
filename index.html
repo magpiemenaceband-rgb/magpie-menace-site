@@ -809,6 +809,27 @@ footer a{
     align-items: flex-start;
   }
 }
+
+.link-strip{
+  max-width: 1100px;
+  margin: 12px auto 0;
+  padding: 0 18px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:center;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:5; /* stays above background */
+}
+
+/* smaller “album card” tiles for the header row */
+.link-strip .tile{
+  width: 140px;
+  min-height: 120px;
+  padding: 10px;
+  border-radius: 18px;
+}
   </style>
 </head>
 
@@ -842,6 +863,9 @@ footer a{
 </div>
     </div>
   </header>
+
+<!-- LINK ROW (tiles injected here) -->
+<nav id="tiles" class="link-strip" aria-label="Site sections"></nav>
 
   <main class="stage" id="stageRoot">
 
@@ -1045,7 +1069,7 @@ footer a{
     // 2) RENDER
     // ============================
 
-    const tilesEl = document.getElementById('orbitRing');
+    const tilesEl = document.getElementById('tiles');
     const audioRack = document.getElementById('audioRack');
 
     const heroTitle = document.getElementById('heroTitle');
@@ -1357,7 +1381,7 @@ function layoutOrbitTiles(){
 //window.addEventListener('resize', layoutOrbitTiles);
 
 // Render tiles
-const tilesEl = document.getElementById('topLinks');
+const tilesEl = document.getElementById('tiles');
 
 // Render tiles into the top row
 SECTIONS.forEach(section => {
