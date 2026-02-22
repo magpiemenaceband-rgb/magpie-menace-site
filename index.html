@@ -144,6 +144,18 @@
   animation:none !important;
 }
 
+.stop-pill{
+  cursor: none;
+  border: 1px solid var(--stroke);
+  display: inline-flex;
+  width: fit-content;
+  pointer-events: auto;
+}
+
+.stop-pill *{
+  pointer-events: none; /* makes the whole pill clickable as one target */
+}
+
 .stop-label{
   display:inline-block;
   transition: opacity 160ms ease;
@@ -251,6 +263,18 @@
   flex-direction:column;
   align-items:flex-end;
   gap:10px;
+  position:relative;
+  z-index:5;
+}
+
+.now-playing{
+  position:relative;
+  z-index:1;
+}
+
+.stop-pill{
+  position:relative;
+  z-index:2;
 }
 
     .now-playing{
@@ -509,10 +533,10 @@
       <span id="nowPlaying">Hover a section to play a preview</span>
     </div>
 
-    <a class="pill stop-pill" href="#" id="stopAudio" aria-live="polite">
-      <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="stop-label" id="stopLabel">Stopped</span>
-    </a>
+    <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
+  <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="stop-label" id="stopLabel">Stopped</span>
+</button>
   </div>
 </div>
 
@@ -1014,8 +1038,7 @@ document.getElementById('bookUs').addEventListener('click', (e)=>{
   e.preventDefault();
   alert('Hook this up to your booking email or form.');
 });
-document.getElementById('stopAudio').addEventListener('click', async (e) => {
-  e.preventDefault();
+document.getElementById('stopAudio').addEventListener('click', async () => {
 
   // If audio is disabled, this button acts as "Enable Audio"
   if(!audioEnabled){
