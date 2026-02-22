@@ -1435,6 +1435,7 @@ let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
 let audioEnabled = true; 
+let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
 
 async function armAudioOnce(){
   if(audioArmed) return true;
@@ -1543,29 +1544,47 @@ async function crossfade(toId){
 	  
 	  // Add Spotify embed if it exists
 if(section.embed){
-  const embedWrap = document.createElement('div');
-  embedWrap.className = 'embed-wrap';
-  embedWrap.innerHTML = section.embed;
-  detailContent.appendChild(embedWrap);
 
-  // ✅ Only for Music + only if audio is currently enabled
-  if(section.id === "music" && audioEnabled){
-    const guard = document.createElement('div');
-    guard.className = 'iframe-guard';
-    guard.setAttribute('aria-label', 'Enable Spotify playback');
-    guard.title = 'Tap to play Spotify (disables hover audio)';
+  // 🎵 Special handling for Music so Spotify doesn't reload
+  if(section.id === "music"){
 
-    guard.addEventListener('pointerdown', () => {
+    if(!musicEmbedCache){
+      const embedWrap = document.createElement('div');
+      embedWrap.className = 'embed-wrap';
+      embedWrap.innerHTML = section.embed;
+      musicEmbedCache = embedWrap;
+
+      // Add the first-click guard only once
       if(audioEnabled){
-        disableHoverAudioForExternalPlayer();
-      }
-      // Remove the guard so future taps go directly to Spotify
-      guard.remove();
-    }, { passive: true });
+        const guard = document.createElement('div');
+        guard.className = 'iframe-guard';
+        guard.setAttribute('aria-label', 'Enable Spotify playback');
+        guard.title = 'Tap to play Spotify (disables hover audio)';
 
-    embedWrap.appendChild(guard);
+        guard.addEventListener('pointerdown', () => {
+          if(audioEnabled){
+            disableHoverAudioForExternalPlayer();
+          }
+          guard.remove();
+        }, { passive: true });
+
+        embedWrap.appendChild(guard);
+      }
+    }
+
+    // Reattach cached Spotify node (no reload)
+    detailContent.appendChild(musicEmbedCache);
+
+  } else {
+
+    // Other sections embed normally
+    const embedWrap = document.createElement('div');
+    embedWrap.className = 'embed-wrap';
+    embedWrap.innerHTML = section.embed;
+    detailContent.appendChild(embedWrap);
   }
 }
+
       detailContent.appendChild(tip);
 
       primaryCta.textContent = section.ctaText;
