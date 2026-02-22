@@ -105,18 +105,19 @@ body{
     }
 
     .logo{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      background: linear-gradient(135deg, rgba(180,58,58,.25), rgba(180,58,58,.06));
-      border:1px solid rgba(180,58,58,.25);
-      box-shadow: var(--shadow-soft);
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      letter-spacing:.5px;
-      color: var(--accent);
-    }
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:64px;          /* controls header height feel */
+}
+
+.logo img{
+  height:100%;
+  width:auto;
+  object-fit:contain;
+  display:block;
+}
 
     .brand h1{ margin:0; font-size:18px; line-height:1.1; }
     .brand .tag{ margin:0; color:var(--muted); font-size:12px; }
@@ -621,7 +622,9 @@ footer a{
     <div class="wrap">
       <div class="topbar">
         <div class="brand" aria-label="Magpie Menace">
-          <div class="logo">MM</div>
+          <div class="logo">
+  <img src="assets/Official Logo Transparent.png" alt="Magpie Menace Logo">
+</div>
           <div>
             <h1>Magpie Menace</h1>
             <p class="tag">Shiny things. Loud songs. Friendly chaos.</p>
