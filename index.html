@@ -1018,6 +1018,22 @@ html{
   box-shadow: 0 18px 50px rgba(0,0,0,.28);
 }
 
+/* Spotify embed wrapper so we can overlay it */
+.embed-wrap{
+  position: relative;
+  margin-top: 18px;
+}
+
+/* Invisible “first click” catcher */
+.iframe-guard{
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: transparent;
+  z-index: 5;
+  cursor: pointer; /* doesn't matter with your custom cursor, but fine */
+}
+
   </style>
 </head>
 
@@ -1515,31 +1531,27 @@ async function crossfade(toId){
 	  // Add Spotify embed if it exists
 if(section.embed){
   const embedWrap = document.createElement('div');
-  embedWrap.style.marginTop = "18px";
+  embedWrap.className = 'embed-wrap';
   embedWrap.innerHTML = section.embed;
   detailContent.appendChild(embedWrap);
-  
-  if(section.id === "music"){
-  const iframe = embedWrap.querySelector('iframe');
 
-  if(iframe){
-    // Only attach once
-    if(!iframe.dataset.mmBound){
-      iframe.dataset.mmBound = "1";
+  // ✅ Only for Music + only if audio is currently enabled
+  if(section.id === "music" && audioEnabled){
+    const guard = document.createElement('div');
+    guard.className = 'iframe-guard';
+    guard.setAttribute('aria-label', 'Enable Spotify playback');
+    guard.title = 'Tap to play Spotify (disables hover audio)';
 
-      const handler = () => {
-        // Only disable if hover audio is currently enabled
-        if(audioEnabled){
-          disableHoverAudioForExternalPlayer();
-        }
-      };
+    guard.addEventListener('pointerdown', () => {
+      if(audioEnabled){
+        disableHoverAudioForExternalPlayer();
+      }
+      // Remove the guard so future taps go directly to Spotify
+      guard.remove();
+    }, { passive: true });
 
-      // pointerdown covers mouse + touch
-      iframe.addEventListener('pointerdown', handler, { passive: true });
-      iframe.addEventListener('focus', handler, { passive: true });
-    }
+    embedWrap.appendChild(guard);
   }
-}
 }
       detailContent.appendChild(tip);
 
@@ -1550,6 +1562,14 @@ if(section.embed){
     function setNowPlaying(section){
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
     }
+	
+	function disableHoverAudioForExternalPlayer(){
+  fadeToken++;
+  stopAll();            // stops preview audio + clears activeAudioId
+  audioEnabled = false; // disables hover-trigger audio
+  nowPlaying.textContent = 'Spotify active (hover audio disabled)';
+  updateStopButton();
+}
 
 function unlockAudio() {
   armAudioOnce();
