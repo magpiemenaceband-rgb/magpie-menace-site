@@ -20,12 +20,60 @@
       --shadow-soft: 0 10px 30px rgba(20,20,26,.10);
       --radius: 22px;
       --radius-sm: 16px;
-
+	  --orbit-tile-w: 150px;
+	  --orbit-tile-h: 125px;
       /* Cursor images (replace with your own PNGs, ideally 64–128px)
          Provide at least magpie.png; the “active” cursor swaps on hover.
       */
       
     }
+
+.orbit-ring{
+  position:absolute;
+  inset:0;
+  pointer-events:none;         /* ring itself doesn’t block */
+  z-index:2;
+}
+
+.orbit-tile{
+  position:absolute;
+  width: var(--orbit-tile-w);
+  min-height: var(--orbit-tile-h);
+  padding: 12px 12px 10px;
+  border-radius: 22px;         /* ✅ oval/rounded rectangle */
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.18);
+  pointer-events:auto;         /* ✅ clickable */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+}
+
+.orbit-tile .tile-img{
+  width: 64px;
+  height: 64px;
+  object-fit: contain;         /* ✅ no cropping */
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
+}
+
+.orbit-tile .title{
+  margin:0;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.orbit-tile .kicker{
+  font-size: 12px;
+  line-height: 1.15;
+  opacity: .9;
+  white-space: normal;         /* ✅ wrap text */
+}
 
     *{ box-sizing:border-box; }
   html,body{
@@ -680,9 +728,12 @@ footer a{
 
 /* Center card should be the topmost layer */
 .center-card{
-  width: min(760px, 92vw);
-  position:relative;
-  z-index: 4; /* higher than orbit tiles */
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+  z-index:1;
+  width: min(520px, 86vw);
 }
 
 /* Center hero row (title + now playing/stop) */
