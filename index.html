@@ -1345,6 +1345,17 @@ async function crossfade(toId){
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
     }
 
+function unlockAudio() {
+  armAudioOnce();
+  window.removeEventListener('pointerdown', unlockAudio);
+  window.removeEventListener('keydown', unlockAudio);
+  window.removeEventListener('touchstart', unlockAudio);
+}
+
+window.addEventListener('pointerdown', unlockAudio);
+window.addEventListener('keydown', unlockAudio);
+window.addEventListener('touchstart', unlockAudio);
+
 function updateStopButton(){
   const stopBtn = document.getElementById('stopAudio');
   const label = document.getElementById('stopLabel');
