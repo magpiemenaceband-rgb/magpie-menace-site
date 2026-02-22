@@ -29,16 +29,21 @@
 
     *{ box-sizing:border-box; }
     html,body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--ink);
-      background: radial-gradient(1200px 700px at 20% 10%, rgba(180,58,58,.10), transparent 55%),
-                  radial-gradient(900px 600px at 80% 30%, rgba(180,58,58,.08), transparent 60%),
-                  var(--bg);
-      overflow-x:hidden;
-      /* We render a custom cursor element so we can animate/scale it */
-      cursor: none;
-    }
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color:var(--ink);
+  overflow-x:hidden;
+  cursor:none;
+
+  background:
+    radial-gradient(1200px 800px at 10% 20%, #f4b24f 0%, transparent 55%),
+    radial-gradient(1000px 700px at 35% 60%, #c94a32 0%, transparent 60%),
+    radial-gradient(900px 700px at 55% 30%, #c0253a 0%, transparent 60%),
+    radial-gradient(900px 700px at 70% 70%, #b53f7c 0%, transparent 60%),
+    radial-gradient(1000px 800px at 85% 40%, #2a356e 0%, transparent 65%),
+    radial-gradient(1200px 900px at 95% 80%, #0f1a3a 0%, transparent 70%),
+    linear-gradient(135deg, #f4b24f 0%, #c0253a 40%, #5b2d6f 70%, #0f1a3a 100%);
+}
     
 	body, a, button, img, .tile, .pill, .btn { cursor: none !important; }
 
