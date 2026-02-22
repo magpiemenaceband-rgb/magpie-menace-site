@@ -1362,10 +1362,10 @@ function layoutOrbitTiles(){
 
   const rect = ring.getBoundingClientRect();
   const cx = rect.width / 2;
-  const cy = rect.height / 2 + 40;   // ✅ push orbit down under header
+  const cy = rect.height / 2 + 20;   // ✅ push orbit down under header
 
   const radius = Math.min(
-  Math.min(rect.width, rect.height) * 0.40,
+  Math.min(rect.width, rect.height) * 0.48,
   460  // max radius cap
 ); 
 
