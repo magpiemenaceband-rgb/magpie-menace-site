@@ -775,6 +775,26 @@ function spawnSparkles(x, y){
     const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
+let audioArmed = false;
+
+async function armAudioOnce(){
+  if(audioArmed) return true;
+
+  const first = audios.get(SECTIONS[0].id);
+  if(!first) return false;
+
+  try{
+    first.volume = 0;
+    await first.play();
+    first.pause();
+    first.currentTime = 0;
+    audioArmed = true;
+    return true;
+  } catch (err){
+    console.warn('Audio blocked until user gesture:', err);
+    return false;
+  }
+}
 
 // Create audio elements
 SECTIONS.forEach(s => {
@@ -891,7 +911,7 @@ function updateStopButton(){
   }, 90);
 }
 
-    function activate(section){
+    async function activate(section){
   // Cursor per section + slightly larger on hover
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
@@ -906,6 +926,13 @@ function updateStopButton(){
   // Smooth audio crossfade
   activeAudioId = section.id;
   updateStopButton();
+  if(!audioArmed){
+    const ok = await armAudioOnce();
+    if(!ok){
+      nowPlaying.textContent = 'Click once to enable audio';
+      return;
+    }
+  }
   crossfade(section.id);
 
   heroTitle.textContent = section.title;
@@ -989,17 +1016,9 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // Autoplay policy hint: first user interaction can unlock audio on iOS/Safari
-window.addEventListener('pointerdown', () => {
-  const first = audios.get(SECTIONS[0].id);
-  if(first){
-    const vol = first.volume;
-    first.volume = 0;
-    first.play().then(()=>{
-      first.pause();
-      first.currentTime = 0;
-      first.volume = vol;
-    }).catch(()=>{});
-  }
+window.addEventListener('pointerdown', async () => {
+  await armAudioOnce();
+  updateStopButton();
 }, { once:true });
 updateStopButton();
   </script>
