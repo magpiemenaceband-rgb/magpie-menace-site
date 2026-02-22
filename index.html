@@ -661,6 +661,87 @@ footer a{
   font-size:13px;
   opacity:.75;
 }
+
+* ===== ORBIT LAYOUT ===== */
+.orbit{
+  position:relative;
+  min-height: calc(100vh - 88px); /* tweak if header height differs */
+  display:grid;
+  place-items:center;
+  padding: 26px;
+}
+
+.center-stage{
+  width: min(720px, 92vw);
+  position:relative;
+  z-index: 2;
+}
+
+/* Center hero row (title + now playing/stop) */
+.center-hero{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding: 14px 6px 16px;
+}
+
+/* Make the detail card look like the center panel */
+.center-stage .detail-card{
+  position: relative;   /* remove sticky behavior in orbit layout */
+  top:auto;
+  width:100%;
+}
+
+/* Ring container */
+.orbit-ring{
+  position:absolute;
+  inset:0;
+  z-index: 3;
+  pointer-events:none; /* ring itself doesn't block clicks */
+}
+
+/* Orbit tiles */
+.orbit-tile{
+  position:absolute;
+  transform: translate(-50%, -50%);
+  pointer-events:auto; /* tile is clickable */
+  width: 160px;
+  height: 160px;
+  border-radius: 999px;
+  padding: 12px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 16px 52px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+
+/* If you’re using your “album card” content inside tiles, ensure it centers */
+.orbit-tile .title{ margin: 6px 0 0; text-align:center; }
+.orbit-tile .kicker{ text-align:center; }
+
+/* Mobile fallback (stack center + grid tiles) */
+@media (max-width: 900px){
+  .orbit{ display:block; min-height:auto; }
+  .orbit-ring{
+    position:relative;
+    inset:auto;
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+    pointer-events:auto;
+  }
+  .orbit-tile{
+    position:relative;
+    transform:none;
+    width:100%;
+    height: 140px;
+    border-radius: 18px;
+  }
+}
   </style>
 </head>
 
@@ -695,69 +776,73 @@ footer a{
     </div>
   </header>
 
-  <main>
-    <div class="grid">
-      <section class="panel" id="leftPanel">
-        <div class="hero">
-  <div>
-    <h2 id="heroTitle">Welcome to the nest.</h2>
-    <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
-  </div>
+  <main class="orbit" id="orbitRoot">
 
-  <div class="hero-right">
-    <div class="now-playing" aria-live="polite">
-      <div class="dot" aria-hidden="true"></div>
-      <span id="nowPlaying">Hover a section to play a preview</span>
+  <!-- CENTER STAGE (what used to be your right panel, plus now-playing + stop) -->
+  <section class="center-stage" aria-label="Center stage">
+
+    <div class="center-hero">
+      <div>
+        <h2 id="heroTitle">Welcome to the nest.</h2>
+        <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
+      </div>
+
+      <div class="hero-right">
+        <div class="now-playing" aria-live="polite">
+          <div class="dot" aria-hidden="true"></div>
+          <span id="nowPlaying">Hover a section to play a preview</span>
+        </div>
+
+        <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
+          <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="stop-label" id="stopLabel">Stopped</span>
+        </button>
+      </div>
     </div>
 
-    <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
-  <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
-  <span class="stop-label" id="stopLabel">Stopped</span>
-</button>
-  </div>
-</div>
-
-        <div class="tiles" id="tiles" aria-label="Site sections">
-          <!-- Tiles are injected by JS -->
+    <!-- Your existing right panel moved into the center -->
+    <aside class="detail-card" aria-label="Section details">
+      <div class="detail-head">
+        <div>
+          <h3 id="detailTitle">Magpie Menace</h3>
+          <p id="detailSubtitle">Choose a section to explore.</p>
         </div>
-      </section>
+        <a class="btn" href="#" id="primaryCta">Start Here</a>
+      </div>
 
-      <aside class="detail-card" aria-label="Section details">
-        <div class="detail-head">
-          <div>
-            <h3 id="detailTitle">Magpie Menace</h3>
-            <p id="detailSubtitle">Choose a section to explore.</p>
-          </div>
-          <a class="btn" href="#" id="primaryCta">Start Here</a>
-        </div>
-        <div class="detail-body">
-          <div id="detailContent">
-            <ul>
-              <li>Add your music links, video embeds, social handles, merch store, and fan club perks.</li>
-              <li>Replace the shiny-object background images and magpie cursor PNGs in <code>/assets</code>.</li>
-              <li>Swap the sample audio files in <code>/audio</code> (10–20s previews work best).</li>
-            </ul>
+      <div class="detail-body">
+        <div id="detailContent">
+          <ul>
+            <li>Add your music links, video embeds, social handles, merch store, and fan club perks.</li>
+            <li>Replace the shiny-object background images and magpie cursor PNGs in <code>/assets</code>.</li>
+            <li>Swap the sample audio files in <code>/audio</code> (10–20s previews work best).</li>
+          </ul>
 
-            <div class="qr" id="tipJarBlock">
-              <img id="qrImg" alt="Tip jar QR code" />
-              <div>
-                <div style="font-weight:850; margin-bottom:6px;">Tip Jar (scan me)</div>
-                <div style="color:var(--muted); font-size:13px; line-height:1.35;">
-                  Replace <code>TIP_JAR_URL</code> in the script with your PayPal/Venmo/Ko‑fi link.
-                </div>
-                <div class="cta-row">
-                  <a class="btn" id="tipButton" href="#" target="_blank" rel="noopener">Open Tip Jar</a>
-                </div>
+          <div class="qr" id="tipJarBlock">
+            <img id="qrImg" alt="Tip jar QR code" />
+            <div>
+              <div style="font-weight:850; margin-bottom:6px;">Tip Jar (scan me)</div>
+              <div style="color:var(--muted); font-size:13px; line-height:1.35;">
+                Replace <code>TIP_JAR_URL</code> in the script with your PayPal/Venmo/Ko-fi link.
+              </div>
+              <div class="cta-row">
+                <a class="btn" id="tipButton" href="#" target="_blank" rel="noopener">Open Tip Jar</a>
               </div>
             </div>
           </div>
         </div>
-      </aside>
-    </div>
+      </div>
+    </aside>
+  </section>
 
-    <!-- Audio elements (JS will control playback) -->
-    <div style="display:none" aria-hidden="true" id="audioRack"></div>
-  </main>
+  <!-- ORBIT RING (tiles injected here now) -->
+  <div id="orbitRing" class="orbit-ring" aria-label="Site sections orbit">
+    <!-- Orbit tiles injected by JS -->
+  </div>
+
+  <!-- Audio elements (JS will control playback) -->
+  <div style="display:none" aria-hidden="true" id="audioRack"></div>
+</main>
 
   <footer>
     © <span id="year"></span> Magpie Menace · Built with love and stolen sparkle.
@@ -891,7 +976,7 @@ footer a{
     // 2) RENDER
     // ============================
 
-    const tilesEl = document.getElementById('tiles');
+    const tilesEl = document.getElementById('orbitRing');
     const audioRack = document.getElementById('audioRack');
 
     const heroTitle = document.getElementById('heroTitle');
@@ -1167,10 +1252,45 @@ async function activate(section){
   crossfade(section.id);
 }
 
+function layoutOrbitTiles(){
+  const ring = document.getElementById('orbitRing');
+  if(!ring) return;
+
+  const tiles = [...ring.querySelectorAll('.orbit-tile')];
+  if(tiles.length === 0) return;
+
+  // Mobile uses CSS grid fallback
+  if(window.matchMedia('(max-width: 900px)').matches){
+    tiles.forEach(t => { t.style.left = ''; t.style.top = ''; });
+    return;
+  }
+
+  const rect = ring.getBoundingClientRect();
+  const cx = rect.width / 2;
+  const cy = rect.height / 2;
+
+  // Push tiles toward outside edge
+  const radius = Math.min(rect.width, rect.height) * 0.43;
+
+  const count = tiles.length;
+  const startAngleDeg = -90;
+
+  tiles.forEach((tile, i) => {
+    const angle = (startAngleDeg + (360 / count) * i) * (Math.PI / 180);
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+
+    tile.style.left = `${x}px`;
+    tile.style.top = `${y}px`;
+  });
+}
+
+window.addEventListener('resize', layoutOrbitTiles);
+
 // Render tiles
 SECTIONS.forEach(section => {
   const btn = document.createElement('button');
-  btn.className = 'tile';
+  btn.className = 'orbit-tile';
   btn.type = 'button';
   btn.setAttribute('aria-label', section.title);
 
@@ -1196,9 +1316,10 @@ SECTIONS.forEach(section => {
 
   tilesEl.appendChild(btn);
 });
+layoutOrbitTiles();
 
 // Cursor shrink when leaving the tiles area (does NOT stop audio)
-tilesEl.addEventListener('mouseleave', () => {
+document.getElementById('orbitRing').addEventListener('mouseleave', () => {
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
 });
