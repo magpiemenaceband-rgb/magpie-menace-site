@@ -269,16 +269,7 @@
 
 .now-playing{
   position:relative;
-  z-index:1;
-}
-
-.stop-pill{
-  position:relative;
-  z-index:2;
-}
-
-    .now-playing{
-      display:flex;
+  display:flex;
       align-items:center;
       gap:10px;
       padding:10px 12px;
@@ -289,7 +280,20 @@
       font-size:12px;
       color: var(--muted);
       white-space:nowrap;
-    }
+  z-index:1;
+}
+
+.stop-pill{
+  position:relative;
+  z-index:2;
+}
+
+button.stop-pill{
+  appearance: none;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.72);
+}
+
 
     .dot{
       width:8px; height:8px; border-radius:999px;
@@ -1038,7 +1042,12 @@ document.getElementById('bookUs').addEventListener('click', (e)=>{
   e.preventDefault();
   alert('Hook this up to your booking email or form.');
 });
-document.getElementById('stopAudio').addEventListener('click', async () => {
+document.getElementById('stopAudio').addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const stopBtn = e.currentTarget;
+  if (stopBtn.getAttribute('aria-disabled') === 'true' && audioEnabled) return;
 
   // If audio is disabled, this button acts as "Enable Audio"
   if(!audioEnabled){
@@ -1055,19 +1064,11 @@ document.getElementById('stopAudio').addEventListener('click', async () => {
   // If audio is enabled but nothing is playing, do nothing
   if(!activeAudioId) return;
 
-  // "Stop": fade out current audio, then DISABLE hover audio globally
-  const a = audios.get(activeAudioId);
-  await fadeTo(a, 0, 260);
-  if(a){
-    a.pause();
-    a.currentTime = 0;
-  }
-
+  // Stop everything immediately + disable hover audio
   fadeToken++;
-  activeAudioId = null;
+  stopAll();           // stops + clears activeAudioId inside stopAll
+  audioEnabled = false;
 
-  audioEnabled = false; // <-- key change (disables hover audio)
-stopAll();
   nowPlaying.textContent = 'Audio disabled';
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
