@@ -1364,7 +1364,7 @@ function updateStopButton(){
 
   // treat as disabled only when: audio enabled but nothing playing
   // (Enable Audio should still be clickable)
-  const ariaDisabled = (audioEnabled && !activeAudioId) ? 'true' : 'false';
+  const ariaDisabled = 'false'; // always clickable: Stop or Enable Audio
   stopBtn.setAttribute('aria-disabled', ariaDisabled);
 
   if(label.textContent === nextText) return;
@@ -1450,14 +1450,11 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  const stopBtn = e.currentTarget;
-  if (stopBtn.getAttribute('aria-disabled') === 'true' && audioEnabled) return;
-
-  // If audio is disabled, this button acts as "Enable Audio"
+  // If currently disabled, this button acts as "Enable Audio"
   if(!audioEnabled){
     audioEnabled = true;
 
-    // try to arm immediately (needs gesture; this click counts)
+    // this click counts as a gesture, so we can arm
     await armAudioOnce();
 
     nowPlaying.textContent = 'Hover a section to play a preview';
@@ -1465,19 +1462,17 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
     return;
   }
 
-  // If audio is enabled but nothing is playing, do nothing
-  if(!activeAudioId) return;
+  // If enabled but nothing is playing, still allow disabling audio
+  // (so it becomes "Enable Audio" again)
+  fadeToken++;
+  stopAll();           // stops + clears activeAudioId
+  audioEnabled = false;
 
-  // Stop everything immediately (DO NOT disable hover audio)
-fadeToken++;
-stopAll();            // stops + clears activeAudioId inside stopAll
-audioEnabled = true;  // keep hover previews enabled
+  nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
+  setCursorBig(false);
+  setCursorSrc('assets/cursor-magpie.png');
 
-nowPlaying.textContent = 'Hover a section to play a preview';
-setCursorBig(false);
-setCursorSrc('assets/cursor-magpie.png');
-
-updateStopButton();
+  updateStopButton();
 });
 
 // Footer year
