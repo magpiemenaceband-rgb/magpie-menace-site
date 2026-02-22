@@ -824,10 +824,11 @@ function fadeTo(audio, target, ms=220){
 }
 
 async function crossfade(toId){
-  const myToken = ++fadeToken;              // <-- add
+  const myToken = ++fadeToken;
   if(activeAudioId === toId) return;
 
-  const from = activeAudioId ? audios.get(activeAudioId) : null;
+  const prevId = activeAudioId;                 // <-- add
+  const from = prevId ? audios.get(prevId) : null;
   const to = audios.get(toId);
   activeAudioId = toId;
 
@@ -840,7 +841,7 @@ async function crossfade(toId){
     fadeTo(to, 0.75, 260)
   ]);
 
-  if(myToken !== fadeToken) return;         // <-- add (ignore stale fades)
+  if(myToken !== fadeToken) return;
   updateStopButton();
 }
 
@@ -911,21 +912,16 @@ function updateStopButton(){
   }, 90);
 }
 
-    async function activate(section){
-  // Cursor per section + slightly larger on hover
+async function activate(section){
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
 
-  // Peck + sparkle on switch
   cursorPeck();
   spawnSparkles(cursorX, cursorY);
 
   setDetails(section);
   setNowPlaying(section);
 
-  // Smooth audio crossfade
-  activeAudioId = section.id;
-  updateStopButton();
   if(!audioArmed){
     const ok = await armAudioOnce();
     if(!ok){
@@ -933,6 +929,7 @@ function updateStopButton(){
       return;
     }
   }
+
   crossfade(section.id);
 
   heroTitle.textContent = section.title;
