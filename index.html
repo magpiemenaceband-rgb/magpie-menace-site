@@ -1034,6 +1034,19 @@ html{
   cursor: pointer; /* doesn't matter with your custom cursor, but fine */
 }
 
+/* Disable custom cursor on touch devices (phones/tablets) */
+@media (hover: none) and (pointer: coarse){
+  .mm-cursor{
+    display: none !important;
+  }
+
+  html, body,
+  a, button, img,
+  .tile, .pill, .btn {
+    cursor: auto !important;
+  }
+}
+
   </style>
 </head>
 
