@@ -710,128 +710,103 @@ footer a{
   opacity:.75;
 }
 
-/* ===== ORBIT LAYOUT ===== */
-.orbit-stage{
-  position:relative;
-  /* push the whole orbit stage BELOW the sticky header */
-  padding-top: 110px;              /* tweak if your header is taller/shorter */
-  padding-inline: 26px;
-  padding-bottom: 26px;
-
-  min-height: 100vh;
-  display:grid;
-  place-items:center;
-
-  /* important: establishes a clean "stage" for orbit math */
-  overflow: hidden;
+/* ===== STAGE LAYOUT (replaces orbit) ===== */
+.stage{
+  width: 100%;
+  padding: 18px 18px 34px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
 }
 
-/* Center card should be the topmost layer */
-.center-card{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform: translate(-50%, -50%);
-  z-index:1;
-  width: min(520px, 86vw);
+/* Top links bar under header */
+.top-links{
+  width: min(1100px, 96vw);
+  margin: 0 auto;
 }
 
-/* Center hero row (title + now playing/stop) */
-.center-hero{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:14px;
-  padding: 14px 6px 16px;
+/* Horizontal scroll row (mobile friendly) */
+.top-links-row{
+  display: flex;
+  gap: 12px;
+  padding: 10px 6px 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
 }
 
-/* Detail card should NOT be sticky in orbit layout */
-.center-card .detail-card{
-  position: relative;
-  top:auto;
-  width:100%;
-}
+/* Optional: hide scrollbar (keeps it clean) */
+.top-links-row::-webkit-scrollbar{ height: 8px; }
+.top-links-row::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius: 999px; }
+.top-links-row::-webkit-scrollbar-track{ background: transparent; }
 
-/* Ring container sits behind the center card, but tiles remain clickable */
-.orbit-ring{
-  position:absolute;
-  /* keep ring below header as well */
-  inset: 110px 0 0 0;  /* top offset matches orbit-stage padding-top */
-  z-index: 2;          /* behind the center card */
-  pointer-events:none; /* ring doesn't block clicks */
-}
-
-/* Orbit tiles: smaller + oval so text fits */
+/* Make tiles “album card” sized for a top row */
 .orbit-tile{
-  position:absolute;
-  transform: translate(-50%, -50%);
-  pointer-events:auto; /* tile clickable */
-  width: 150px;
-  height: 112px;
-  border-radius: 22px;
-
-  padding: 10px 10px 12px;
+  position: relative;            /* no absolute positioning anymore */
+  transform: none;               /* remove translate */
+  pointer-events: auto;
+  flex: 0 0 auto;                /* don’t shrink */
+  width: 148px;                  /* tweak */
+  height: auto;
+  border-radius: 18px;
+  padding: 12px;
   background: rgba(255,255,255,.10);
   border: 1px solid rgba(255,255,255,.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 16px 52px rgba(0,0,0,.18);
-  overflow:hidden;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  gap:6px;
+  overflow: hidden;
+  scroll-snap-align: start;
 }
 
-/* If you're using the "image on top, title under, kicker under" layout */
+/* Give the image more room, text below */
 .orbit-tile .tile-img-wrap{
   width: 100%;
-  height: 64px;
-  display:grid;
-  place-items:center;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 8px;
 }
-
 .orbit-tile .tile-img{
-  max-height: 64px;
-  max-width: 100%;
+  max-width: 92px;
+  max-height: 74px;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  display:block;
+  display: block;
 }
 
+/* Title + kicker stacked */
 .orbit-tile .title{
   margin: 0;
-  text-align:center;
-  font-weight: 900;
-  line-height: 1.05;
-  font-size: 14px;
+  font-weight: 850;
+  text-align: center;
 }
-
 .orbit-tile .kicker{
-  text-align:center;
+  margin-top: 4px;
   font-size: 12px;
   opacity: .9;
+  text-align: center;
 }
 
-/* Mobile fallback (stack center + grid tiles) */
-@media (max-width: 900px){
-  .orbit-stage{ display:block; padding-top: 110px; }
-  .orbit-ring{
-    position:relative;
-    inset:auto;
-    display:grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 14px;
-    pointer-events:auto;
+/* Center panel below */
+.center-stage{
+  width: min(860px, 96vw);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Optional: tighten the hero row for mobile */
+@media (max-width: 720px){
+  .center-hero{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
-  .orbit-tile{
-    position:relative;
-    transform:none;
-    width:100%;
-    height: 130px;
-    border-radius: 18px;
+  .hero-right{
+    align-items: flex-start;
   }
 }
   </style>
@@ -868,14 +843,20 @@ footer a{
     </div>
   </header>
 
-  <main class="orbit-stage" id="orbitRoot" aria-label="Orbit layout">
+  <main class="stage" id="stageRoot">
 
-  <!-- CENTER CARD (in the true middle of the orbit) -->
-  <section class="center-card" aria-label="Center content">
+  <!-- TOP LINKS ROW (tiles injected here) -->
+  <nav class="top-links" aria-label="Site sections">
+    <div id="topLinks" class="top-links-row">
+      <!-- Tiles injected by JS -->
+    </div>
+  </nav>
 
-    <!-- Now playing + Stop live with the center card -->
+  <!-- CENTER STAGE (your center panel stays) -->
+  <section class="center-stage" aria-label="Center stage">
+
     <div class="center-hero">
-      <div class="hero-left">
+      <div>
         <h2 id="heroTitle">Welcome to the nest.</h2>
         <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
       </div>
@@ -893,7 +874,6 @@ footer a{
       </div>
     </div>
 
-    <!-- Your existing right panel content -->
     <aside class="detail-card" aria-label="Section details">
       <div class="detail-head">
         <div>
@@ -929,14 +909,8 @@ footer a{
 
   </section>
 
-  <!-- ORBIT RING (tiles injected here) -->
-  <div id="orbitRing" class="orbit-ring" aria-label="Site sections orbit">
-    <!-- Orbit tiles injected by JS -->
-  </div>
-
   <!-- Audio elements (JS will control playback) -->
   <div style="display:none" aria-hidden="true" id="audioRack"></div>
-
 </main>
 
   <footer>
@@ -1153,12 +1127,10 @@ function spawnSparkles(x, y){
     }
 
     function buildQr(url){
-      // Simple hosted QR generator (swap to a local QR image later if you prefer)
-      const data = encodeURIComponent(url);
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${data}`;
-      tipLink.href = url;
-      tipButton.href = url;
-    }
+  qrImg.src = "assets/qrcode-paypal.png";   // <-- your static QR image
+  tipLink.href = url;
+  tipButton.href = url;
+}
 
     buildQr(safeUrl(TIP_JAR_URL));
 
@@ -1382,38 +1354,36 @@ function layoutOrbitTiles(){
   });
 }
 
-window.addEventListener('resize', layoutOrbitTiles);
+//window.addEventListener('resize', layoutOrbitTiles);
 
 // Render tiles
+const tilesEl = document.getElementById('topLinks');
+
+// Render tiles into the top row
 SECTIONS.forEach(section => {
   const btn = document.createElement('button');
   btn.className = 'orbit-tile';
   btn.type = 'button';
   btn.setAttribute('aria-label', section.title);
 
-  // Background image for the tile
-  btn.dataset.bg = section.shinyBg;
-
   btn.innerHTML = `
-  <div class="tile-img-wrap">
-    <img class="tile-img" src="${section.shinyBg}" alt="">
-  </div>
-  <p class="title">${section.title}</p>
-  <div class="kicker">${section.kicker}</div>
-`;
+    <div class="tile-img-wrap">
+      <img class="tile-img" src="${section.shinyBg}" alt="">
+    </div>
+    <p class="title">${section.title}</p>
+    <div class="kicker">${section.kicker}</div>
+  `;
 
-  // OPTION B: Keep playing until another section is hovered/clicked
   btn.addEventListener('mouseenter', () => {
     activate(section);
     cursorPeck();
   });
 
-  // Mobile / touch
   btn.addEventListener('click', () => activate(section));
 
   tilesEl.appendChild(btn);
 });
-layoutOrbitTiles();
+//layoutOrbitTiles();
 
 // Cursor shrink when leaving the tiles area (does NOT stop audio)
 document.getElementById('orbitRing').addEventListener('mouseleave', () => {
@@ -1453,16 +1423,16 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
   // If audio is enabled but nothing is playing, do nothing
   if(!activeAudioId) return;
 
-  // Stop everything immediately + disable hover audio
-  fadeToken++;
-  stopAll();           // stops + clears activeAudioId inside stopAll
-  audioEnabled = false;
+  // Stop everything immediately (DO NOT disable hover audio)
+fadeToken++;
+stopAll();            // stops + clears activeAudioId inside stopAll
+audioEnabled = true;  // keep hover previews enabled
 
-  nowPlaying.textContent = 'Audio disabled';
-  setCursorBig(false);
-  setCursorSrc('assets/cursor-magpie.png');
+nowPlaying.textContent = 'Hover a section to play a preview';
+setCursorBig(false);
+setCursorSrc('assets/cursor-magpie.png');
 
-  updateStopButton();
+updateStopButton();
 });
 
 // Footer year
