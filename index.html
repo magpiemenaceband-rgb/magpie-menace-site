@@ -662,19 +662,27 @@ footer a{
   opacity:.75;
 }
 
-* ===== ORBIT LAYOUT ===== */
-.orbit{
+/* ===== ORBIT LAYOUT ===== */
+.orbit-stage{
   position:relative;
-  min-height: calc(100vh - 88px); /* tweak if header height differs */
+  /* push the whole orbit stage BELOW the sticky header */
+  padding-top: 110px;              /* tweak if your header is taller/shorter */
+  padding-inline: 26px;
+  padding-bottom: 26px;
+
+  min-height: 100vh;
   display:grid;
   place-items:center;
-  padding: 26px;
+
+  /* important: establishes a clean "stage" for orbit math */
+  overflow: hidden;
 }
 
-.center-stage{
-  width: min(720px, 92vw);
+/* Center card should be the topmost layer */
+.center-card{
+  width: min(760px, 92vw);
   position:relative;
-  z-index: 2;
+  z-index: 4; /* higher than orbit tiles */
 }
 
 /* Center hero row (title + now playing/stop) */
@@ -686,45 +694,78 @@ footer a{
   padding: 14px 6px 16px;
 }
 
-/* Make the detail card look like the center panel */
-.center-stage .detail-card{
-  position: relative;   /* remove sticky behavior in orbit layout */
+/* Detail card should NOT be sticky in orbit layout */
+.center-card .detail-card{
+  position: relative;
   top:auto;
   width:100%;
 }
 
-/* Ring container */
+/* Ring container sits behind the center card, but tiles remain clickable */
 .orbit-ring{
   position:absolute;
-  inset:0;
-  z-index: 3;
-  pointer-events:none; /* ring itself doesn't block clicks */
+  /* keep ring below header as well */
+  inset: 110px 0 0 0;  /* top offset matches orbit-stage padding-top */
+  z-index: 2;          /* behind the center card */
+  pointer-events:none; /* ring doesn't block clicks */
 }
 
-/* Orbit tiles */
+/* Orbit tiles: smaller + oval so text fits */
 .orbit-tile{
   position:absolute;
   transform: translate(-50%, -50%);
-  pointer-events:auto; /* tile is clickable */
-  width: 160px;
-  height: 160px;
-  border-radius: 999px;
-  padding: 12px;
+  pointer-events:auto; /* tile clickable */
+  width: 150px;
+  height: 112px;
+  border-radius: 22px;
+
+  padding: 10px 10px 12px;
   background: rgba(255,255,255,.10);
   border: 1px solid rgba(255,255,255,.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 16px 52px rgba(0,0,0,.18);
   overflow:hidden;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
 }
 
-/* If you’re using your “album card” content inside tiles, ensure it centers */
-.orbit-tile .title{ margin: 6px 0 0; text-align:center; }
-.orbit-tile .kicker{ text-align:center; }
+/* If you're using the "image on top, title under, kicker under" layout */
+.orbit-tile .tile-img-wrap{
+  width: 100%;
+  height: 64px;
+  display:grid;
+  place-items:center;
+}
+
+.orbit-tile .tile-img{
+  max-height: 64px;
+  max-width: 100%;
+  object-fit: contain;
+  display:block;
+}
+
+.orbit-tile .title{
+  margin: 0;
+  text-align:center;
+  font-weight: 900;
+  line-height: 1.05;
+  font-size: 14px;
+}
+
+.orbit-tile .kicker{
+  text-align:center;
+  font-size: 12px;
+  opacity: .9;
+}
 
 /* Mobile fallback (stack center + grid tiles) */
 @media (max-width: 900px){
-  .orbit{ display:block; min-height:auto; }
+  .orbit-stage{ display:block; padding-top: 110px; }
   .orbit-ring{
     position:relative;
     inset:auto;
@@ -738,7 +779,7 @@ footer a{
     position:relative;
     transform:none;
     width:100%;
-    height: 140px;
+    height: 130px;
     border-radius: 18px;
   }
 }
@@ -776,13 +817,14 @@ footer a{
     </div>
   </header>
 
-  <main class="orbit" id="orbitRoot">
+  <main class="orbit-stage" id="orbitRoot" aria-label="Orbit layout">
 
-  <!-- CENTER STAGE (what used to be your right panel, plus now-playing + stop) -->
-  <section class="center-stage" aria-label="Center stage">
+  <!-- CENTER CARD (in the true middle of the orbit) -->
+  <section class="center-card" aria-label="Center content">
 
+    <!-- Now playing + Stop live with the center card -->
     <div class="center-hero">
-      <div>
+      <div class="hero-left">
         <h2 id="heroTitle">Welcome to the nest.</h2>
         <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
       </div>
@@ -800,7 +842,7 @@ footer a{
       </div>
     </div>
 
-    <!-- Your existing right panel moved into the center -->
+    <!-- Your existing right panel content -->
     <aside class="detail-card" aria-label="Section details">
       <div class="detail-head">
         <div>
@@ -833,15 +875,17 @@ footer a{
         </div>
       </div>
     </aside>
+
   </section>
 
-  <!-- ORBIT RING (tiles injected here now) -->
+  <!-- ORBIT RING (tiles injected here) -->
   <div id="orbitRing" class="orbit-ring" aria-label="Site sections orbit">
     <!-- Orbit tiles injected by JS -->
   </div>
 
   <!-- Audio elements (JS will control playback) -->
   <div style="display:none" aria-hidden="true" id="audioRack"></div>
+
 </main>
 
   <footer>
