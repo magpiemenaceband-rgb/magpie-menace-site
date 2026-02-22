@@ -897,6 +897,25 @@ footer a{
   }
 }
 
+/* MOBILE: keep the details panel in normal flow (not sticky) */
+@media (max-width: 720px){
+  .detail-card{
+    position: relative;   /* was sticky */
+    top: auto;
+    z-index: 1;
+  }
+
+  /* optional: a little breathing room */
+  .center-stage{
+    margin-top: 4px;
+  }
+}
+
+/* Make sure sticky panel can appear above other positioned rows */
+.detail-card{
+  z-index: 10;
+}
+
   </style>
 </head>
 
