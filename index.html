@@ -344,20 +344,28 @@ button.stop-pill{
     }
 
     .tile{
-      position:relative;
-      border-radius: var(--radius-sm);
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.62);
-      box-shadow: 0 10px 22px rgba(20,20,26,.08);
-      padding:14px;
-      cursor: none;
-      overflow:hidden;
-      transition: transform .14s ease, background .14s ease;
-      min-height:92px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+  position:relative;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);        
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow: 0 10px 22px rgba(20,20,26,.10);
+  padding:14px 16px;
+  overflow:hidden;                          
+  transition: transform .14s ease, background .14s ease, border-color .14s ease;
+  min-height:92px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.tile:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.26);
+}
 
     /* Subtle “peck” animation on hover */
     @keyframes peck{
@@ -370,18 +378,23 @@ button.stop-pill{
     .tile:hover{ animation: peck 220ms ease-out 1; }
 
     .tile::before{
-      content:"";
-      position:absolute;
-      inset:-6px;
-      background-repeat:no-repeat;
-      background-position: right 10px bottom 10px;
-      background-size: 140px;
-      opacity:.30;
-      filter: saturate(1.08) contrast(1.08);
-      transform: rotate(-4deg);
-      pointer-events:none;
-      transition: opacity .14s ease, transform .14s ease;
-    }
+  content:"";
+  position:absolute;
+  inset:10px;                     
+  background-repeat:no-repeat;
+  background-position: right center;
+  background-size: contain;       
+  opacity:.40;
+  pointer-events:none;
+  transform:none;                
+  filter: saturate(1.05) contrast(1.05);
+  transition: opacity .14s ease, transform .14s ease;
+}
+
+.tile:hover::before{
+  opacity:.55;
+  transform: scale(1.02);
+}
 
     .tile:hover{ transform: translateY(-2px); background: rgba(255,255,255,.80); }
     .tile:hover::before{ opacity:.42; transform: rotate(-2deg) scale(1.01); }
