@@ -154,7 +154,7 @@ body{
 
 	/* Left logo */
 .logo-mark{
-  height:80px;
+  height:90px;
 }
 
 .logo-mark img{
@@ -727,30 +727,31 @@ footer a{
 
 /* Horizontal scroll row (mobile friendly) */
 .top-links-row{
-  display: flex;
-  gap: 12px;
+  display:flex;
+  gap:12px;
   padding: 10px 6px 6px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
+
+  /* ✅ no scrolling */
+  overflow: visible;
+  scroll-snap-type: none;
+
+  /* ✅ wrap to new lines instead of scroll */
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-/* Optional: hide scrollbar (keeps it clean) */
-.top-links-row::-webkit-scrollbar{ height: 8px; }
-.top-links-row::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius: 999px; }
-.top-links-row::-webkit-scrollbar-track{ background: transparent; }
+
 
 /* Make tiles “album card” sized for a top row */
 .orbit-tile{
   position: relative;            /* no absolute positioning anymore */
   transform: none;               /* remove translate */
   pointer-events: auto;
-  flex: 0 0 auto;                /* don’t shrink */
-  width: 148px;                  /* tweak */
+  flex: 0 1 140px;   /* ✅ can shrink a bit */
+  width: 140px;      /* ✅ smaller */
+  padding: 10px;
   height: auto;
   border-radius: 18px;
-  padding: 12px;
   background: rgba(255,255,255,.10);
   border: 1px solid rgba(255,255,255,.22);
   backdrop-filter: blur(10px);
@@ -763,14 +764,14 @@ footer a{
 /* Give the image more room, text below */
 .orbit-tile .tile-img-wrap{
   width: 100%;
-  height: 74px;
+  height: 62px;
   display: grid;
   place-items: center;
   margin-bottom: 8px;
 }
 .orbit-tile .tile-img{
-  max-width: 92px;
-  max-height: 74px;
+  max-width: 80px;
+  max-height: 62px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -782,10 +783,11 @@ footer a{
   margin: 0;
   font-weight: 850;
   text-align: center;
+  font-size: 13px;
 }
 .orbit-tile .kicker{
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 11px;
   opacity: .9;
   text-align: center;
 }
@@ -808,6 +810,14 @@ footer a{
   .hero-right{
     align-items: flex-start;
   }
+}
+
+@media (min-width: 1050px){
+  .orbit-tile{ width: 130px; }
+}
+
+.center-hero > div:first-child{
+  display:none;
 }
 
 .link-strip{
@@ -838,6 +848,31 @@ footer a{
   background: transparent;
 }
 
+.status-row{
+  width: min(1100px, 96vw);
+  margin: 6px auto 14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Make the pills match the header row vibe */
+.status-row .now-playing{
+  background: rgba(255,255,255,.60);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@media (max-width: 720px){
+  .status-row{
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
   </style>
 </head>
 
@@ -852,7 +887,7 @@ footer a{
 
   <!-- LEFT: Bird logo -->
   <div class="logo-mark">
-    <img src="assets/Official Logo Transparent.png" alt="Magpie Logo">
+    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Logo">
   </div>
 
   <!-- CENTER: Band name -->
@@ -881,6 +916,18 @@ footer a{
       <!-- Tiles injected by JS -->
     </div>
   </nav>
+  
+  <div class="status-row" aria-label="Playback status">
+  <div class="now-playing" aria-live="polite">
+    <div class="dot" aria-hidden="true"></div>
+    <span id="nowPlaying">Hover a section to play a preview</span>
+  </div>
+
+  <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
+    <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="stop-label" id="stopLabel">Stopped</span>
+  </button>
+</div>
 
   <!-- CENTER STAGE (your center panel stays) -->
   <section class="center-stage" aria-label="Center stage">
@@ -889,18 +936,6 @@ footer a{
       <div>
         <h2 id="heroTitle">Welcome to the nest.</h2>
         <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
-      </div>
-
-      <div class="hero-right">
-        <div class="now-playing" aria-live="polite">
-          <div class="dot" aria-hidden="true"></div>
-          <span id="nowPlaying">Hover a section to play a preview</span>
-        </div>
-
-        <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
-          <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="stop-label" id="stopLabel">Stopped</span>
-        </button>
       </div>
     </div>
 
@@ -1326,8 +1361,8 @@ async function activate(section){
   spawnSparkles(cursorX, cursorY);
 
   setDetails(section);
-  heroTitle.textContent = section.title;
-  heroText.textContent = section.subtitle;
+  //heroTitle.textContent = section.title;
+  //heroText.textContent = section.subtitle;
 
   // If audio is disabled, don't attempt to play — just update the text
   if(!audioEnabled){
