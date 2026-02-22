@@ -294,7 +294,15 @@ button.stop-pill{
   background: rgba(255,255,255,.72);
 }
 
+#stopAudio{
+  position: relative;
+  z-index: 10000; /* higher than anything else on the page */
+  pointer-events: auto;
+}
 
+#stopAudio *{
+  pointer-events: none;
+}
     .dot{
       width:8px; height:8px; border-radius:999px;
       background: rgba(180,58,58,.70);
@@ -475,6 +483,8 @@ button.stop-pill{
       opacity:0;
       animation: sparklePop 520ms ease-out forwards;
     }
+	
+	
     @keyframes sparklePop{
       0%{ opacity:0; transform: translate3d(var(--sx), var(--sy), 0) scale(0.6); }
       20%{ opacity:1; }
