@@ -1349,43 +1349,6 @@ async function activate(section){
   crossfade(section.id);
 }
 
-function layoutOrbitTiles(){
-  const ring = document.getElementById('orbitRing');
-  if(!ring) return;
-
-  const tiles = [...ring.querySelectorAll('.orbit-tile')];
-  if(tiles.length === 0) return;
-
-  // Mobile uses CSS grid fallback
-  if(window.matchMedia('(max-width: 900px)').matches){
-    tiles.forEach(t => { t.style.left = ''; t.style.top = ''; });
-    return;
-  }
-
-  const rect = ring.getBoundingClientRect();
-  const cx = rect.width / 2;
-  const cy = rect.height / 2 + 10;   // ✅ push orbit down under header
-
-  const radius = Math.min(
-  Math.min(rect.width, rect.height) * 0.52,
-  460  // max radius cap
-); 
-
-  const count = tiles.length;
-  const startAngleDeg = -90;
-
-  tiles.forEach((tile, i) => {
-    const angle = (startAngleDeg + (360 / count) * i) * (Math.PI / 180);
-    const x = cx + Math.cos(angle) * radius;
-    const y = cy + Math.sin(angle) * radius;
-
-    tile.style.left = `${x}px`;
-    tile.style.top = `${y}px`;
-  });
-}
-
-//window.addEventListener('resize', layoutOrbitTiles);
-
 
 
 // Render tiles into the top row under the header
