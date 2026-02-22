@@ -49,16 +49,7 @@
   radial-gradient(1200px 900px at 80% 60%, #1b2655 0%, transparent 65%),
   linear-gradient(140deg, #5c1a1a 0%, #5b2d6f 50%, #0c1635 100%);
 }
-    body{
-  animation: bgDrift 40s ease-in-out infinite alternate;
-}
-
-@keyframes bgDrift{
-  0% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
-  100% { background-position: 2% 2%, -2% 3%, 3% -2%, -3% 1%, 2% -3%, -1% 2%, 0% 0%; }
-}
-
-	body, a, button, img, .tile, .pill, .btn { cursor: none !important; }
+    body, a, button, img, .tile, .pill, .btn { cursor: none !important; }
 
     /* Slightly interactive “sparkle” noise layer */
     .grain{
@@ -521,7 +512,15 @@ button.stop-pill{
       transform: rotate(45deg);
     }
     .sparkle::after{ transform: rotate(-45deg); }
-      
+     
+body{
+  animation: bgDrift 40s ease-in-out infinite alternate;
+}
+
+@keyframes bgDrift{
+  0% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
+  100% { background-position: 2% 2%, -2% 3%, 3% -2%, -3% 1%, 2% -3%, -1% 2%, 0% 0%; }
+}	 
   </style>
 </head>
 
