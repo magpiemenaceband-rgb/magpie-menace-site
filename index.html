@@ -830,6 +830,14 @@ footer a{
   padding: 10px;
   border-radius: 18px;
 }
+
+.mm-cursor{
+  display:block;
+}
+.mm-cursor img{
+  background: transparent;
+}
+
   </style>
 </head>
 
@@ -864,8 +872,6 @@ footer a{
     </div>
   </header>
 
-<!-- LINK ROW (tiles injected here) -->
-<nav id="tiles" class="link-strip" aria-label="Site sections"></nav>
 
   <main class="stage" id="stageRoot">
 
@@ -1069,7 +1075,7 @@ footer a{
     // 2) RENDER
     // ============================
 
-    const tilesEl = document.getElementById('tiles');
+    const tilesEl = document.getElementById('topLinks');
     const audioRack = document.getElementById('audioRack');
 
     const heroTitle = document.getElementById('heroTitle');
@@ -1380,10 +1386,11 @@ function layoutOrbitTiles(){
 
 //window.addEventListener('resize', layoutOrbitTiles);
 
-// Render tiles
-const tilesEl = document.getElementById('tiles');
 
-// Render tiles into the top row
+
+// Render tiles into the top row under the header
+const tilesEl = document.getElementById('topLinks');
+
 SECTIONS.forEach(section => {
   const btn = document.createElement('button');
   btn.className = 'orbit-tile';
@@ -1398,19 +1405,14 @@ SECTIONS.forEach(section => {
     <div class="kicker">${section.kicker}</div>
   `;
 
-  btn.addEventListener('mouseenter', () => {
-    activate(section);
-    cursorPeck();
-  });
-
+  btn.addEventListener('mouseenter', () => activate(section));
   btn.addEventListener('click', () => activate(section));
 
   tilesEl.appendChild(btn);
 });
-//layoutOrbitTiles();
 
-// Cursor shrink when leaving the tiles area (does NOT stop audio)
-document.getElementById('orbitRing').addEventListener('mouseleave', () => {
+// Cursor shrink when leaving the top links row
+tilesEl.addEventListener('mouseleave', () => {
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
 });
