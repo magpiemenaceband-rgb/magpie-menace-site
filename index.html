@@ -243,9 +243,15 @@
       gap:14px;
       padding:22px 22px 10px;
     }
-
+	
     .hero h2{ margin:0; font-size:28px; letter-spacing:-.4px; }
     .hero p{ margin:8px 0 0; color:var(--muted); max-width:62ch; }
+	.hero-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
 
     .now-playing{
       display:flex;
@@ -481,11 +487,7 @@
 
         <div class="actions">
           <a class="pill" href="#" id="tipLink">Tip Jar</a>
-		  <a class="pill stop-pill" href="#" id="stopAudio" aria-live="polite">
-  <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
-  <span class="stop-label" id="stopLabel">Stopped</span>
-</a>
-          <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
+		  <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
           <a class="pill" href="#" id="bookUs">Book Us</a>
         </div>
       </div>
@@ -496,15 +498,23 @@
     <div class="grid">
       <section class="panel" id="leftPanel">
         <div class="hero">
-          <div>
-            <h2 id="heroTitle">Welcome to the nest.</h2>
-            <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
-          </div>
-          <div class="now-playing" aria-live="polite">
-            <div class="dot" aria-hidden="true"></div>
-            <span id="nowPlaying">Hover a section to play a preview</span>
-          </div>
-        </div>
+  <div>
+    <h2 id="heroTitle">Welcome to the nest.</h2>
+    <p id="heroText">Hover a section to hear a song sample and see details here. On mobile, tap a section.</p>
+  </div>
+
+  <div class="hero-right">
+    <div class="now-playing" aria-live="polite">
+      <div class="dot" aria-hidden="true"></div>
+      <span id="nowPlaying">Hover a section to play a preview</span>
+    </div>
+
+    <a class="pill stop-pill" href="#" id="stopAudio" aria-live="polite">
+      <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="stop-label" id="stopLabel">Stopped</span>
+    </a>
+  </div>
+</div>
 
         <div class="tiles" id="tiles" aria-label="Site sections">
           <!-- Tiles are injected by JS -->
