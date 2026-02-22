@@ -1015,10 +1015,7 @@ function updateStopButton(){
 }
 
 async function activate(section){
-if(!audioEnabled){
-  nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
-  return;
-}
+  // Always do visuals + UI updates (even if audio is disabled)
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
 
@@ -1026,6 +1023,16 @@ if(!audioEnabled){
   spawnSparkles(cursorX, cursorY);
 
   setDetails(section);
+  heroTitle.textContent = section.title;
+  heroText.textContent = section.subtitle;
+
+  // If audio is disabled, don't attempt to play — just update the text
+  if(!audioEnabled){
+    nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
+    return;
+  }
+
+  // Audio is enabled: proceed as normal
   setNowPlaying(section);
 
   if(!audioArmed){
@@ -1037,9 +1044,6 @@ if(!audioEnabled){
   }
 
   crossfade(section.id);
-
-  heroTitle.textContent = section.title;
-  heroText.textContent = section.subtitle;
 }
 
 // Render tiles
