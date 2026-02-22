@@ -1180,17 +1180,18 @@ html{
         ],
         ctaText: "Listen",
         ctaHref: "#"
-		embed: 
-		<iframe data-testid="embed-iframe" style="border-radius:12px" 
-src="https://open.spotify.com/embed/playlist/0NFM3PoeiTbxt4R73QgXim?utm_source=generator&theme=0" 
-width="100%" 
-height="380" 
-frameBorder="0" 
-allowfullscreen="" 
-allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-loading="lazy"></iframe>
-
-      },
+		
+		embed: `
+    <iframe style="border-radius:16px"
+      src="https://open.spotify.com/embed/playlist/0NFM3PoeiTbxt4R73QgXim?utm_source=generator&theme=0" 
+      width="100%"
+      height="380"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  `
+},
       {
         id: "videos",
         title: "Videos",
