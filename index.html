@@ -569,14 +569,41 @@ button.stop-pill{
 
     .qr{
       display:flex;
-      gap:14px;
+      gap:20px;
       align-items:center;
       margin-top:16px;
       padding:14px;
       border-radius: 18px;
       border:1px dashed rgba(180,58,58,.35);
       background: rgba(255,255,255,.55);
+	  flex-wrap:wrap;
     }
+
+	.qr-codes{
+  display:flex;
+  gap:14px;
+}
+
+.qr-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+
+.qr-item img{
+  width:130px;
+  height:130px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:#fff;
+}
+
+.qr-label{
+  font-size:12px;
+  font-weight:700;
+  opacity:.8;
+}
 
     .qr img{ width:140px; height:140px; border-radius: 14px; border:1px solid var(--stroke); background:#fff; }
 
@@ -945,7 +972,7 @@ footer a{
 
   <!-- RIGHT: Buttons -->
   <div class="actions">
-    <a class="pill" href="#" id="tipLink">Tip Jar</a>
+    <a class="pill" href="#" id="tipLink" target="_blank" rel="noopener">Tip Jar</a>
     <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
     <a class="pill" href="#" id="bookUs">Book Us</a>
   </div>
@@ -1004,17 +1031,30 @@ footer a{
           </ul>
 
           <div class="qr" id="tipJarBlock">
-            <img id="qrImg" alt="Tip jar QR code" />
-            <div>
-              <div style="font-weight:850; margin-bottom:6px;">Tip Jar (scan me)</div>
-              <div style="color:var(--muted); font-size:13px; line-height:1.35;">
-                We appreciate any and all tips. Thank you for keeping music alive!
-              </div>
-              <div class="cta-row">
-                <a class="btn" id="tipButton" href="#" target="_blank" rel="noopener">Open Tip Jar</a>
-              </div>
-            </div>
-          </div>
+
+  <div class="qr-codes">
+    <div class="qr-item">
+      <img id="qrPaypal" alt="PayPal QR code" />
+      <div class="qr-label">PayPal</div>
+    </div>
+
+    <div class="qr-item">
+      <img id="qrCashApp" alt="Cash App QR code" />
+      <div class="qr-label">Cash App</div>
+    </div>
+  </div>
+
+  <div class="qr-text">
+    <div style="font-weight:850; margin-bottom:6px;">Support the Band</div>
+    <div style="color:var(--muted); font-size:13px; line-height:1.35;">
+      We appreciate any and all tips. Thank you for keeping music alive!
+    </div>
+    <div class="cta-row">
+      <a class="btn" id="tipButton" href="#" target="_blank" rel="noopener">Open PayPal</a>
+    </div>
+  </div>
+
+</div>
         </div>
       </div>
     </aside>
@@ -1227,7 +1267,8 @@ function spawnSparkles(x, y){
     // Tip jar block
     const tipLink = document.getElementById('tipLink');
     const tipButton = document.getElementById('tipButton');
-    const qrImg = document.getElementById('qrImg');
+    const qrPaypal = document.getElementById('qrPaypal');
+	const qrCashApp = document.getElementById('qrCashApp');
 
     function safeUrl(u){
       try{
@@ -1238,8 +1279,10 @@ function spawnSparkles(x, y){
       }
     }
 
-    function buildQr(url){
-  qrImg.src = "assets/qrcode-paypal.png";   // <-- your static QR image
+function buildQr(url){
+  qrPaypal.src = "assets/qrcode-paypal.png";
+  qrCashApp.src = "assets/qrcode-cashapp.png"; // <-- add your CashApp QR image file here
+
   tipLink.href = url;
   tipButton.href = url;
 }
