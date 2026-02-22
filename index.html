@@ -1311,10 +1311,9 @@ function layoutOrbitTiles(){
 
   const rect = ring.getBoundingClientRect();
   const cx = rect.width / 2;
-  const cy = rect.height / 2;
+  const cy = rect.height / 2 + 30;   // ✅ push orbit down under header
 
-  // Push tiles toward outside edge
-  const radius = Math.min(rect.width, rect.height) * 0.43;
+  const radius = Math.min(rect.width, rect.height) * 0.32; // ✅ tighter ring
 
   const count = tiles.length;
   const startAngleDeg = -90;
