@@ -568,27 +568,22 @@ button.stop-pill{
     .btn:hover{ transform: translateY(-1px); background: rgba(180,58,58,.18); }
 
     .qr{
-  /* keep your card look */
-  margin-top:16px;
-  padding:14px;
-  border-radius: 18px;
-  border:1px dashed rgba(180,58,58,.35);
-  background: rgba(255,255,255,.55);
+      display:flex;
+      gap:20px;
+      align-items:center;
+      margin-top:16px;
+      padding:14px;
+      border-radius: 18px;
+      border:1px dashed rgba(180,58,58,.35);
+      background: rgba(255,255,255,.55);
+	  flex-wrap:wrap;
+    }
 
-  /*  stack contents and center */
-  display:flex;
-  flex-direction: column;
-  align-items: center;
-  gap:14px;
-  text-align:center;
-}
-
-.qr-codes{
+	.qr-codes{
   display:flex;
   gap:14px;
-  flex-wrap: wrap;
+  flex-wrap: wrap;      
   justify-content: center;
-  width: 100%;
   max-width: 100%;
 }
 
@@ -599,6 +594,21 @@ button.stop-pill{
   gap:6px;
 }
 
+.qr-item img{
+  width:130px;
+  height:130px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:#fff;
+}
+
+.qr-label{
+  font-size:12px;
+  font-weight:700;
+  opacity:.8;
+}
+
+/* Clickable QR styling */
 .qr-item a{
   display:block;
   border-radius:14px;
@@ -614,12 +624,6 @@ button.stop-pill{
   transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
 
-.qr-label{
-  font-size:12px;
-  font-weight:700;
-  opacity:.8;
-}
-
 /* Subtle glow on hover */
 .qr-item a:hover img{
   transform: scale(1.04);
@@ -629,6 +633,7 @@ button.stop-pill{
     0 12px 30px rgba(0,0,0,.18);
   filter: brightness(1.03);
 }
+    .qr img{ width:140px; height:140px; border-radius: 14px; border:1px solid var(--stroke); background:#fff; }
 
     footer{ padding:28px 18px 40px; color: var(--muted); text-align:center; }
     footer a{ color: var(--accent); text-decoration:none; font-weight:700; }
