@@ -1057,7 +1057,7 @@ footer a{
 
           <div class="qr" id="tipJarBlock">
 
-  <div class="qr-codes">
+<div class="qr-codes">
 
   <div class="qr-item">
     <a id="paypalLink" href="#" target="_blank" rel="noopener">
@@ -1072,13 +1072,15 @@ footer a{
     </a>
     <div class="qr-label">Cash App</div>
   </div>
-  
+
   <div class="qr-item">
     <a id="venmoLink" href="#" target="_blank" rel="noopener">
       <img id="qrVenmo" alt="Venmo QR code" />
     </a>
     <div class="qr-label">Venmo</div>
   </div>
+
+</div>
 
 </div>
 
@@ -1114,7 +1116,7 @@ footer a{
 
     const TIP_JAR_URL = "https://www.paypal.com/ncp/payment/T49SSHQQ2MZ74"; // <-- replace (PayPal.me / Venmo / Ko-fi / etc.)
 	const CASHAPP_URL = "https://cash.app/$MagpieMenace";
-	const VENMO_URL = "https://account.venmo.com/u/MagpieMenace";
+	const VENMO_URL = "https://venmo.com/u/MagpieMenace";
 
     // Replace these placeholders with your real links and preview audio files.
     // Put shiny object PNGs/JPGs under /assets and audio previews under /audio.
@@ -1324,21 +1326,22 @@ const paypalLink = document.getElementById('paypalLink');
 const cashAppLink = document.getElementById('cashAppLink');
 const venmoLink = document.getElementById('venmoLink');
 
-function buildQr(){
-  qrPaypal.src = "assets/qrcode-paypal.png";
-  qrCashApp.src = "assets/qrcode-cashapp.png"; 
-  qrCashApp.src = "assets/qrcode-venmo.png"; 
 
-  paypalLink.href = TIP_JAR_URL;
+function buildPaymentQrs(){
+  qrPaypal.src  = "assets/qrcode-paypal.png";
+  qrCashApp.src = "assets/qrcode-cashapp.png";
+  qrVenmo.src   = "assets/qrcode-venmo.png";
+
+  paypalLink.href  = TIP_JAR_URL;
   cashAppLink.href = CASHAPP_URL;
-  venmoLink.href = VENMO_URL;
+  venmoLink.href   = VENMO_URL;
 
+  // Top “Tip Jar” should still go to your primary (PayPal here)
   tipLink.href = TIP_JAR_URL;
   tipButton.href = TIP_JAR_URL;
 }
 
-    buildQr(safeUrl(TIP_JAR_URL));
-
+buildPaymentQrs();
 
 // Create audio elements
 const audios = new Map();
