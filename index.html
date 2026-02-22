@@ -1511,6 +1511,7 @@ async function crossfade(toId){
       detailContent.innerHTML = '';
       detailContent.appendChild(list);
       detailContent.appendChild(ctaRow);
+	  
 	  // Add Spotify embed if it exists
 if(section.embed){
   const embedWrap = document.createElement('div');
@@ -1612,16 +1613,7 @@ async function activate(section){
 
   setDetails(section);
   
-  // If this is the Music section, disable hover audio
-if(section.id === "music"){
-  fadeToken++;
-  stopAll();            // stop preview audio
-  audioEnabled = false; // disable hover-trigger audio
-  nowPlaying.textContent = 'Streaming via Spotify';
-  updateStopButton();
-}
-
-  // If audio is disabled, don't attempt to play — just update the text
+   // If audio is disabled, don't attempt to play — just update the text
   if(!audioEnabled){
     nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
     return;
