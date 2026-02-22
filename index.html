@@ -1517,6 +1517,28 @@ if(section.embed){
   embedWrap.style.marginTop = "18px";
   embedWrap.innerHTML = section.embed;
   detailContent.appendChild(embedWrap);
+  
+  if(section.id === "music"){
+  const iframe = embedWrap.querySelector('iframe');
+
+  if(iframe){
+    // Only attach once
+    if(!iframe.dataset.mmBound){
+      iframe.dataset.mmBound = "1";
+
+      const handler = () => {
+        // Only disable if hover audio is currently enabled
+        if(audioEnabled){
+          disableHoverAudioForExternalPlayer();
+        }
+      };
+
+      // pointerdown covers mouse + touch
+      iframe.addEventListener('pointerdown', handler, { passive: true });
+      iframe.addEventListener('focus', handler, { passive: true });
+    }
+  }
+}
 }
       detailContent.appendChild(tip);
 
@@ -1568,6 +1590,16 @@ function updateStopButton(){
     label.textContent = nextText;
     label.classList.remove('fading');
   }, 90);
+}
+
+function disableHoverAudioForExternalPlayer(){
+  // stop preview audio + prevent hover-trigger playback
+  fadeToken++;
+  stopAll();            // stops previews + clears activeAudioId
+  audioEnabled = false; // disables hover audio
+
+  nowPlaying.textContent = 'Spotify active (hover audio disabled)';
+  updateStopButton();   // should show "Enable Audio"
 }
 
 async function activate(section){
