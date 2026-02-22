@@ -605,6 +605,31 @@ button.stop-pill{
   opacity:.8;
 }
 
+/* Clickable QR styling */
+.qr-item a{
+  display:block;
+  border-radius:14px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.qr-item img{
+  width:130px;
+  height:130px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:#fff;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+/* Subtle glow on hover */
+.qr-item a:hover img{
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 3px rgba(180,58,58,.18),
+    0 0 25px rgba(180,58,58,.25),
+    0 12px 30px rgba(0,0,0,.18);
+  filter: brightness(1.03);
+}
     .qr img{ width:140px; height:140px; border-radius: 14px; border:1px solid var(--stroke); background:#fff; }
 
     footer{ padding:28px 18px 40px; color: var(--muted); text-align:center; }
@@ -1033,16 +1058,29 @@ footer a{
           <div class="qr" id="tipJarBlock">
 
   <div class="qr-codes">
-    <div class="qr-item">
-      <img id="qrPaypal" alt="PayPal QR code" />
-      <div class="qr-label">PayPal</div>
-    </div>
 
-    <div class="qr-item">
-      <img id="qrCashApp" alt="Cash App QR code" />
-      <div class="qr-label">Cash App</div>
-    </div>
+  <div class="qr-item">
+    <a id="paypalLink" href="#" target="_blank" rel="noopener">
+      <img id="qrPaypal" alt="PayPal QR code" />
+    </a>
+    <div class="qr-label">PayPal</div>
   </div>
+
+  <div class="qr-item">
+    <a id="cashAppLink" href="#" target="_blank" rel="noopener">
+      <img id="qrCashApp" alt="Cash App QR code" />
+    </a>
+    <div class="qr-label">Cash App</div>
+  </div>
+  
+  <div class="qr-item">
+    <a id="venmoLink" href="#" target="_blank" rel="noopener">
+      <img id="qrVenmo" alt="Venmo QR code" />
+    </a>
+    <div class="qr-label">Venmo</div>
+  </div>
+
+</div>
 
   <div class="qr-text">
     <div style="font-weight:850; margin-bottom:6px;">Support the Band</div>
@@ -1075,6 +1113,8 @@ footer a{
     // ============================
 
     const TIP_JAR_URL = "https://www.paypal.com/ncp/payment/T49SSHQQ2MZ74"; // <-- replace (PayPal.me / Venmo / Ko-fi / etc.)
+	const CASHAPP_URL = "https://cash.app/$MagpieMenace";
+	const VENMO_URL = "https://account.venmo.com/u/MagpieMenace";
 
     // Replace these placeholders with your real links and preview audio files.
     // Put shiny object PNGs/JPGs under /assets and audio previews under /audio.
@@ -1269,6 +1309,7 @@ function spawnSparkles(x, y){
     const tipButton = document.getElementById('tipButton');
     const qrPaypal = document.getElementById('qrPaypal');
 	const qrCashApp = document.getElementById('qrCashApp');
+	const qrVenmo = document.getElementById('qrVenmo');
 
     function safeUrl(u){
       try{
@@ -1279,12 +1320,21 @@ function spawnSparkles(x, y){
       }
     }
 
-function buildQr(url){
-  qrPaypal.src = "assets/qrcode-paypal.png";
-  qrCashApp.src = "assets/qrcode-cashapp.png"; // <-- add your CashApp QR image file here
+const paypalLink = document.getElementById('paypalLink');
+const cashAppLink = document.getElementById('cashAppLink');
+const venmoLink = document.getElementById('venmoLink');
 
-  tipLink.href = url;
-  tipButton.href = url;
+function buildQr(){
+  qrPaypal.src = "assets/qrcode-paypal.png";
+  qrCashApp.src = "assets/qrcode-cashapp.png"; 
+  qrCashApp.src = "assets/qrcode-venmo.png"; 
+
+  paypalLink.href = TIP_JAR_URL;
+  cashAppLink.href = CASHAPP_URL;
+  venmoLink.href = VENMO_URL;
+
+  tipLink.href = TIP_JAR_URL;
+  tipButton.href = TIP_JAR_URL;
 }
 
     buildQr(safeUrl(TIP_JAR_URL));
