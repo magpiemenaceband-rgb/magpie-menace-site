@@ -92,10 +92,9 @@ body{
 
     /* Top header layout */
 .topbar{
-  display:flex;
+  display:grid;
+  grid-template-columns: auto 1fr auto;
   align-items:center;
-  justify-content:space-between;
-  gap:14px;
 }
 
 /* Brand container */
@@ -105,9 +104,9 @@ body{
   gap:18px;
 }
 
-/* Left bird logo */
+	/* Left logo */
 .logo-mark{
-  height:54px;
+  height:60px;
 }
 
 .logo-mark img{
@@ -117,7 +116,7 @@ body{
   display:block;
 }
 
-/* Centered band name + tagline */
+/* CENTER BAND NAME */
 .brand-text{
   display:flex;
   flex-direction:column;
@@ -126,17 +125,34 @@ body{
   text-align:center;
 }
 
+/* Larger band name */
 .brand-text img{
-  height:40px;  /* adjust size here */
+  height:70px;   /* Increase this for bigger */
   width:auto;
   object-fit:contain;
   display:block;
+
+  /* Subtle glow */
+  filter:
+    drop-shadow(0 0 8px rgba(255,255,255,.25))
+    drop-shadow(0 10px 30px rgba(180,58,58,.25));
+
+  transition: transform .2s ease, filter .2s ease;
+}
+
+/* Slight hover life */
+.brand-text img:hover{
+  transform: scale(1.03);
+  filter:
+    drop-shadow(0 0 14px rgba(255,255,255,.35))
+    drop-shadow(0 16px 40px rgba(180,58,58,.35));
 }
 
 .brand-text .tag{
-  margin:6px 0 0;
-  font-size:13px;
-  color: var(--muted);
+  margin-top:8px;
+  font-size:14px;
+  letter-spacing:.3px;
+  color: rgba(0,0,0,.75);
 }
 
     .logo{
@@ -655,24 +671,27 @@ footer a{
 
   <header>
     <div class="wrap">
-      <div class="topbar">
-        <div class="brand" aria-label="Magpie Menace">
+      <<div class="topbar">
+
+  <!-- LEFT: Bird logo -->
   <div class="logo-mark">
-    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Menace Logo">
+    <img src="assets/Official Logo Transparent.png" alt="Magpie Logo">
   </div>
 
+  <!-- CENTER: Band name -->
   <div class="brand-text">
     <img src="assets/magpie menace text only.png" alt="Magpie Menace">
     <p class="tag">Shiny things. Loud songs. Friendly chaos.</p>
   </div>
-</div>
 
-        <div class="actions">
-          <a class="pill" href="#" id="tipLink">Tip Jar</a>
-		  <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
-          <a class="pill" href="#" id="bookUs">Book Us</a>
-        </div>
-      </div>
+  <!-- RIGHT: Buttons -->
+  <div class="actions">
+    <a class="pill" href="#" id="tipLink">Tip Jar</a>
+    <a class="pill" href="#" id="joinMailing">Join Mailing List</a>
+    <a class="pill" href="#" id="bookUs">Book Us</a>
+  </div>
+
+</div>
     </div>
   </header>
 
