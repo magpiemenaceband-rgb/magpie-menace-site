@@ -75,6 +75,30 @@
   white-space: normal;         /* ✅ wrap text */
 }
 
+.orbit-tile{
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+/* Hover effect */
+.orbit-tile:hover{
+  transform: translateY(-4px);
+  background: rgba(255,255,255,.20);   /* lighter glass */
+  border-color: rgba(255,255,255,.38);
+  box-shadow: 0 20px 60px rgba(0,0,0,.28);
+}
+
+/* Image glow boost */
+.orbit-tile:hover .tile-img{
+  filter:
+    drop-shadow(0 12px 22px rgba(0,0,0,.35))
+    drop-shadow(0 0 12px rgba(255,255,255,.25));
+  transform: scale(1.06);
+}
+
     *{ box-sizing:border-box; }
   html,body{
   margin:0;
@@ -1361,8 +1385,6 @@ async function activate(section){
   spawnSparkles(cursorX, cursorY);
 
   setDetails(section);
-  //heroTitle.textContent = section.title;
-  //heroText.textContent = section.subtitle;
 
   // If audio is disabled, don't attempt to play — just update the text
   if(!audioEnabled){
