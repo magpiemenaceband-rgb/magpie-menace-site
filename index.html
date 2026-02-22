@@ -582,6 +582,9 @@ button.stop-pill{
 	.qr-codes{
   display:flex;
   gap:14px;
+  flex-wrap: wrap;      
+  justify-content: center;
+  max-width: 100%;
 }
 
 .qr-item{
@@ -897,6 +900,14 @@ html{
 
 .center-hero > div:first-child{
   display:none;
+}
+
+/* Optional: slightly smaller QRs on phones so 3 fits nicely */
+@media (max-width: 520px){
+  .qr-item img{
+    width:110px;
+    height:110px;
+  }
 }
 
 .link-strip{
