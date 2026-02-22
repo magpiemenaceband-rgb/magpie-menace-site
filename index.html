@@ -1129,7 +1129,6 @@ html{
   We appreciate any and all tips. Thank you for keeping music alive!
 </div>
 
-
   </div>
 
 </div>
@@ -1376,7 +1375,9 @@ function buildPaymentQrs(){
 
   // Top “Tip Jar” should still go to your primary (PayPal here)
   tipLink.href = TIP_JAR_URL;
-  tipButton.href = TIP_JAR_URL;
+
+  // Only set this if the button exists
+  if (tipButton) tipButton.href = TIP_JAR_URL;
 }
 
 buildPaymentQrs();
