@@ -1024,6 +1024,11 @@ html{
   margin-top: 12px;
 }
 
+/* Reduce space below Spotify player */
+.embed-wrap{
+  margin-bottom: 10px;   /* try 8–14px depending on feel */
+}
+
 /* Invisible “first click” catcher */
 .iframe-guard{
   position: absolute;
@@ -1164,7 +1169,7 @@ html{
 .panel-head{
   position: relative;
   text-align:center;
-  margin: 14px 0 8px;
+  margin: 12px 0 6px;
   font-size: 12px;
   font-weight: 1000;
   letter-spacing: .8px;
@@ -1788,7 +1793,7 @@ function setDetails(section){
   if(section.id === "music" && Array.isArray(section.links) && section.links.length){
     const h1 = document.createElement('div');
     h1.className = 'panel-head';
-    h1.textContent = 'Streaming Sites';
+    h1.textContent = 'Stream Our Music Here';
     detailContent.appendChild(h1);
 
     const linkRow = document.createElement('div');
