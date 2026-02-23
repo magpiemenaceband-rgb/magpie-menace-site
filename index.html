@@ -1274,9 +1274,7 @@ html{
 		{ platform: "bandcamp",     name: "Bandcamp",     url: "https://magpiemenace.bandcamp.com" },
 		{ platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
 		],
-		bullets: [
-          "Direct downloads (MP3/WAV)"
-        ],
+		//bullets: [],
         ctaText: "Listen",
         ctaHref: "#",
 		
@@ -1737,7 +1735,7 @@ if(section.embed){
 
       primaryCta.textContent = section.ctaText;
       primaryCta.href = section.ctaHref;
-    }
+}
 
     function setNowPlaying(section){
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
