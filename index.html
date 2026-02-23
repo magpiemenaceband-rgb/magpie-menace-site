@@ -1047,6 +1047,33 @@ html{
   }
 }
 
+.streaming-links{
+  margin-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+.stream-btn{
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+  color:#ffffff;
+  transition: all .18s ease;
+}
+
+.stream-btn:hover{
+  background: rgba(255,255,255,.22);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+
   </style>
 </head>
 
@@ -1207,6 +1234,13 @@ html{
           "Direct downloads (MP3/FLAC)",
           "Lyric sheets + credits"
         ],
+		links: [
+  { name: "Spotify", url: "https://open.spotify.com/artist/09S4illm5MXKZdRnzzm3CH?si=IyW7bHRETPeLLA4TA0uHaQ" },
+  { name: "Apple Music", url: "https://music.apple.com/us/artist/magpie-menace/1789389483" },
+  { name: "YouTube Music", url: "https://music.youtube.com/channel/UCOdAZpz9Oyc08QnhJ5YeNFw" },
+  { name: "Bandcamp", url: "https://magpiemenace.bandcamp.com" },
+  { name: "SoundCloud", url: "https://soundcloud.com/magpie-menace" }
+],
         ctaText: "Listen",
         ctaHref: "#",
 		
@@ -1535,12 +1569,31 @@ async function crossfade(toId){
       cta.textContent = section.ctaText;
       ctaRow.appendChild(cta);
 
+	  // Add streaming links if they exist
+if(section.links && section.links.length){
+  const linkRow = document.createElement('div');
+  linkRow.className = 'streaming-links';
+
+  section.links.forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'stream-btn';
+    a.href = link.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = link.name;
+    linkRow.appendChild(a);
+  });
+
+  detailContent.appendChild(linkRow);
+}
+
       // Keep tip jar visible everywhere
       const tip = document.getElementById('tipJarBlock');
 
       detailContent.innerHTML = '';
       detailContent.appendChild(list);
       detailContent.appendChild(ctaRow);
+	    
 	  
 	  // Add Spotify embed if it exists
 if(section.embed){
