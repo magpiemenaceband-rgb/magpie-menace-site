@@ -1160,6 +1160,72 @@ html{
   box-shadow: 0 10px 24px rgba(0,0,0,.22);
 }
 
+/* Centered section headings inside the detail panel (matches Downloads style) */
+.panel-head{
+  text-align:center;
+  margin: 12px 0 8px;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .25px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.92);
+}
+
+.download-list{
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.download-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  transition: background .2s ease, transform .2s ease;
+}
+
+.download-item:hover{
+  background: rgba(255,255,255,.14);
+  transform: translateY(-2px);
+}
+
+.dl-title{
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+}
+
+.dl-meta{
+  font-size: 12px;
+  opacity: .75;
+  margin-top: 2px;
+}
+
+.dl-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  transition: all .2s ease;
+}
+
+.dl-btn:hover{
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
   </style>
 </head>
 
@@ -1324,10 +1390,11 @@ html{
 		{ platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
 		],
 		downloads: [
-  { title: "Help",     url: "https://downloads.magpiemenace.com/dl/help", meta: "MP3" },
-  { title: "Midwest Goodbye", url: "https://downloads.magpiemenace.com/dl/midwest", meta: "MP3" },
-  { title: "Out Of My Head",      url: "https://downloads.magpiemenace.com/dl/outofmyhead", meta: "MP3" }
+  { title: "Help",     url: "https://downloads.magpiemenace.com/dl/help", meta: "MP3 • 6.3MB" },
+  { title: "Midwest Goodbye", url: "https://downloads.magpiemenace.com/dl/midwest", meta: "MP3 • 5.8MB },
+  { title: "Out Of My Head",      url: "https://downloads.magpiemenace.com/dl/outofmyhead", meta: "MP3 • 7.1MB" }
 ],
+
 		bullets: [],
         ctaText: "Listen",
         ctaHref: "#",
@@ -1671,17 +1738,23 @@ const PLATFORM_ICONS = {
   `
 };
 
-    function setDetails(section){
+function setDetails(section){
   detailTitle.textContent = section.title;
   detailSubtitle.textContent = section.subtitle;
 
+  // Keep tip jar visible everywhere
   const tip = document.getElementById('tipJarBlock');
 
-  // Clear panel FIRST so nothing "sticks" if an error happens
+  // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
 
-  // ✅ Streaming links FIRST (top of panel)
-  if(Array.isArray(section.links) && section.links.length){
+  // 1) Streaming Sites heading + buttons (Music only)
+  if(section.id === "music" && Array.isArray(section.links) && section.links.length){
+    const h1 = document.createElement('div');
+    h1.className = 'panel-head';
+    h1.textContent = 'Streaming Sites';
+    detailContent.appendChild(h1);
+
     const linkRow = document.createElement('div');
     linkRow.className = 'streaming-links';
 
@@ -1693,10 +1766,7 @@ const PLATFORM_ICONS = {
       a.rel = "noopener";
       a.dataset.platform = link.platform || '';
 
-      const icon = (typeof PLATFORM_ICONS !== 'undefined' && PLATFORM_ICONS[link.platform])
-        ? PLATFORM_ICONS[link.platform]
-        : '';
-
+      const icon = (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform]) ? PLATFORM_ICONS[link.platform] : '';
       a.innerHTML = `
         <span class="stream-ico">${icon}</span>
         <span class="stream-label">${link.name}</span>
@@ -1705,78 +1775,41 @@ const PLATFORM_ICONS = {
     });
 
     detailContent.appendChild(linkRow);
+
+    // 2) Spotify Playlist heading
+    const h2 = document.createElement('div');
+    h2.className = 'panel-head';
+    h2.textContent = 'Spotify Playlist';
+    detailContent.appendChild(h2);
   }
 
-  // ✅ Bullets (safe; skip for Music if you want)
-  if(section.id !== "music" && Array.isArray(section.bullets) && section.bullets.length){
-    const list = document.createElement('ul');
-    section.bullets.forEach(t => {
-      const li = document.createElement('li');
-      li.textContent = t;
-      list.appendChild(li);
-    });
-    detailContent.appendChild(list);
-  }
-
-// ✅ Downloads (Bandcamp links)
-if(Array.isArray(section.downloads) && section.downloads.length){
-  const dlWrap = document.createElement('div');
-  dlWrap.className = 'downloads';
-
-  const title = document.createElement('div');
-  title.className = 'downloads-title';
-  title.textContent = 'Downloads';
-  dlWrap.appendChild(title);
-
-  const row = document.createElement('div');
-  row.className = 'downloads-row';
-
-  section.downloads.forEach(track => {
-    const a = document.createElement('a');
-    a.className = 'download-btn';
-    a.href = track.url;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = track.title;
-
-    row.appendChild(a);
-  });
-
-  dlWrap.appendChild(row);
-  detailContent.appendChild(dlWrap);
-}
- 
-  // ✅ Embed (Spotify caching retained)
+  // 3) Spotify embed (move UP under Spotify Playlist)
   if(section.embed){
-
     if(section.id === "music"){
-
+      // Reuse cached node so Spotify doesn't reload
       if(!musicEmbedCache){
         const embedWrap = document.createElement('div');
         embedWrap.className = 'embed-wrap';
         embedWrap.innerHTML = section.embed;
         musicEmbedCache = embedWrap;
 
-        // First-click guard (only if hover audio currently enabled)
-        if(audioEnabled){
-          const guard = document.createElement('div');
-          guard.className = 'iframe-guard';
-          guard.setAttribute('aria-label', 'Enable Spotify playback');
-          guard.title = 'Tap to play Spotify (disables hover audio)';
+        // First-click guard (only once) so tapping Spotify can disable hover audio
+        const guard = document.createElement('div');
+        guard.className = 'iframe-guard';
+        guard.setAttribute('aria-label', 'Enable Spotify playback');
+        guard.title = 'Tap to play Spotify (disables hover audio)';
 
-          guard.addEventListener('pointerdown', () => {
-            if(audioEnabled){
-              disableHoverAudioForExternalPlayer();
-            }
-            guard.remove();
-          }, { passive: true });
+        guard.addEventListener('pointerdown', () => {
+          if(typeof disableHoverAudioForExternalPlayer === "function"){
+            disableHoverAudioForExternalPlayer();
+          }
+          guard.remove();
+        }, { passive: true });
 
-          embedWrap.appendChild(guard);
-        }
+        embedWrap.appendChild(guard);
       }
 
       detailContent.appendChild(musicEmbedCache);
-
     } else {
       const embedWrap = document.createElement('div');
       embedWrap.className = 'embed-wrap';
@@ -1785,10 +1818,58 @@ if(Array.isArray(section.downloads) && section.downloads.length){
     }
   }
 
-  // ✅ Tip jar last
+  // 4) Downloads (move DOWN below Spotify player, Music only)
+  if(section.id === "music" && Array.isArray(section.downloads) && section.downloads.length){
+    const h3 = document.createElement('div');
+    h3.className = 'panel-head';
+    h3.textContent = 'Downloads';
+    detailContent.appendChild(h3);
+
+    const list = document.createElement('div');
+    list.className = 'download-list';
+
+    section.downloads.forEach(track => {
+  const row = document.createElement('div');
+  row.className = 'download-item';
+
+  // Optional meta line (file size, length, etc)
+  const meta = track.meta
+    ? `<div class="dl-meta">${track.meta}</div>`
+    : `<div class="dl-meta">MP3</div>`;
+
+  // IMPORTANT:
+  // Use your Worker route for tracking
+  // Example: downloads.magpiemenace.com/dl/help.mp3
+  const trackedUrl = track.url;
+
+  row.innerHTML = `
+    <div class="dl-left">
+      <div class="dl-title">${track.title}</div>
+      ${meta}
+    </div>
+
+    <a class="dl-btn"
+       href="${trackedUrl}"
+       target="_blank"
+       rel="noopener"
+       download>
+      <span class="dl-ico">${typeof DL_ICON !== "undefined" ? DL_ICON : ""}</span>
+      Download
+    </a>
+  `;
+
+  list.appendChild(row);
+});
+
+    detailContent.appendChild(list);
+  }
+
+  // 5) Tip jar at bottom (unchanged)
   if(tip) detailContent.appendChild(tip);
 
-
+  // If you still want the top-right button in the card:
+  primaryCta.textContent = section.ctaText || 'Start Here';
+  primaryCta.href = section.ctaHref || '#';
 }
 
     function setNowPlaying(section){
