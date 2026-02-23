@@ -1119,6 +1119,47 @@ html{
 .stream-btn[data-platform="bandcamp"]{     --glow: rgba(30, 180, 200, .30); }
 .stream-btn[data-platform="soundcloud"]{   --glow: rgba(255, 85, 0, .30); }
 
+.downloads{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.16);
+}
+
+.downloads-title{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  color: rgba(255,255,255,.92);
+  margin: 0 0 8px;
+  text-align:center;
+}
+
+.downloads-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+
+.download-btn{
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.20);
+  background: rgba(0,0,0,.12);
+  color:#fff;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  white-space:nowrap;
+}
+
+.download-btn:hover{
+  transform: translateY(-2px);
+  background: rgba(0,0,0,.18);
+  box-shadow: 0 10px 24px rgba(0,0,0,.22);
+}
+
   </style>
 </head>
 
@@ -1282,6 +1323,11 @@ html{
 		{ platform: "bandcamp",     name: "Bandcamp",     url: "https://magpiemenace.bandcamp.com" },
 		{ platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
 		],
+		downloads: [
+  { title: "Help",     url: "https://magpiemenace.bandcamp.com/track/help" },
+  { title: "Midwest Goodbye", url: "https://magpiemenace.bandcamp.com/track/magpie-menace-featuring-geoff-white-midwest-goodbye" },
+  { title: "Out Of My Head",      url: "https://magpiemenace.bandcamp.com/track/out-of-my-head" }
+],
 		bullets: [],
         ctaText: "Listen",
         ctaHref: "#",
@@ -1672,6 +1718,33 @@ const PLATFORM_ICONS = {
     detailContent.appendChild(list);
   }
 
+// ✅ Downloads (Bandcamp links)
+if(Array.isArray(section.downloads) && section.downloads.length){
+  const dlWrap = document.createElement('div');
+  dlWrap.className = 'downloads';
+
+  const title = document.createElement('div');
+  title.className = 'downloads-title';
+  title.textContent = 'Downloads';
+  dlWrap.appendChild(title);
+
+  const row = document.createElement('div');
+  row.className = 'downloads-row';
+
+  section.downloads.forEach(track => {
+    const a = document.createElement('a');
+    a.className = 'download-btn';
+    a.href = track.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = track.title;
+
+    row.appendChild(a);
+  });
+
+  dlWrap.appendChild(row);
+  detailContent.appendChild(dlWrap);
+}
  
   // ✅ Embed (Spotify caching retained)
   if(section.embed){
