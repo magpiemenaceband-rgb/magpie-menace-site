@@ -1047,32 +1047,6 @@ html{
   }
 }
 
-.streaming-links{
-  margin-top:16px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-}
-
-.stream-btn{
-  padding:8px 14px;
-  border-radius:999px;
-  font-size:13px;
-  font-weight:700;
-  text-decoration:none;
-  border:1px solid rgba(255,255,255,.25);
-  background: rgba(255,255,255,.12);
-  backdrop-filter: blur(8px);
-  color:#ffffff;
-  transition: all .18s ease;
-}
-
-.stream-btn:hover{
-  background: rgba(255,255,255,.22);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,.25);
-}
 
 .streaming-links{
   margin-top: 14px;
@@ -1297,12 +1271,12 @@ html{
           "Lyric sheets + credits"
         ],
 		links: [
-  { platform: "spotify",      name: "Spotify",      url: "https://open.spotify.com/artist/09S4illm5MXKZdRnzzm3CH?si=IyW7bHRETPeLLA4TA0uHaQ" },
-  { platform: "apple",        name: "Apple Music",  url: "https://music.apple.com/us/artist/magpie-menace/1789389483" },
-  { platform: "youtubemusic", name: "YouTube Music",url: "https://music.youtube.com/channel/UCOdAZpz9Oyc08QnhJ5YeNFw" },
-  { platform: "bandcamp",     name: "Bandcamp",     url: "https://magpiemenace.bandcamp.com" },
-  { platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
-],
+		{ platform: "spotify",      name: "Spotify",      url: "https://open.spotify.com/artist/09S4illm5MXKZdRnzzm3CH?si=IyW7bHRETPeLLA4TA0uHaQ" },
+		{ platform: "apple",        name: "Apple Music",  url: "https://music.apple.com/us/artist/magpie-menace/1789389483" },
+		{ platform: "youtubemusic", name: "YouTube Music",url: "https://music.youtube.com/channel/UCOdAZpz9Oyc08QnhJ5YeNFw" },
+		{ platform: "bandcamp",     name: "Bandcamp",     url: "https://magpiemenace.bandcamp.com" },
+		{ platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
+		],
         ctaText: "Listen",
         ctaHref: "#",
 		
@@ -1690,7 +1664,26 @@ if(section.links && section.links.length){
       detailContent.innerHTML = '';
       detailContent.appendChild(list);
       detailContent.appendChild(ctaRow);
-	    
+	  
+	  // 🔥 Render streaming links ABOVE Spotify embed
+if(section.links && section.links.length){
+  const linkRow = document.createElement('div');
+  linkRow.className = 'streaming-links';
+
+  section.links.forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'stream-btn';
+    a.href = link.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.dataset.platform = link.platform || '';
+    a.textContent = link.name;
+
+    linkRow.appendChild(a);
+  });
+
+  detailContent.appendChild(linkRow);
+}
 	  
 	  // Add Spotify embed if it exists
 if(section.embed){
