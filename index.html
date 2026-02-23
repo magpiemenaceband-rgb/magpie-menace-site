@@ -1672,18 +1672,7 @@ const PLATFORM_ICONS = {
     detailContent.appendChild(list);
   }
 
-  // ✅ CTA row
-  const ctaRow = document.createElement('div');
-  ctaRow.className = 'cta-row';
-
-  const cta = document.createElement('a');
-  cta.className = 'btn';
-  cta.href = section.ctaHref;
-  cta.textContent = section.ctaText;
-
-  ctaRow.appendChild(cta);
-  detailContent.appendChild(ctaRow);
-
+ 
   // ✅ Embed (Spotify caching retained)
   if(section.embed){
 
@@ -1726,9 +1715,7 @@ const PLATFORM_ICONS = {
   // ✅ Tip jar last
   if(tip) detailContent.appendChild(tip);
 
-  // Sync top-right CTA
-  primaryCta.textContent = section.ctaText;
-  primaryCta.href = section.ctaHref;
+
 }
 
     function setNowPlaying(section){
