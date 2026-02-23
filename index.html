@@ -1104,6 +1104,7 @@ html{
 }
 
 /* Subtle platform-specific glows */
+.stream-btn[data-platform="youtube"]{      --glow: rgba(255, 0, 0, .35); }
 .stream-btn[data-platform="spotify"]{      --glow: rgba(29, 185, 84, .35); }
 .stream-btn[data-platform="apple"]{        --glow: rgba(255, 255, 255, .25); }
 .stream-btn[data-platform="youtubemusic"]{ --glow: rgba(255, 0, 0, .28); }
@@ -1266,6 +1267,7 @@ html{
         previewSrc: "audio/music-preview.mp3",
         subtitle: "Stream it, buy it, steal it (legally).",
         links: [
+		{ platform: "youtube",      name: "YouTube",      url: "https://www.youtube.com/channel/UCV7OcPA15N68AWwC3A1ozIw" },
 		{ platform: "spotify",      name: "Spotify",      url: "https://open.spotify.com/artist/09S4illm5MXKZdRnzzm3CH?si=IyW7bHRETPeLLA4TA0uHaQ" },
 		{ platform: "apple",        name: "Apple Music",  url: "https://music.apple.com/us/artist/magpie-menace/1789389483" },
 		{ platform: "youtubemusic", name: "YouTube Music",url: "https://music.youtube.com/channel/UCOdAZpz9Oyc08QnhJ5YeNFw" },
@@ -1273,8 +1275,7 @@ html{
 		{ platform: "soundcloud",   name: "SoundCloud",   url: "https://soundcloud.com/magpie-menace" }
 		],
 		bullets: [
-          "Direct downloads (MP3/FLAC)",
-          "Lyric sheets + credits"
+          "Direct downloads (MP3/WAV)"
         ],
         ctaText: "Listen",
         ctaHref: "#",
@@ -1586,6 +1587,11 @@ async function crossfade(toId){
 }
 
 const PLATFORM_ICONS = {
+  youtube: `
+    <svg viewBox="0 0 24 24">
+      <path d="M23 12s0-3.6-.46-5.2a3 3 0 0 0-2.1-2.1C18.8 4 12 4 12 4s-6.8 0-8.44.7a3 3 0 0 0-2.1 2.1C1 8.4 1 12 1 12s0 3.6.46 5.2a3 3 0 0 0 2.1 2.1C5.2 20 12 20 12 20s6.8 0 8.44-.7a3 3 0 0 0 2.1-2.1C23 15.6 23 12 23 12Zm-13 3.5v-7l6 3.5-6 3.5Z"/>
+    </svg>
+  `,
   spotify: `
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm4.63 14.43a.9.9 0 0 1-1.24.29c-2.55-1.56-5.76-1.92-9.53-1.06a.9.9 0 1 1-.4-1.76c4.23-.96 7.89-.52 10.82 1.28.42.25.55.81.35 1.25Zm.88-2.64a1.05 1.05 0 0 1-1.44.34c-2.92-1.79-7.37-2.3-10.82-1.25a1.05 1.05 0 0 1-.61-2.01c3.95-1.2 8.86-.62 12.23 1.44.5.3.66.95.34 1.48Zm.07-2.83c-3.5-2.08-9.27-2.27-12.61-1.26a1.2 1.2 0 1 1-.7-2.29c3.84-1.16 10.22-.94 14.24 1.45a1.2 1.2 0 0 1-1.93 2.1Z"/>
