@@ -1269,6 +1269,26 @@ html{
   font-size: 13px;
 }
 
+/* Make embed wrapper hug the iframe (kills mystery space) */
+.embed-wrap{
+  padding: 0 !important;
+  margin: 10px 0 0 !important;     /* top space ok; bottom handled by downloads heading */
+  background: transparent !important;
+  border: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+.embed-wrap iframe{
+  display: block;                  /* removes inline iframe baseline gap */
+  margin: 0 !important;
+}
+
+/* Pull the Downloads header upward so it sits closer to Spotify */
+.panel-head-downloads{
+  margin-top: 12px !important;     /* try 10–14px */
+}
+
   </style>
 </head>
 
@@ -1863,7 +1883,7 @@ detailContent.appendChild(h2);
   // 4) Downloads (move DOWN below Spotify player, Music only)
   if(section.id === "music" && Array.isArray(section.downloads) && section.downloads.length){
     const h3 = document.createElement('div');
-    h3.className = 'panel-head';
+    h3.className = 'panel-head panel-head-downloads';
     h3.textContent = 'Free Song Downloads';
     detailContent.appendChild(h3);
 
