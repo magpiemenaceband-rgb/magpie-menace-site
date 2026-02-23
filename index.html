@@ -1162,13 +1162,38 @@ html{
 
 /* Centered section headings inside the detail panel (matches Downloads style) */
 .panel-head{
+  position: relative;
   text-align:center;
-  margin: 12px 0 8px;
+  margin: 14px 0 8px;
   font-size: 12px;
-  font-weight: 950;
-  letter-spacing: .25px;
+  font-weight: 1000;
+  letter-spacing: .8px;
   text-transform: uppercase;
-  color: rgba(255,255,255,.92);
+  color: rgba(255,255,255,.95);
+}
+
+/* Glow underline */
+.panel-head::after{
+  content: "";
+  display: block;
+  width: 48px;                      /* underline width */
+  height: 2px;
+  margin: 8px auto 0;
+
+  border-radius: 2px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.0),
+    rgba(255,255,255,.7),
+    rgba(255,255,255,.0)
+  );
+
+  box-shadow:
+    0 0 6px rgba(255,255,255,.35),
+    0 0 12px rgba(255,255,255,.15);
+
+  opacity: .85;
 }
 
 .download-list{
@@ -1231,6 +1256,11 @@ html{
 .cta-row,
 .primary-cta {
   display: none !important;
+}
+
+.panel-head-playlist{
+  margin-top: 30px;   /* increase this if you want more space */
+  font-size: 13px;
 }
 
   </style>
@@ -1784,9 +1814,9 @@ function setDetails(section){
 
     // 2) Spotify Playlist heading
     const h2 = document.createElement('div');
-    h2.className = 'panel-head';
-    h2.textContent = 'Spotify Playlist';
-    detailContent.appendChild(h2);
+h2.className = 'panel-head panel-head-playlist';
+h2.textContent = 'Spotify Playlist';
+detailContent.appendChild(h2);
   }
 
   // 3) Spotify embed (move UP under Spotify Playlist)
