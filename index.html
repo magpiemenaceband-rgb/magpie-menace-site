@@ -1051,9 +1051,10 @@ html{
 .streaming-links{
   margin-top: 14px;
   display:flex;
-  flex-wrap:wrap;
-  gap:10px;
+  flex-wrap: nowrap;       /* keep one row */
+  gap:8px;                 /* slightly tighter spacing */
   justify-content:center;
+  align-items:center;
 }
 
 .stream-btn{
@@ -1061,12 +1062,12 @@ html{
 
   display:inline-flex;
   align-items:center;
-  gap:10px;
-  padding:10px 14px;
+  gap:6px;
+  padding:6px 12px;
   border-radius:999px;
   text-decoration:none;
-  font-size:13px;
-  font-weight:800;
+  font-size:12px;
+  font-weight:700;
 
   border:1px solid rgba(255,255,255,.22);
   background: rgba(255,255,255,.10);
@@ -1074,23 +1075,24 @@ html{
   -webkit-backdrop-filter: blur(10px);
 
   color:#fff;
+  white-space:nowrap;      /* prevent label wrapping */
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
 }
 
 .stream-ico{
-  width:18px;
-  height:18px;
-  display:inline-flex;
+  width:16px;
+  height:16px;
+  display:flex;
   align-items:center;
   justify-content:center;
 }
 
 .stream-ico svg{
-  width:18px;
-  height:18px;
+  width:16px;
+  height:16px;
   fill: #fff;
   opacity: .95;
-  filter: drop-shadow(0 0 10px var(--glow));
+  filter: drop-shadow(0 0 6px var(--glow));
 }
 
 .stream-btn:hover{
@@ -1101,6 +1103,12 @@ html{
     0 0 0 3px rgba(255,255,255,.06),
     0 0 18px var(--glow),
     0 12px 30px rgba(0,0,0,.22);
+}
+
+@media (max-width: 700px){
+  .streaming-links{
+    flex-wrap: wrap;
+  }
 }
 
 /* Subtle platform-specific glows */
