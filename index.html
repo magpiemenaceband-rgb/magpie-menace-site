@@ -1226,6 +1226,13 @@ html{
   background: rgba(255,255,255,.22);
   box-shadow: 0 8px 20px rgba(0,0,0,.25);
 }
+
+.detail-panel .btn,
+.cta-row,
+.primary-cta {
+  display: none !important;
+}
+
   </style>
 </head>
 
@@ -1868,8 +1875,8 @@ function setDetails(section){
   if(tip) detailContent.appendChild(tip);
 
   // If you still want the top-right button in the card:
-  primaryCta.textContent = section.ctaText || 'Start Here';
-  primaryCta.href = section.ctaHref || '#';
+  //primaryCta.textContent = section.ctaText || 'Start Here';
+  //primaryCta.href = section.ctaHref || '#';
 }
 
     function setNowPlaying(section){
