@@ -1018,17 +1018,6 @@ html{
   box-shadow: 0 18px 50px rgba(0,0,0,.28);
 }
 
-/* Spotify embed wrapper so we can overlay it */
-.embed-wrap{
-  position: relative;
-  margin-top: 12px;
-}
-
-/* Reduce space below Spotify player */
-.embed-wrap{
-  margin-bottom: 8px;   /* try 8–14px depending on feel */
-  padding: 10px 14px;
-}
 
 /* Invisible “first click” catcher */
 .iframe-guard{
@@ -1269,24 +1258,32 @@ html{
   font-size: 13px;
 }
 
-/* Make embed wrapper hug the iframe (kills mystery space) */
+/* Spotify/embed wrapper (single source of truth) */
 .embed-wrap{
-  padding: 0 !important;
-  margin: 10px 0 0 !important;     /* top space ok; bottom handled by downloads heading */
-  background: transparent !important;
-  border: 0 !important;
-  min-height: 0 !important;
-  height: auto !important;
+  position: relative;
+  margin: 12px 0 0;     /* space above the player */
+  padding: 0;           /* IMPORTANT: no padding = no fake empty area */
+  background: transparent;
+  border: 0;
+  min-height: 0;
+  height: auto;
 }
 
+/* Prevent iframe baseline gaps */
 .embed-wrap iframe{
-  display: block;                  /* removes inline iframe baseline gap */
-  margin: 0 !important;
+  display:block;
+  width:100%;
+  border:0;
+}
+
+/* Control the space AFTER the player by controlling what's NEXT */
+.panel-head-downloads{
+  margin-top: 10px;     /* this is the gap between player and Downloads heading */
 }
 
 /* Pull the Downloads header upward so it sits closer to Spotify */
 .panel-head-downloads{
-  margin-top: 12px !important;     /* try 10–14px */
+  margin-top: 10px !important;     /* try 10–14px */
 }
 
   </style>
