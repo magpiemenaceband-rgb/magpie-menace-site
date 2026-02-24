@@ -1780,6 +1780,17 @@ const MOBILE = MQ_COARSE.matches && !MQ_HOVER.matches;
 
 // Separate concept: small layout breakpoint (window size)
 const SMALL = window.innerWidth <= 720;
+const MQ_HOVER = window.matchMedia('(hover: hover)');
+const MQ_COARSE = window.matchMedia('(pointer: coarse)');
+
+// Touch-first devices (phones/tablets)
+const MOBILE = MQ_COARSE.matches && !MQ_HOVER.matches;
+
+// Layout breakpoint (window size)
+const SMALL = window.innerWidth <= 720;
+
+// Default: previews ON for hover-capable devices, OFF for touch-first devices
+
 let audioEnabled = !MOBILE;   // ✅ off on mobile by default
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
 
@@ -2084,15 +2095,6 @@ function updateStopButton(){
   }, 90);
 }
 
-function disableHoverAudioForExternalPlayer(){
-  // stop preview audio + prevent hover-trigger playback
-  fadeToken++;
-  stopAll();            // stops previews + clears activeAudioId
-  audioEnabled = false; // disables hover audio
-
-  nowPlaying.textContent = 'Spotify active (hover audio disabled)';
-  updateStopButton();   // should show "Enable Audio"
-}
 
 async function activate(section){
   // Always do visuals + UI updates
