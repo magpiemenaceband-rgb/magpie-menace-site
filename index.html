@@ -1773,6 +1773,52 @@ html{
     const detailContent = document.getElementById('detailContent');
     const primaryCta = document.getElementById('primaryCta');
 
+// ============================
+// HOME (default Magpie Menace view)
+// ============================
+
+// Capture the initial home state from the DOM (before setDetails() ever runs)
+const HOME_TITLE = detailTitle.textContent || "Magpie Menace";
+const HOME_SUBTITLE = detailSubtitle.textContent || "Choose a section to explore.";
+
+// Build a reusable "home" body (avoid cloning IDs by reusing the existing tipJarBlock node)
+function buildHomeBody(){
+  const frag = document.createDocumentFragment();
+
+  const ul = document.createElement('ul');
+  ul.innerHTML = `
+    <li>Magpie Menace is Derek Harlan and Tim Long.</li>
+    <li>Tim hits dingers and Derek drains threes.</li>
+    <li>Together, we make music to sooth your soul.</li>
+  `;
+  frag.appendChild(ul);
+
+  // Re-attach the existing tip jar block (it gets moved around by setDetails)
+  const tip = document.getElementById('tipJarBlock');
+  if (tip) frag.appendChild(tip);
+
+  return frag;
+}
+
+function showHome(){
+  // Reset title/subtitle
+  detailTitle.textContent = HOME_TITLE;
+  detailSubtitle.textContent = HOME_SUBTITLE;
+
+  // Reset right panel content
+  detailContent.innerHTML = "";
+  detailContent.appendChild(buildHomeBody());
+
+  // Optional: reset cursor + status text to "home" feel
+  setCursorBig(false);
+  setCursorSrc('assets/cursor-magpie.png');
+
+  if (typeof stopAll === "function") stopAll(); // stop any preview audio
+  if (typeof updateStopButton === "function") updateStopButton();
+
+  const np = document.getElementById('nowPlaying');
+  if (np) np.textContent = 'Hover a section to play a preview';
+}
 	// Custom cursor state
 const cursorEl = document.getElementById('mmCursor');
 const cursorImg = document.getElementById('mmCursorImg');
@@ -1910,6 +1956,20 @@ const TOUCH = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || MQ_A
 
 // Treat as “mobile/touch-first” if it’s touch and not truly hover-first
 const MOBILE = TOUCH && !CAN_HOVER;
+
+// Hovering the header restores the main Magpie Menace "home" view (desktop only)
+const headerEl = document.querySelector('header');
+if (headerEl && CAN_HOVER){
+  headerEl.addEventListener('mouseenter', showHome);
+}
+
+// Clicking the logo/name restores home without reloading
+document.querySelectorAll('header a[href="/"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    showHome();
+  });
+});
 
 // Layout breakpoint (just for scrolling/layout decisions)
 const SMALL = window.innerWidth <= 720;
