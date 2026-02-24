@@ -1111,6 +1111,23 @@ html{
   }
 }
 
+/* Social glows */
+.stream-btn[data-platform="instagram"]{
+  --glow: rgba(193, 53, 132, .35);
+}
+
+.stream-btn[data-platform="facebook"]{
+  --glow: rgba(24, 119, 242, .35);
+}
+
+.stream-btn[data-platform="tiktok"]{
+  --glow: rgba(255, 0, 80, .30);
+}
+
+.stream-btn[data-platform="x"]{
+  --glow: rgba(255,255,255,.25);
+}
+
 /* Subtle platform-specific glows */
 .stream-btn[data-platform="youtube"]{      --glow: rgba(255, 0, 0, .35); }
 .stream-btn[data-platform="spotify"]{      --glow: rgba(29, 185, 84, .35); }
@@ -1560,21 +1577,37 @@ html{
         ctaHref: "https://www.youtube.com/@MagpieMenace/videos"
       },
       {
-        id: "social",
-        title: "Social Media",
-        kicker: "Follow the chaos",
-        shinyBg: "assets/shiny-social.png",
-        cursorSrc: "assets/cursor-magpie-social.png",
-        previewSrc: "audio/social-preview.mp3",
-        subtitle: "Announcements, clips, memes, and shinies.",
-        bullets: [
-          "Instagram / TikTok",
-          "Facebook / X",
-          "Discord (optional)"
-        ],
-        ctaText: "Follow",
-        ctaHref: "#"
-      },
+  id: "social",
+  title: "Social Media",
+  kicker: "Follow the chaos",
+  shinyBg: "assets/shiny-social.png",
+  cursorSrc: "assets/cursor-magpie-social.png",
+  previewSrc: "audio/social-preview.mp3",
+  subtitle: "Announcements, clips, memes, and shinies.",
+
+  links: [
+    {
+      platform: "instagram",
+      name: "Instagram",
+      url: "https://www.instagram.com/magpiemenaceband/"
+    },
+    {
+      platform: "facebook",
+      name: "Facebook",
+      url: "https://www.facebook.com/MagpieMenace"
+    },
+    {
+      platform: "tiktok",
+      name: "TikTok",
+      url: "https://www.tiktok.com/@magpiemenaceband"
+    },
+    {
+      platform: "x",
+      name: "X",
+      url: "https://x.com/Magpie__Menace"
+    }
+  ]
+}
       {
         id: "merch",
         title: "Merch",
@@ -2052,6 +2085,34 @@ detailContent.appendChild(h2);
 
     detailContent.appendChild(list);
   }
+
+// ===== Social Media Buttons =====
+if (section.id === "social" && Array.isArray(section.links)) {
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Follow Us';
+  detailContent.appendChild(h);
+
+  const linkRow = document.createElement('div');
+  linkRow.className = 'streaming-links';
+
+  section.links.forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'stream-btn';
+    a.href = link.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.dataset.platform = link.platform;
+
+    a.innerHTML = `
+      <span class="stream-label">${link.name}</span>
+    `;
+
+    linkRow.appendChild(a);
+  });
+
+  detailContent.appendChild(linkRow);
+}
 
   // 5) Tip jar at bottom (unchanged)
   if(tip) detailContent.appendChild(tip);
