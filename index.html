@@ -1362,6 +1362,52 @@ html{
   }
 }
 
+.merch-grid{
+  margin-top: 12px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px){
+  .merch-grid{ grid-template-columns: 1fr; }
+}
+
+.merch-card{
+  display:block;
+  text-decoration:none;
+  border-radius: 16px;
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.merch-card:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
+}
+
+.merch-img{
+  width:100%;
+  height:auto;
+  display:block;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: rgba(255,255,255,.06);
+}
+
+.merch-title{
+  padding: 10px 12px;
+  font-weight: 900;
+  font-size: 13px;
+  color: #1a1a1a;
+}
+
   </style>
 </head>
 
@@ -1609,21 +1655,42 @@ html{
   ]
 },
       {
-        id: "merch",
-        title: "Merch",
-        kicker: "Tees • Stickers • Trinkets",
-        shinyBg: "assets/shiny-shirt.png",
-        cursorSrc: "assets/cursor-magpie-merch.png",
-        previewSrc: "audio/merch-preview.mp3",
-        subtitle: "Wear the omen.",
-        bullets: [
-          "Shopify / Bandcamp merch",
-          "Limited drops",
-          "Tour leftovers"
-        ],
-        ctaText: "Shop",
-        ctaHref: "#"
-      },
+  id: "merch",
+  title: "Merch",
+  kicker: "Tees • Stickers • Trinkets",
+  shinyBg: "assets/shiny-shirt.png",
+  cursorSrc: "assets/cursor-magpie-merch.png",
+  previewSrc: "audio/merch-preview.mp3",
+  subtitle: "Wear the omen.",
+
+  shopUrl: "https://magpiemenace.myspreadshop.com/",
+
+  products: [
+    {
+      title: "Official Logo Tee",
+      url: "https://magpiemenace.myspreadshop.com/official+logo+transparent-A68c9648dca8b7575e7c015fe?productType=812&sellable=BvJzXRqMryID1ZlEox8B-812-7&appearance=566",
+      img: "https://image.spreadshirtmedia.com/image-server/v1/products/T812A386PA4267PT17X104Y58D1057796575W13821H17864/views/1,width=650,height=650,appearanceId=566,backgroundColor=ffffff,crop=detail,modelId=1237/magpie-menace-official-band-logo.jpg"
+    },
+    {
+      title: "Skull See-Saw (Women’s Tee)",
+      url: "https://magpiemenace.myspreadshop.com/magpies+skull+see+saw+perch+on+skull-A683c9dc5833c9939447897e3?productType=347&sellable=OL3mbnrQeyHjMqeMAMQA-347-8&appearance=386",
+      img: "https://image.spreadshirtmedia.com/image-server/v1/products/T347A386PA4306PT17X38Y31D1057318889W17598H17598/views/1,width=650,height=650,appearanceId=386,backgroundColor=ffffff,crop=detail,modelId=2564/magpie-menace-band-logo-featuring-two-australian-magpies-perched-on-a-seesaw-balanced-on-a-skull.jpg"
+    },
+    {
+      title: "Skull See-Saw (Tie-Dye)",
+      url: "https://magpiemenace.myspreadshop.com/magpies+skull+see+saw+perch+on+skull-A683c9dc5833c9939447897e3?productType=491&sellable=OL3mbnrQeyHjMqeMAMQA-491-8&appearance=1123",
+      img: "https://image.spreadshirtmedia.com/image-server/v1/products/T491A1123PA4308PT17X40Y37D1057318889W25000H25000/views/1,width=650,height=650,appearanceId=1123,backgroundColor=ffffff/magpie-menace-band-logo-featuring-two-australian-magpies-perched-on-a-seesaw-balanced-on-a-skull.jpg"
+    },
+    {
+      title: "Pumping Iron Hoodie",
+      url: "https://magpiemenace.myspreadshop.com/magpie+menace+band+magpies+pumping+iron-A68447cb238282b50dc412a55?productType=111&sellable=AbDv05ablzHvq03yEJXZ-111-22&appearance=1",
+      img: "https://image.spreadshirtmedia.com/image-server/v1/products/T111A1PA4247PT17X70Y22D1057347778W20844H20844/views/1,width=650,height=650,appearanceId=1,backgroundColor=ffffff,crop=detail,modelId=12749/magpie-menace-band-magpies-pumping-iron.jpg"
+    }
+  ],
+
+  ctaText: "Shop All Merch",
+  ctaHref: "https://magpiemenace.myspreadshop.com/"
+},
       {
         id: "news",
         title: "News",
@@ -2112,6 +2179,50 @@ if (section.id === "social" && Array.isArray(section.links)) {
   });
 
   detailContent.appendChild(linkRow);
+}
+
+// ===== Merch: featured items + Shop All =====
+if (section.id === "merch") {
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Featured Merch';
+  detailContent.appendChild(h);
+
+  const grid = document.createElement('div');
+  grid.className = 'merch-grid';
+
+  (section.products || []).forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'merch-card';
+    a.href = p.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+
+    a.innerHTML = `
+      <img class="merch-img" src="${p.img}" alt="${p.title}" loading="lazy">
+      <div class="merch-title">${p.title}</div>
+    `;
+
+    grid.appendChild(a);
+  });
+
+  detailContent.appendChild(grid);
+
+  // Shop all button
+  if (section.ctaHref && section.ctaText) {
+    const row = document.createElement('div');
+    row.className = 'cta-row';
+
+    const btn = document.createElement('a');
+    btn.className = 'btn';
+    btn.href = section.ctaHref;
+    btn.target = "_blank";
+    btn.rel = "noopener";
+    btn.textContent = section.ctaText;
+
+    row.appendChild(btn);
+    detailContent.appendChild(row);
+  }
 }
 
   // 5) Tip jar at bottom (unchanged)
