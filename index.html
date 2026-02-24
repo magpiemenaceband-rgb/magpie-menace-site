@@ -1333,6 +1333,13 @@ html{
   .mobile-hint{ display:inline-flex; align-items:center; gap:8px; }
 }
 
+/* MOBILE: remove the entire hover/status strip */
+@media (hover: none) and (pointer: coarse){
+  .status-row{
+    display: none !important;
+  }
+}
+
   </style>
 </head>
 
@@ -2101,9 +2108,8 @@ async function activate(section){
 
   // ✅ MOBILE: no preview audio at all
   if (MOBILE) {
-    nowPlaying.textContent = `Viewing: ${section.title}`;
-    return;
-  }
+  return; // do nothing with nowPlaying on mobile
+}
 
   // If audio is disabled (desktop user clicked Stop)
   if (!audioEnabled){
@@ -2222,9 +2228,7 @@ window.addEventListener('pointerdown', async () => {
   updateStopButton();
 }, { once:true });
 updateStopButton();
-if(MOBILE){
-  nowPlaying.textContent = 'Tap a section to explore (previews disabled on mobile)';
-}
+
   </script>
 </body>
 </html>
