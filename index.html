@@ -61,19 +61,6 @@
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
 }
 
-.orbit-tile .title{
-  margin:0;
-  font-weight: 900;
-  font-size: 14px;
-  line-height: 1.1;
-}
-
-.orbit-tile .kicker{
-  font-size: 12px;
-  line-height: 1.15;
-  opacity: .9;
-  white-space: normal;         /* ✅ wrap text */
-}
 
 .orbit-tile{
   transition:
@@ -863,9 +850,12 @@ html{
 /* Title + kicker stacked */
 .orbit-tile .title{
   margin: 0;
-  font-weight: 850;
+  font-weight: 900;
   text-align: center;
-  font-size: 13px;
+
+  /* Responsive scaling without changing box size */
+  font-size: clamp(15px, 1.1vw, 18px);
+  line-height: 1.1;
 }
 .orbit-tile .kicker{
   margin-top: 4px;
