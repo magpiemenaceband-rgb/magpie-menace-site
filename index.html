@@ -1772,7 +1772,14 @@ const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
-const MOBILE = window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth <= 720;
+const MQ_HOVER = window.matchMedia('(hover: hover)');
+const MQ_COARSE = window.matchMedia('(pointer: coarse)');
+
+// True only for real touch-first devices (phones/tablets)
+const MOBILE = MQ_COARSE.matches && !MQ_HOVER.matches;
+
+// Separate concept: small layout breakpoint (window size)
+const SMALL = window.innerWidth <= 720;
 let audioEnabled = !MOBILE;   // ✅ off on mobile by default
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
 
@@ -2141,14 +2148,17 @@ SECTIONS.forEach(section => {
     <div class="kicker">${section.kicker}</div>
   `;
 
-  if(!MOBILE){
+// Desktop/laptop devices that can hover get hover previews
+if (MQ_HOVER.matches) {
   btn.addEventListener('mouseenter', () => activate(section));
 }
 
+// Everyone gets click/tap
 btn.addEventListener('click', () => {
   activate(section);
 
-  if(MOBILE){
+  // Touch devices (and optionally small screens) should auto-scroll
+  if (MOBILE || SMALL) {
     scrollToDetails();
   }
 });
