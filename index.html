@@ -1308,6 +1308,31 @@ html{
   border: 0;
 }
 
+#detailPanel{
+  scroll-margin-top: 110px; /* adjust if needed */
+}
+
+.mobile-hint{
+  display:none;
+  padding:10px 12px;
+  border-radius: 999px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.20);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 22px rgba(20,20,26,.08);
+  font-size:12px;
+  font-weight:800;
+  color:#1a1a1a;
+  white-space:nowrap;
+}
+
+/* MOBILE behavior */
+@media (hover: none) and (pointer: coarse){
+  #stopAudio{ display:none !important; }
+  .mobile-hint{ display:inline-flex; align-items:center; gap:8px; }
+}
+
   </style>
 </head>
 
@@ -1360,6 +1385,10 @@ html{
     <div class="dot" aria-hidden="true"></div>
     <span id="nowPlaying">Hover a section to play a preview</span>
   </div>
+	
+	<div class="mobile-hint" id="mobileHint" aria-hidden="true">
+  Tap a section to open details ↓
+</div>
 
   <button class="pill stop-pill" type="button" id="stopAudio" aria-live="polite">
     <span class="wave" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -1646,12 +1675,22 @@ function scrollToDetails(){
   const panel = document.getElementById('detailPanel');
   if(!panel) return;
 
-  // Smooth scroll so user feels guided
+  // First scroll immediately
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Optional: a tiny offset if your sticky header overlaps
-  // (uncomment if needed)
-  // setTimeout(() => window.scrollBy({ top: -80, left: 0, behavior: 'instant' }), 0);
+  // Second scroll shortly after (catches layout shift from iframes)
+  setTimeout(() => {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 220);
+
+  // If an iframe exists, scroll again after it finishes loading
+  const iframe = panel.querySelector('iframe');
+  if(iframe && !iframe.__mmScrollHooked){
+    iframe.__mmScrollHooked = true;
+    iframe.addEventListener('load', () => {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, { once: true });
+  }
 }
 
 window.addEventListener('pointermove', (e)=>{
@@ -1733,7 +1772,8 @@ const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
-let audioEnabled = true; 
+const MOBILE = window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth <= 720;
+let audioEnabled = !MOBILE;   // ✅ off on mobile by default
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
 
 async function armAudioOnce(){
@@ -1802,6 +1842,7 @@ async function crossfade(toId){
 
   if(myToken !== fadeToken) return;
   updateStopButton();
+  
 }
 
     function stopAll(exceptId=null){
@@ -2047,26 +2088,31 @@ function disableHoverAudioForExternalPlayer(){
 }
 
 async function activate(section){
-  // Always do visuals + UI updates (even if audio is disabled)
+  // Always do visuals + UI updates
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
 
   cursorPeck();
   spawnSparkles(cursorX, cursorY);
 
-
   setDetails(section);
-  
-   // If audio is disabled, don't attempt to play — just update the text
-  if(!audioEnabled){
+
+  // ✅ MOBILE: no preview audio at all
+  if (MOBILE) {
+    nowPlaying.textContent = `Viewing: ${section.title}`;
+    return;
+  }
+
+  // If audio is disabled (desktop user clicked Stop)
+  if (!audioEnabled){
     nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
     return;
   }
 
-  // Audio is enabled: proceed as normal
+  // Audio is enabled → proceed normally
   setNowPlaying(section);
 
-  if(!audioArmed){
+  if (!audioArmed){
     const ok = await armAudioOnce();
     if(!ok){
       nowPlaying.textContent = 'Click once to enable audio';
@@ -2095,11 +2141,14 @@ SECTIONS.forEach(section => {
     <div class="kicker">${section.kicker}</div>
   `;
 
+  if(!MOBILE){
   btn.addEventListener('mouseenter', () => activate(section));
-  btn.addEventListener('click', () => {
+}
+
+btn.addEventListener('click', () => {
   activate(section);
 
-  if(isMobileish()){
+  if(MOBILE){
     scrollToDetails();
   }
 });
@@ -2173,6 +2222,9 @@ window.addEventListener('pointerdown', async () => {
   updateStopButton();
 }, { once:true });
 updateStopButton();
+if(MOBILE){
+  nowPlaying.textContent = 'Tap a section to explore (previews disabled on mobile)';
+}
   </script>
 </body>
 </html>
