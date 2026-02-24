@@ -1362,52 +1362,6 @@ html{
   }
 }
 
-.merch-grid{
-  margin-top: 12px;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 10px;
-}
-
-@media (max-width: 520px){
-  .merch-grid{ grid-template-columns: 1fr; }
-}
-
-.merch-card{
-  display:block;
-  text-decoration:none;
-  border-radius: 16px;
-  overflow:hidden;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-.merch-card:hover{
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.14);
-  border-color: rgba(255,255,255,.24);
-  box-shadow: 0 12px 30px rgba(0,0,0,.22);
-}
-
-.merch-img{
-  width:100%;
-  height:auto;
-  display:block;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  background: rgba(255,255,255,.06);
-}
-
-.merch-title{
-  padding: 10px 12px;
-  font-weight: 900;
-  font-size: 13px;
-  color: #1a1a1a;
-}
-
   </style>
 </head>
 
@@ -2027,45 +1981,6 @@ const PLATFORM_ICONS = {
   `
 };
 
-// ===== Spreadshop embed (load once, render into #myShop when merch is active) =====
-const SPREADSHOP = {
-  loaded: false,
-  loading: false,
-  scriptSrc: "https://magpiemenace.myspreadshop.com/shopfiles/shopclient/shopclient.nocache.js",
-  shopUrl: "https://magpiemenace.myspreadshop.com",
-  shopName: "magpiemenace",
-  locale: "us_US",
-  baseId: "myShop"
-};
-
-function loadSpreadshopOnce(){
-  if (SPREADSHOP.loaded || SPREADSHOP.loading) return;
-  SPREADSHOP.loading = true;
-
-  // Spreadshop expects this config in window scope
-  window.spread_shop_config = {
-    shopName: SPREADSHOP.shopName,
-    locale: SPREADSHOP.locale,
-    prefix: SPREADSHOP.shopUrl,
-    baseId: SPREADSHOP.baseId
-  };
-
-  const s = document.createElement('script');
-  s.type = 'text/javascript';
-  s.src = SPREADSHOP.scriptSrc;
-
-  s.onload = () => {
-    SPREADSHOP.loaded = true;
-    SPREADSHOP.loading = false;
-  };
-  s.onerror = () => {
-    SPREADSHOP.loading = false;
-    console.warn("Spreadshop embed failed to load.");
-  };
-
-  document.body.appendChild(s);
-}
-
 function setDetails(section){
   detailTitle.textContent = section.title;
   detailSubtitle.textContent = section.subtitle;
@@ -2075,36 +1990,6 @@ function setDetails(section){
 
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
-
-// ===== Merch: Spreadshop embedded store =====
-if (section.id === "merch") {
-  const h = document.createElement('div');
-  h.className = 'panel-head';
-  h.textContent = 'Merch Store';
-  detailContent.appendChild(h);
-
-  const shopWrap = document.createElement('div');
-  shopWrap.innerHTML = `
-    <div id="myShop">
-      <a href="https://magpiemenace.myspreadshop.com">magpiemenace</a>
-      <div style="padding:10px 0; font-weight:800; opacity:.85;">Loading merch…</div>
-    </div>
-  `;
-  detailContent.appendChild(shopWrap);
-
-  // Load Spreadshop JS (only once)
-  loadSpreadshopOnce();
-
-  // Optional: add a fallback button in case embed is blocked
-  const row = document.createElement('div');
-  row.className = 'cta-row';
-  row.innerHTML = `
-    <a class="btn" href="https://magpiemenace.myspreadshop.com/" target="_blank" rel="noopener">
-      Shop on Spreadshop
-    </a>
-  `;
-  detailContent.appendChild(row);
-}
 
   // 1) Streaming Sites heading + buttons (Music only)
   if(section.id === "music" && Array.isArray(section.links) && section.links.length){
