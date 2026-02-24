@@ -1772,17 +1772,19 @@ const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
-const MQ_HOVER = window.matchMedia('(hover: hover)');
-const MQ_COARSE = window.matchMedia('(pointer: coarse)');
+const MQ_ANY_HOVER  = window.matchMedia('(any-hover: hover)');
+const MQ_ANY_COARSE = window.matchMedia('(any-pointer: coarse)');
 
-// True only for real touch-first devices (phones/tablets)
-const MOBILE = MQ_COARSE.matches && !MQ_HOVER.matches;
+const CAN_HOVER = MQ_ANY_HOVER.matches;
 
-// Separate concept: small layout breakpoint (window size)
+// Touch-first devices (phones/tablets)
+const MOBILE = MQ_ANY_COARSE.matches && !CAN_HOVER;
+
+// Layout breakpoint (window size)
 const SMALL = window.innerWidth <= 720;
 
 // Default: previews ON for hover-capable devices, OFF for touch-first devices
-let audioEnabled = !MOBILE;   // ✅ off on mobile by default
+let audioEnabled = !MOBILE;
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
 
 async function armAudioOnce(){
@@ -2142,18 +2144,13 @@ SECTIONS.forEach(section => {
   `;
 
 // Desktop/laptop devices that can hover get hover previews
-if (MQ_HOVER.matches) {
+if (CAN_HOVER) {
   btn.addEventListener('mouseenter', () => activate(section));
 }
 
-// Everyone gets click/tap
 btn.addEventListener('click', () => {
   activate(section);
-
-  // Touch devices (and optionally small screens) should auto-scroll
-  if (MOBILE || SMALL) {
-    scrollToDetails();
-  }
+  if (MOBILE || SMALL) scrollToDetails();
 });
 
   tilesEl.appendChild(btn);
