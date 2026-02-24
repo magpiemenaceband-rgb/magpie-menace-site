@@ -1412,6 +1412,24 @@ html{
   line-height: 1.2;
 }
 
+.home-logo{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 10px 0 6px;
+}
+
+.home-logo img{
+  width: min(420px, 85%);
+  height: auto;
+  object-fit: contain;
+  display:block;
+
+  /* optional: subtle pop */
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,.18))
+    drop-shadow(0 18px 40px rgba(0,0,0,.22));
+}
 
   </style>
 </head>
@@ -1496,11 +1514,9 @@ html{
 
       <div class="detail-body">
       <div id="detailContent">
-  <ul>
-    <li>Magpie Menace is Derek Harlan and Tim Long.</li>
-    <li>Tim hits dingers and Derek drains threes.</li>
-    <li>Together, we make music to sooth your soul.</li>
-  </ul>
+  <div class="home-logo">
+    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Menace logo">
+  </div>
 </div>
 
 <!-- ✅ Put tip jar OUTSIDE detailContent so it never gets wiped -->
@@ -1785,17 +1801,12 @@ const HOME_SUBTITLE = detailSubtitle.textContent || "Choose a section to explore
 function buildHomeBody(){
   const frag = document.createDocumentFragment();
 
-  const ul = document.createElement('ul');
-  ul.innerHTML = `
-    <li>Magpie Menace is Derek Harlan and Tim Long.</li>
-    <li>Tim hits dingers and Derek drains threes.</li>
-    <li>Together, we make music to sooth your soul.</li>
+  const wrap = document.createElement('div');
+  wrap.className = 'home-logo';
+  wrap.innerHTML = `
+    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Menace logo">
   `;
-  frag.appendChild(ul);
-
-  // Re-attach the existing tip jar block (it gets moved around by setDetails)
-  //const tip = document.getElementById('tipJarWrap');
-  //if (tip) frag.appendChild(tip);
+  frag.appendChild(wrap);
 
   return frag;
 }
