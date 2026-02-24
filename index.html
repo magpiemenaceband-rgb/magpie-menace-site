@@ -1428,6 +1428,43 @@ html{
   100% { transform: translateY(0) rotate(0deg) scaleX(1) scaleY(1); }
 }
 
+.news-list{
+  margin-top: 10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.news-item{
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+}
+
+.news-date{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  opacity: .8;
+}
+
+.news-title{
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.news-text{
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: .92;
+}
+
   </style>
 </head>
 
@@ -1727,13 +1764,21 @@ html{
         shinyBg: "assets/shiny-newspaper.png",
         cursorSrc: "assets/cursor-magpie-news.png",
         previewSrc: "audio/news-preview.mp3",
-        subtitle: "What we’re up to (and why it’s probably loud).",
-        bullets: [
-          "Upcoming shows",
-          "Press mentions",
-          "Studio updates"
-        ],
-        ctaText: "Read",
+        subtitle: "Updates from the nest.",
+        bullets: [],
+		posts: [
+    {
+      date: "Feb 2026",
+      title: "New single dropping soon",
+      text: "We’re putting the finishing touches on the next track. Pre-save links coming ASAP."
+    },
+    {
+      date: "Jan 2026",
+      title: "Merch restock",
+      text: "A fresh run of tees + a couple new designs are live in the store."
+    }
+  ],
+  ctaText: "More",
         ctaHref: "#"
       },
       {
@@ -2312,6 +2357,38 @@ if (section.id === "merch") {
   });
 
   detailContent.appendChild(grid);
+}
+
+// ===== News =====
+if (section.id === "news") {
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Latest News';
+  detailContent.appendChild(h);
+
+  if (Array.isArray(section.posts) && section.posts.length) {
+    const wrap = document.createElement('div');
+    wrap.className = 'news-list';
+
+    section.posts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'news-item';
+      card.innerHTML = `
+        <div class="news-date">${p.date || ''}</div>
+        <div class="news-title">${p.title || ''}</div>
+        <div class="news-text">${p.text || ''}</div>
+      `;
+      wrap.appendChild(card);
+    });
+
+    detailContent.appendChild(wrap);
+  } else {
+    const empty = document.createElement('p');
+    empty.style.margin = '10px 0 0';
+    empty.style.opacity = '.85';
+    empty.textContent = 'No updates yet — check back soon.';
+    detailContent.appendChild(empty);
+  }
 }
 
   // 5) Tip jar at bottom (unchanged)
