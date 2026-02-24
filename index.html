@@ -35,56 +35,6 @@
   z-index:2;
 }
 
-.orbit-tile{
-  position:absolute;
-  width: var(--orbit-tile-w);
-  min-height: var(--orbit-tile-h);
-  padding: 12px 12px 10px;
-  border-radius: 22px;         /* ✅ oval/rounded rectangle */
-  background: rgba(255,255,255,.14);
-  border: 1px solid rgba(255,255,255,.22);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 18px 40px rgba(0,0,0,.18);
-  pointer-events:auto;         /* ✅ clickable */
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:8px;
-  text-align:center;
-}
-
-.orbit-tile .tile-img{
-  width: 64px;
-  height: 64px;
-  object-fit: contain;         /* ✅ no cropping */
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
-}
-
-
-.orbit-tile{
-  transition:
-    transform .18s ease,
-    background .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease;
-}
-
-/* Hover effect */
-.orbit-tile:hover{
-  transform: translateY(-4px);
-  background: rgba(255,255,255,.20);   /* lighter glass */
-  border-color: rgba(255,255,255,.38);
-  box-shadow: 0 20px 60px rgba(0,0,0,.28);
-}
-
-/* Image glow boost */
-.orbit-tile:hover .tile-img{
-  filter:
-    drop-shadow(0 12px 22px rgba(0,0,0,.35))
-    drop-shadow(0 0 12px rgba(255,255,255,.25));
-  transform: scale(1.06);
-}
 
     *{ box-sizing:border-box; }
   html,body{
@@ -850,6 +800,7 @@ html{
   height: auto;
   object-fit: contain;
   display: block;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.20));
 }
 
 /* Title + kicker stacked */
@@ -868,6 +819,30 @@ html{
   opacity: .9;
   text-align: center;
   color: #1a1a1a;
+}
+
+/* Hover effect */
+.orbit-tile:hover{
+  transform: translateY(-4px);
+  background: rgba(255,255,255,.20);   /* lighter glass */
+  border-color: rgba(255,255,255,.38);
+  box-shadow: 0 20px 60px rgba(0,0,0,.28);
+}
+
+/* Image glow boost */
+.orbit-tile:hover .tile-img{
+  filter:
+    drop-shadow(0 12px 22px rgba(0,0,0,.35))
+    drop-shadow(0 0 12px rgba(255,255,255,.25));
+  transform: scale(1.06);
+}
+
+.orbit-tile{
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
 }
 
 /* Center panel below */
