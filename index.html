@@ -1548,6 +1548,16 @@ html{
   justify-content:center;
 }
 
+.release-cover{
+  width: 92px;          /* adjust if you want */
+  height: 92px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.18);
+}
+
   </style>
 </head>
 
@@ -2670,7 +2680,10 @@ function setDetails(section){
         const card = document.createElement('div');
         card.className = 'release-item';
 
-        const coverSrc = r.cover
+        // Build a root-safe cover path:
+// "assets/X.png" -> "/assets/X.png"
+// "http..." stays as-is
+const coverSrc = r.cover
   ? (r.cover.startsWith('http') ? r.cover : '/' + r.cover.replace(/^\.?\//, ''))
   : '';
 
@@ -2679,8 +2692,11 @@ const coverHtml = coverSrc
           src="${encodeURI(coverSrc)}"
           alt="${r.title} cover"
           loading="lazy"
-          onerror="this.style.display='none'; console.warn('Missing cover:', '${coverSrc}')">`
-  : `<div class="release-cover placeholder" aria-hidden="true"></div>`;
+          onerror="this.onerror=null; this.src='/assets/Official%20Logo%20NoTest%20Transparent.png';">`
+  : `<img class="release-cover"
+          src="/assets/Official%20Logo%20NoTest%20Transparent.png"
+          alt=""
+          aria-hidden="true">`;
 
         const linksHtml = (Array.isArray(r.links) && r.links.length)
           ? `
