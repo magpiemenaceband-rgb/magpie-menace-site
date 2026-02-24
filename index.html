@@ -1030,7 +1030,7 @@ html{
 }
 
 /* Disable custom cursor on touch devices (phones/tablets) */
-@media (hover: none) and (pointer: coarse){
+@media (any-pointer: coarse), (pointer: coarse), (max-width: 820px){
   .mm-cursor{
     display: none !important;
   }
@@ -1038,6 +1038,11 @@ html{
   html, body,
   a, button, img,
   .tile, .pill, .btn {
+    cursor: auto !important;
+  }
+
+  /* Undo your global cursor:none on touch */
+  html, body{
     cursor: auto !important;
   }
 }
@@ -1784,15 +1789,30 @@ const MQ_ANY_COARSE = window.matchMedia('(any-pointer: coarse)');
 
 const CAN_HOVER = MQ_ANY_HOVER.matches;
 
-// Touch-first devices (phones/tablets)
-const MOBILE = MQ_ANY_COARSE.matches && !CAN_HOVER;
+// True on iPhone/Android and most touch devices
+const TOUCH = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || MQ_ANY_COARSE.matches;
 
-// Layout breakpoint (window size)
+// Treat as “mobile/touch-first” if it’s touch and not truly hover-first
+const MOBILE = TOUCH && !CAN_HOVER;
+
+// Layout breakpoint (just for scrolling/layout decisions)
 const SMALL = window.innerWidth <= 720;
 
-// Default: previews ON for hover-capable devices, OFF for touch-first devices
+// Default: previews ON only for non-mobile
 let audioEnabled = !MOBILE;
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
+
+if (MOBILE) {
+  // previews should never play on iPhone/Android
+  audioEnabled = false;
+  stopAll();
+}
+
+window.addEventListener('touchstart', () => {
+  if (!MOBILE) return;
+  audioEnabled = false;
+  stopAll();
+}, { passive: true });
 
 async function armAudioOnce(){
   if(audioArmed) return true;
@@ -2106,12 +2126,12 @@ async function activate(section){
 
   setDetails(section);
 
-  // ✅ MOBILE: no preview audio at all
+  // ✅ Mobile: never preview audio
   if (MOBILE) {
-  return; // do nothing with nowPlaying on mobile
-}
+    return;
+  }
 
-  // If audio is disabled (desktop user clicked Stop)
+  // Desktop: if user disabled audio, show message + stop
   if (!audioEnabled){
     nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
     return;
@@ -2120,7 +2140,7 @@ async function activate(section){
   // Audio is enabled → proceed normally
   setNowPlaying(section);
 
-  if (!audioArmed){
+  if(!audioArmed){
     const ok = await armAudioOnce();
     if(!ok){
       nowPlaying.textContent = 'Click once to enable audio';
@@ -2130,7 +2150,6 @@ async function activate(section){
 
   crossfade(section.id);
 }
-
 
 
 // Render tiles into the top row under the header
@@ -2199,7 +2218,7 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
     audioEnabled = true;
 
     // this click counts as a gesture, so we can arm
-    await armAudioOnce();
+    if (!MOBILE && audioEnabled && !audioArmed) await armAudioOnce();
 
     nowPlaying.textContent = 'Hover a section to play a preview';
     updateStopButton();
@@ -2224,7 +2243,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Autoplay policy hint: first user interaction can unlock audio on iOS/Safari
 window.addEventListener('pointerdown', async () => {
-  await armAudioOnce();
+  if (!MOBILE && audioEnabled && !audioArmed) await armAudioOnce();
   updateStopButton();
 }, { once:true });
 updateStopButton();
