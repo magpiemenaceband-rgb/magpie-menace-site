@@ -1425,10 +1425,36 @@ html{
   object-fit: contain;
   display:block;
 
-  /* optional: subtle pop */
+  /* optional pop */
   filter:
     drop-shadow(0 0 10px rgba(255,255,255,.18))
     drop-shadow(0 18px 40px rgba(0,0,0,.22));
+
+  /* KEY: make transforms look like they're hinged at the body */
+  transform-origin: 50% 55%;
+  transition: transform 220ms ease, filter 220ms ease;
+  will-change: transform;
+}
+
+/* hover flap */
+.home-logo:hover img{
+  animation: wingFlap 520ms ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 16px rgba(255,255,255,.22))
+    drop-shadow(0 22px 55px rgba(0,0,0,.28));
+}
+
+/* Stop flapping on touch devices where hover is weird */
+@media (hover: none) and (pointer: coarse){
+  .home-logo:hover img{ animation: none; }
+}
+
+@keyframes wingFlap{
+  0%   { transform: translateY(0) rotate(0deg) scaleX(1) scaleY(1); }
+  20%  { transform: translateY(1px) rotate(-1.2deg) scaleX(1.01) scaleY(.96); }
+  50%  { transform: translateY(-2px) rotate(1.2deg)  scaleX(.99) scaleY(1.04); }
+  80%  { transform: translateY(1px) rotate(-.6deg) scaleX(1.01) scaleY(.97); }
+  100% { transform: translateY(0) rotate(0deg) scaleX(1) scaleY(1); }
 }
 
   </style>
