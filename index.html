@@ -1465,6 +1465,88 @@ html{
   opacity: .92;
 }
 
+.release-list{
+  margin-top: 10px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.release-item{
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+}
+
+.release-top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+
+.release-cover{
+  width: 86px;
+  height: 86px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  object-fit: cover;
+  background: rgba(255,255,255,.06);
+  flex: 0 0 auto;
+}
+
+.release-cover.placeholder{
+  display:block;
+}
+
+.release-meta{
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.release-date{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  opacity: .8;
+  color: #fff;
+}
+
+.release-title{
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 950;
+  color: #fff;
+  line-height: 1.15;
+}
+
+.release-type{
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: .85;
+  color: #fff;
+}
+
+.release-blurb{
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: .92;
+  color: #fff;
+}
+
+.release-links{
+  margin-top: 10px;
+  display:flex;
+  flex-wrap: wrap;
+  gap:8px;
+  justify-content:center;
+}
+
   </style>
 </head>
 
@@ -1797,21 +1879,173 @@ html{
         ctaHref: "#"
       },
       {
-        id: "releases",
-        title: "Releases",
-        kicker: "Singles • EPs • Albums",
-        shinyBg: "assets/shiny-vinyl.png",
-        cursorSrc: "assets/cursor-magpie-releases.png",
-        previewSrc: "audio/releases-preview.mp3",
-        subtitle: "A timeline of shiny noise.",
-        bullets: [
-          "Release artwork + credits",
-          "Links to listen/buy",
-          "Release notes"
-        ],
-        ctaText: "Browse",
-        ctaHref: "#"
-      },
+  id: "releases",
+  title: "Releases",
+  kicker: "Singles • EPs • Albums",
+  shinyBg: "assets/shiny-vinyl.png",
+  cursorSrc: "assets/cursor-magpie-releases.png",
+  previewSrc: "audio/releases-preview.mp3",
+  subtitle: "A timeline of shiny noise.",
+  releases: [
+    {
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+    {
+      date: "2025",
+      title: "Help",
+      type: "Single",
+      cover: "assets/covers/help.jpg",
+      blurb: "Fast, loud, and a little too honest.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	{
+      date: "2025",
+      title: "Midwest Goodbye",
+      type: "Single",
+      cover: "assets/covers/midwest-goodbye.jpg",
+      blurb: "A goodbye that hits like headlights in the rearview.",
+      links: [
+        { platform: "spotify", name: "Spotify", url: "https://..." },
+        { platform: "apple", name: "Apple Music", url: "https://..." },
+        { platform: "youtube", name: "YouTube", url: "https://..." },
+        { platform: "bandcamp", name: "Bandcamp", url: "https://..." }
+      ]
+    },
+	
+	
+  ]
+},
       {
         id: "militia",
         title: "Magpie Militia",
@@ -2175,52 +2409,59 @@ function setDetails(section){
   detailTitle.textContent = section.title;
   detailSubtitle.textContent = section.subtitle;
 
-  // Keep tip jar + text visible everywhere
-//const tip = document.getElementById('tipJarWrap');
+  // Keep tip jar visible everywhere (move the same DOM node around)
+  const tip = document.getElementById('tipJarWrap');
 
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
 
-  // 1) Streaming Sites heading + buttons (Music only)
-  if(section.id === "music" && Array.isArray(section.links) && section.links.length){
-    const h1 = document.createElement('div');
-    h1.className = 'panel-head';
-    h1.textContent = 'Stream Our Music Here';
-    detailContent.appendChild(h1);
+  // =========================
+  // MUSIC
+  // =========================
+  if (section.id === "music") {
 
-    const linkRow = document.createElement('div');
-    linkRow.className = 'streaming-links';
+    // 1) Streaming Sites heading + buttons
+    if (Array.isArray(section.links) && section.links.length) {
+      const h1 = document.createElement('div');
+      h1.className = 'panel-head';
+      h1.textContent = 'Stream Our Music Here';
+      detailContent.appendChild(h1);
 
-    section.links.forEach(link => {
-      const a = document.createElement('a');
-      a.className = 'stream-btn';
-      a.href = link.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.dataset.platform = link.platform || '';
+      const linkRow = document.createElement('div');
+      linkRow.className = 'streaming-links';
 
-      const icon = (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform]) ? PLATFORM_ICONS[link.platform] : '';
-      a.innerHTML = `
-        <span class="stream-ico">${icon}</span>
-        <span class="stream-label">${link.name}</span>
-      `;
-      linkRow.appendChild(a);
-    });
+      section.links.forEach(link => {
+        const a = document.createElement('a');
+        a.className = 'stream-btn';
+        a.href = link.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.dataset.platform = link.platform || '';
 
-    detailContent.appendChild(linkRow);
+        const icon =
+          (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
+            ? PLATFORM_ICONS[link.platform]
+            : '';
 
-    // 2) Spotify Playlist heading
-    const h2 = document.createElement('div');
-h2.className = 'panel-head panel-head-playlist';
-h2.textContent = 'Spotify Playlist';
-detailContent.appendChild(h2);
-  }
+        a.innerHTML = `
+          <span class="stream-ico">${icon}</span>
+          <span class="stream-label">${link.name}</span>
+        `;
+        linkRow.appendChild(a);
+      });
 
-  // 3) Spotify embed (move UP under Spotify Playlist)
-  if(section.embed){
-    if(section.id === "music"){
-      // Reuse cached node so Spotify doesn't reload
-      if(!musicEmbedCache){
+      detailContent.appendChild(linkRow);
+
+      // 2) Spotify Playlist heading
+      const h2 = document.createElement('div');
+      h2.className = 'panel-head panel-head-playlist';
+      h2.textContent = 'Spotify Playlist';
+      detailContent.appendChild(h2);
+    }
+
+    // 3) Spotify embed (cached so it doesn't reload)
+    if (section.embed) {
+      if (!musicEmbedCache) {
         const embedWrap = document.createElement('div');
         embedWrap.className = 'embed-wrap';
         embedWrap.innerHTML = section.embed;
@@ -2233,7 +2474,7 @@ detailContent.appendChild(h2);
         guard.title = 'Tap to play Spotify (disables hover audio)';
 
         guard.addEventListener('pointerdown', () => {
-          if(typeof disableHoverAudioForExternalPlayer === "function"){
+          if (typeof disableHoverAudioForExternalPlayer === "function") {
             disableHoverAudioForExternalPlayer();
           }
           guard.remove();
@@ -2243,175 +2484,247 @@ detailContent.appendChild(h2);
       }
 
       detailContent.appendChild(musicEmbedCache);
-    } else {
-      const embedWrap = document.createElement('div');
-      embedWrap.className = 'embed-wrap';
-      embedWrap.innerHTML = section.embed;
-      detailContent.appendChild(embedWrap);
+    }
+
+    // 4) Downloads (below player)
+    if (Array.isArray(section.downloads) && section.downloads.length) {
+      const h3 = document.createElement('div');
+      h3.className = 'panel-head panel-head-downloads';
+      h3.textContent = 'Free Song Downloads';
+      detailContent.appendChild(h3);
+
+      const list = document.createElement('div');
+      list.className = 'download-list';
+
+      section.downloads.forEach(track => {
+        const row = document.createElement('div');
+        row.className = 'download-item';
+
+        const meta = track.meta
+          ? `<div class="dl-meta">${track.meta}</div>`
+          : `<div class="dl-meta">MP3</div>`;
+
+        const trackedUrl = track.url;
+
+        row.innerHTML = `
+          <div class="dl-left">
+            <div class="dl-title">${track.title}</div>
+            ${meta}
+          </div>
+
+          <a class="dl-btn"
+             href="${trackedUrl}"
+             target="_blank"
+             rel="noopener"
+             download>
+            <span class="dl-ico">${typeof DL_ICON !== "undefined" ? DL_ICON : ""}</span>
+            Download
+          </a>
+        `;
+
+        list.appendChild(row);
+      });
+
+      detailContent.appendChild(list);
     }
   }
 
-  // 4) Downloads (move DOWN below Spotify player, Music only)
-  if(section.id === "music" && Array.isArray(section.downloads) && section.downloads.length){
-    const h3 = document.createElement('div');
-    h3.className = 'panel-head panel-head-downloads';
-    h3.textContent = 'Free Song Downloads';
-    detailContent.appendChild(h3);
-
-    const list = document.createElement('div');
-    list.className = 'download-list';
-
-    section.downloads.forEach(track => {
-  const row = document.createElement('div');
-  row.className = 'download-item';
-
-  // Optional meta line (file size, length, etc)
-  const meta = track.meta
-    ? `<div class="dl-meta">${track.meta}</div>`
-    : `<div class="dl-meta">MP3</div>`;
-
-  // IMPORTANT:
-  // Use your Worker route for tracking
-  // Example: downloads.magpiemenace.com/dl/help.mp3
-  const trackedUrl = track.url;
-
-  row.innerHTML = `
-    <div class="dl-left">
-      <div class="dl-title">${track.title}</div>
-      ${meta}
-    </div>
-
-    <a class="dl-btn"
-       href="${trackedUrl}"
-       target="_blank"
-       rel="noopener"
-       download>
-      <span class="dl-ico">${typeof DL_ICON !== "undefined" ? DL_ICON : ""}</span>
-      Download
-    </a>
-  `;
-
-  list.appendChild(row);
-});
-
-    detailContent.appendChild(list);
+  // =========================
+  // EMBED (for non-music sections like Videos, etc.)
+  // =========================
+  else if (section.embed) {
+    const embedWrap = document.createElement('div');
+    embedWrap.className = 'embed-wrap';
+    embedWrap.innerHTML = section.embed;
+    detailContent.appendChild(embedWrap);
   }
 
-// ===== Social Media Buttons =====
-if (section.id === "social" && Array.isArray(section.links)) {
-  const h = document.createElement('div');
-  h.className = 'panel-head';
-  h.textContent = 'Follow Us';
-  detailContent.appendChild(h);
+  // =========================
+  // SOCIAL
+  // =========================
+  else if (section.id === "social") {
+    const h = document.createElement('div');
+    h.className = 'panel-head';
+    h.textContent = 'Follow Us';
+    detailContent.appendChild(h);
 
-  const linkRow = document.createElement('div');
-  linkRow.className = 'streaming-links';
+    const linkRow = document.createElement('div');
+    linkRow.className = 'streaming-links';
 
-  section.links.forEach(link => {
-    const a = document.createElement('a');
-    a.className = 'stream-btn';
-    a.href = link.url;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.dataset.platform = link.platform;
+    (section.links || []).forEach(link => {
+      const a = document.createElement('a');
+      a.className = 'stream-btn';
+      a.href = link.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.dataset.platform = link.platform || '';
 
-    a.innerHTML = `
-      <span class="stream-label">${link.name}</span>
-    `;
-
-    linkRow.appendChild(a);
-  });
-
-  detailContent.appendChild(linkRow);
-}
-
-// ===== Merch: featured items + Visit Store (top) =====
-if (section.id === "merch") {
-
-  // Top: Visit Store button
-  if (section.shopUrl) {
-    const topRow = document.createElement('div');
-    topRow.className = 'cta-row';
-    topRow.style.marginTop = '0';
-    topRow.style.justifyContent = 'center';
-
-    const topBtn = document.createElement('a');
-    topBtn.className = 'btn';
-    topBtn.href = section.shopUrl;
-    topBtn.target = "_blank";
-    topBtn.rel = "noopener";
-    topBtn.textContent = 'Visit Store';
-
-    topRow.appendChild(topBtn);
-    detailContent.appendChild(topRow);
-  }
-
-  // Heading
-  const h = document.createElement('div');
-  h.className = 'panel-head';
-  h.textContent = 'Featured Merch';
-  detailContent.appendChild(h);
-
-  // Grid
-  const grid = document.createElement('div');
-  grid.className = 'merch-grid';
-
-  (section.products || []).forEach(p => {
-    const a = document.createElement('a');
-    a.className = 'merch-card';
-    a.href = p.url;
-    a.target = "_blank";
-    a.rel = "noopener";
-
-    a.innerHTML = `
-      <img class="merch-img" src="${p.img}" alt="${p.title}" loading="lazy">
-      <div class="merch-title">${p.title}</div>
-    `;
-
-    grid.appendChild(a);
-  });
-
-  detailContent.appendChild(grid);
-}
-
-// ===== News =====
-if (section.id === "news") {
-  const h = document.createElement('div');
-  h.className = 'panel-head';
-  h.textContent = 'Latest News';
-  detailContent.appendChild(h);
-
-  if (Array.isArray(section.posts) && section.posts.length) {
-    const wrap = document.createElement('div');
-    wrap.className = 'news-list';
-
-    section.posts.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'news-item';
-      card.innerHTML = `
-        <div class="news-date">${p.date || ''}</div>
-        <div class="news-title">${p.title || ''}</div>
-        <div class="news-text">${p.text || ''}</div>
-      `;
-      wrap.appendChild(card);
+      a.innerHTML = `<span class="stream-label">${link.name}</span>`;
+      linkRow.appendChild(a);
     });
 
-    detailContent.appendChild(wrap);
-  } else {
-    const empty = document.createElement('p');
-    empty.style.margin = '10px 0 0';
-    empty.style.opacity = '.85';
-    empty.textContent = 'No updates yet — check back soon.';
-    detailContent.appendChild(empty);
+    detailContent.appendChild(linkRow);
   }
-}
 
-  // 5) Tip jar at bottom (unchanged)
-  //if(tip) detailContent.appendChild(tip);
+  // =========================
+  // MERCH
+  // =========================
+  else if (section.id === "merch") {
+
+    // Top: Visit Store button
+    if (section.shopUrl) {
+      const topRow = document.createElement('div');
+      topRow.className = 'cta-row';
+      topRow.style.marginTop = '0';
+      topRow.style.justifyContent = 'center';
+
+      const topBtn = document.createElement('a');
+      topBtn.className = 'btn';
+      topBtn.href = section.shopUrl;
+      topBtn.target = "_blank";
+      topBtn.rel = "noopener";
+      topBtn.textContent = 'Visit Store';
+
+      topRow.appendChild(topBtn);
+      detailContent.appendChild(topRow);
+    }
+
+    // Heading
+    const h = document.createElement('div');
+    h.className = 'panel-head';
+    h.textContent = 'Featured Merch';
+    detailContent.appendChild(h);
+
+    // Grid
+    const grid = document.createElement('div');
+    grid.className = 'merch-grid';
+
+    (section.products || []).forEach(p => {
+      const a = document.createElement('a');
+      a.className = 'merch-card';
+      a.href = p.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+
+      a.innerHTML = `
+        <img class="merch-img" src="${p.img}" alt="${p.title}" loading="lazy">
+        <div class="merch-title">${p.title}</div>
+      `;
+
+      grid.appendChild(a);
+    });
+
+    detailContent.appendChild(grid);
+  }
+
+  // =========================
+  // NEWS
+  // =========================
+  else if (section.id === "news") {
+    const h = document.createElement('div');
+    h.className = 'panel-head';
+    h.textContent = 'Latest News';
+    detailContent.appendChild(h);
+
+    if (Array.isArray(section.posts) && section.posts.length) {
+      const wrap = document.createElement('div');
+      wrap.className = 'news-list';
+
+      section.posts.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'news-item';
+        card.innerHTML = `
+          <div class="news-date">${p.date || ''}</div>
+          <div class="news-title">${p.title || ''}</div>
+          <div class="news-text">${p.text || ''}</div>
+        `;
+        wrap.appendChild(card);
+      });
+
+      detailContent.appendChild(wrap);
+    } else {
+      const empty = document.createElement('p');
+      empty.style.margin = '10px 0 0';
+      empty.style.opacity = '.85';
+      empty.textContent = 'No updates yet — check back soon.';
+      detailContent.appendChild(empty);
+    }
+  }
+
+  // =========================
+  // RELEASES
+  // =========================
+  else if (section.id === "releases") {
+    const h = document.createElement('div');
+    h.className = 'panel-head';
+    h.textContent = 'Releases';
+    detailContent.appendChild(h);
+
+    if (Array.isArray(section.releases) && section.releases.length) {
+      const wrap = document.createElement('div');
+      wrap.className = 'release-list';
+
+      section.releases.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'release-item';
+
+        const coverHtml = r.cover
+          ? `<img class="release-cover" src="${r.cover}" alt="${r.title} cover" loading="lazy">`
+          : `<div class="release-cover placeholder" aria-hidden="true"></div>`;
+
+        const linksHtml = (Array.isArray(r.links) && r.links.length)
+          ? `
+            <div class="release-links">
+              ${r.links.map(link => {
+                const icon =
+                  (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
+                    ? PLATFORM_ICONS[link.platform]
+                    : '';
+                return `
+                  <a class="stream-btn" href="${link.url}" target="_blank" rel="noopener" data-platform="${link.platform || ''}">
+                    <span class="stream-ico">${icon}</span>
+                    <span class="stream-label">${link.name}</span>
+                  </a>
+                `;
+              }).join('')}
+            </div>
+          `
+          : '';
+
+        card.innerHTML = `
+          <div class="release-top">
+            ${coverHtml}
+            <div class="release-meta">
+              <div class="release-date">${r.date || ''}</div>
+              <div class="release-title">${r.title || ''}</div>
+              <div class="release-type">${r.type || ''}</div>
+              ${r.blurb ? `<div class="release-blurb">${r.blurb}</div>` : ''}
+            </div>
+          </div>
+          ${linksHtml}
+        `;
+
+        wrap.appendChild(card);
+      });
+
+      detailContent.appendChild(wrap);
+    } else {
+      const empty = document.createElement('div');
+      empty.style.marginTop = '10px';
+      empty.style.opacity = '.85';
+      empty.textContent = 'No releases listed yet.';
+      detailContent.appendChild(empty);
+    }
+  }
+
+  // =========================
+  // TIP JAR (always at bottom)
+  // =========================
+  if (tip) detailContent.appendChild(tip);
 
   // If you still want the top-right button in the card:
-  //primaryCta.textContent = section.ctaText || 'Start Here';
-  //primaryCta.href = section.ctaHref || '#';
+  // primaryCta.textContent = section.ctaText || 'Start Here';
+  // primaryCta.href = section.ctaHref || '#';
 }
 
     function setNowPlaying(section){
