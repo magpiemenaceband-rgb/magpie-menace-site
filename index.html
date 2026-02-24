@@ -2027,6 +2027,45 @@ const PLATFORM_ICONS = {
   `
 };
 
+// ===== Spreadshop embed (load once, render into #myShop when merch is active) =====
+const SPREADSHOP = {
+  loaded: false,
+  loading: false,
+  scriptSrc: "https://magpiemenace.myspreadshop.com/shopfiles/shopclient/shopclient.nocache.js",
+  shopUrl: "https://magpiemenace.myspreadshop.com",
+  shopName: "magpiemenace",
+  locale: "us_US",
+  baseId: "myShop"
+};
+
+function loadSpreadshopOnce(){
+  if (SPREADSHOP.loaded || SPREADSHOP.loading) return;
+  SPREADSHOP.loading = true;
+
+  // Spreadshop expects this config in window scope
+  window.spread_shop_config = {
+    shopName: SPREADSHOP.shopName,
+    locale: SPREADSHOP.locale,
+    prefix: SPREADSHOP.shopUrl,
+    baseId: SPREADSHOP.baseId
+  };
+
+  const s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.src = SPREADSHOP.scriptSrc;
+
+  s.onload = () => {
+    SPREADSHOP.loaded = true;
+    SPREADSHOP.loading = false;
+  };
+  s.onerror = () => {
+    SPREADSHOP.loading = false;
+    console.warn("Spreadshop embed failed to load.");
+  };
+
+  document.body.appendChild(s);
+}
+
 function setDetails(section){
   detailTitle.textContent = section.title;
   detailSubtitle.textContent = section.subtitle;
@@ -2036,6 +2075,36 @@ function setDetails(section){
 
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
+
+// ===== Merch: Spreadshop embedded store =====
+if (section.id === "merch") {
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Merch Store';
+  detailContent.appendChild(h);
+
+  const shopWrap = document.createElement('div');
+  shopWrap.innerHTML = `
+    <div id="myShop">
+      <a href="https://magpiemenace.myspreadshop.com">magpiemenace</a>
+      <div style="padding:10px 0; font-weight:800; opacity:.85;">Loading merch…</div>
+    </div>
+  `;
+  detailContent.appendChild(shopWrap);
+
+  // Load Spreadshop JS (only once)
+  loadSpreadshopOnce();
+
+  // Optional: add a fallback button in case embed is blocked
+  const row = document.createElement('div');
+  row.className = 'cta-row';
+  row.innerHTML = `
+    <a class="btn" href="https://magpiemenace.myspreadshop.com/" target="_blank" rel="noopener">
+      Shop on Spreadshop
+    </a>
+  `;
+  detailContent.appendChild(row);
+}
 
   // 1) Streaming Sites heading + buttons (Music only)
   if(section.id === "music" && Array.isArray(section.links) && section.links.length){
