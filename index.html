@@ -1377,7 +1377,7 @@ html{
       </div>
     </div>
 
-    <aside class="detail-card" aria-label="Section details">
+    <aside class="detail-card" id="detailPanel" aria-label="Section details">
       <div class="detail-head">
         <div>
           <h3 id="detailTitle">Magpie Menace</h3>
@@ -1634,6 +1634,24 @@ function moveCursor(x, y){
   cursorEl.style.setProperty('--x', `${x}px`);
   cursorEl.style.setProperty('--y', `${y}px`);
   cursorEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+}
+
+function isMobileish(){
+  // "hover: none" catches touch devices better than screen width alone
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    || window.innerWidth <= 720;
+}
+
+function scrollToDetails(){
+  const panel = document.getElementById('detailPanel');
+  if(!panel) return;
+
+  // Smooth scroll so user feels guided
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Optional: a tiny offset if your sticky header overlaps
+  // (uncomment if needed)
+  // setTimeout(() => window.scrollBy({ top: -80, left: 0, behavior: 'instant' }), 0);
 }
 
 window.addEventListener('pointermove', (e)=>{
@@ -2078,7 +2096,13 @@ SECTIONS.forEach(section => {
   `;
 
   btn.addEventListener('mouseenter', () => activate(section));
-  btn.addEventListener('click', () => activate(section));
+  btn.addEventListener('click', () => {
+  activate(section);
+
+  if(isMobileish()){
+    scrollToDetails();
+  }
+});
 
   tilesEl.appendChild(btn);
 });
