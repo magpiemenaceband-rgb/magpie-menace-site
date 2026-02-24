@@ -1362,6 +1362,13 @@ html{
   }
 }
 
+.merch-grid{
+  margin-top: 12px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr)); /* ✅ always 2 columns */
+  gap: 10px;
+}
+
   </style>
 </head>
 
@@ -2135,13 +2142,34 @@ if (section.id === "social" && Array.isArray(section.links)) {
   detailContent.appendChild(linkRow);
 }
 
-// ===== Merch: featured items + Shop All =====
+// ===== Merch: featured items + Visit Store (top) =====
 if (section.id === "merch") {
+
+  // Top: Visit Store button
+  if (section.shopUrl) {
+    const topRow = document.createElement('div');
+    topRow.className = 'cta-row';
+    topRow.style.marginTop = '0';
+    topRow.style.justifyContent = 'center';
+
+    const topBtn = document.createElement('a');
+    topBtn.className = 'btn';
+    topBtn.href = section.shopUrl;
+    topBtn.target = "_blank";
+    topBtn.rel = "noopener";
+    topBtn.textContent = 'Visit Store';
+
+    topRow.appendChild(topBtn);
+    detailContent.appendChild(topRow);
+  }
+
+  // Heading
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Featured Merch';
   detailContent.appendChild(h);
 
+  // Grid
   const grid = document.createElement('div');
   grid.className = 'merch-grid';
 
@@ -2161,22 +2189,6 @@ if (section.id === "merch") {
   });
 
   detailContent.appendChild(grid);
-
-  // Shop all button
-  if (section.ctaHref && section.ctaText) {
-    const row = document.createElement('div');
-    row.className = 'cta-row';
-
-    const btn = document.createElement('a');
-    btn.className = 'btn';
-    btn.href = section.ctaHref;
-    btn.target = "_blank";
-    btn.rel = "noopener";
-    btn.textContent = section.ctaText;
-
-    row.appendChild(btn);
-    detailContent.appendChild(row);
-  }
 }
 
   // 5) Tip jar at bottom (unchanged)
