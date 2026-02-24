@@ -1286,6 +1286,28 @@ html{
   margin-top: 10px !important;     /* try 10–14px */
 }
 
+.video-embed{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.video-embed iframe{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
   </style>
 </head>
 
@@ -1477,13 +1499,24 @@ html{
         cursorSrc: "assets/cursor-magpie-videos.png",
         previewSrc: "audio/videos-preview.mp3",
         subtitle: "Music videos, live cuts, and questionable decisions.",
-        bullets: [
-          "YouTube embeds",
-          "Live session highlights",
-          "Behind-the-scenes"
-        ],
+        
+		// ✅ Add this:
+  embed: `
+    <div class="video-embed">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/videoseries?list=PLhbt3ddH0jvPNCHiSO1o0hSWs0WVlOhkX&rel=0"
+        title="Magpie Menace videos"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+  `,
+  
+		bullets: [],
         ctaText: "Watch",
-        ctaHref: "#"
+        ctaHref: "https://www.youtube.com/@MagpieMenace/videos"
       },
       {
         id: "social",
