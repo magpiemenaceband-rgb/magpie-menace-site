@@ -1501,37 +1501,40 @@ html{
     <li>Tim hits dingers and Derek drains threes.</li>
     <li>Together, we make music to sooth your soul.</li>
   </ul>
+</div>
 
-  <div id="tipJarWrap">
-    <div class="qr" id="tipJarBlock">
-      <div class="qr-codes">
-        <div class="qr-item">
-          <a id="paypalLink" href="#" target="_blank" rel="noopener">
-            <img id="qrPaypal" alt="PayPal QR code" />
-          </a>
-          <div class="qr-label">PayPal</div>
-        </div>
+<!-- ✅ Put tip jar OUTSIDE detailContent so it never gets wiped -->
+<div id="tipJarWrap">
+  <div class="qr" id="tipJarBlock">
+    <div class="qr-codes">
 
-        <div class="qr-item">
-          <a id="cashAppLink" href="#" target="_blank" rel="noopener">
-            <img id="qrCashApp" alt="Cash App QR code" />
-          </a>
-          <div class="qr-label">Cash App</div>
-        </div>
-
-        <div class="qr-item">
-          <a id="venmoLink" href="#" target="_blank" rel="noopener">
-            <img id="qrVenmo" alt="Venmo QR code" />
-          </a>
-          <div class="qr-label">Venmo</div>
-        </div>
+      <div class="qr-item">
+        <a id="paypalLink" href="#" target="_blank" rel="noopener">
+          <img id="qrPaypal" alt="PayPal QR code" />
+        </a>
+        <div class="qr-label">PayPal</div>
       </div>
-    </div>
 
-    <div class="qr-text">
-      <div style="font-weight:850; margin-bottom:6px;">Support the Band</div>
-      <div class="support-note">We appreciate any and all tips. Thank you for keeping music alive!</div>
+      <div class="qr-item">
+        <a id="cashAppLink" href="#" target="_blank" rel="noopener">
+          <img id="qrCashApp" alt="Cash App QR code" />
+        </a>
+        <div class="qr-label">Cash App</div>
+      </div>
+
+      <div class="qr-item">
+        <a id="venmoLink" href="#" target="_blank" rel="noopener">
+          <img id="qrVenmo" alt="Venmo QR code" />
+        </a>
+        <div class="qr-label">Venmo</div>
+      </div>
+
     </div>
+  </div>
+
+  <div class="qr-text">
+    <div style="font-weight:850; margin-bottom:6px;">Support the Band</div>
+    <div class="support-note">We appreciate any and all tips. Thank you for keeping music alive!</div>
   </div>
 </div>
         </div>
@@ -1791,8 +1794,8 @@ function buildHomeBody(){
   frag.appendChild(ul);
 
   // Re-attach the existing tip jar block (it gets moved around by setDetails)
-  const tip = document.getElementById('tipJarWrap');
-  if (tip) frag.appendChild(tip);
+  //const tip = document.getElementById('tipJarWrap');
+  //if (tip) frag.appendChild(tip);
 
   return frag;
 }
@@ -2105,7 +2108,7 @@ function setDetails(section){
   detailSubtitle.textContent = section.subtitle;
 
   // Keep tip jar + text visible everywhere
-const tip = document.getElementById('tipJarWrap');
+//const tip = document.getElementById('tipJarWrap');
 
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
@@ -2304,7 +2307,7 @@ if (section.id === "merch") {
 }
 
   // 5) Tip jar at bottom (unchanged)
-  if(tip) detailContent.appendChild(tip);
+  //if(tip) detailContent.appendChild(tip);
 
   // If you still want the top-right button in the card:
   //primaryCta.textContent = section.ctaText || 'Start Here';
