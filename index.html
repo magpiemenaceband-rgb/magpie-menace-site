@@ -2541,18 +2541,19 @@ const PLATFORM_ICONS = {
 };
 
 function reloadMailerLite() {
-  // Remove existing universal.js if present
-  const existing = document.querySelector('script[src="https://assets.mailerlite.com/js/universal.js"]');
-  if (existing) existing.remove();
+  // Remove any existing universal.js
+  document
+    .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
+    .forEach(s => s.remove());
 
-  // Re-add it so it re-scans .ml-embedded blocks
+  // Re-add it (this forces a fresh scan of .ml-embedded blocks)
   const s = document.createElement('script');
   s.src = 'https://assets.mailerlite.com/js/universal.js';
   s.async = true;
 
   s.onload = () => {
     if (typeof window.ml === 'function') {
-      window.ml('account', '2142386'); // your account id
+      window.ml('account', '2142386');
     }
   };
 
@@ -2687,40 +2688,49 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embedded form)
+// MAGPIE MILITIA (MailerLite embedded form) — BULLETPROOF
 // =========================
 else if (section.id === "militia") {
 
+  // Heading
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // ✅ Build once, then reuse (prevents "won't reload after success" issue)
-  if (!militiaEmbedCache) {
-    const formWrap = document.createElement('div');
-    formWrap.className = 'embed-wrap';
-    formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
-    militiaEmbedCache = formWrap;
+  // Embed placeholder (MailerLite will render into this)
+  const formWrap = document.createElement('div');
+  formWrap.className = 'embed-wrap';
 
-    // Kick MailerLite once AFTER it's in the DOM
-    // (do it after append below)
-  }
+  // Nonce helps force a fresh render when returning after success state
+  const nonce = Date.now();
 
-  detailContent.appendChild(militiaEmbedCache);
+  formWrap.innerHTML = `
+    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}" data-nonce="${nonce}"></div>
+  `;
+  detailContent.appendChild(formWrap);
 
-  // ✅ Only try to init when we first create it
-  if (militiaEmbedCache.__mlInited !== true) {
-    militiaEmbedCache.__mlInited = true;
+  // ✅ Force MailerLite to re-scan / re-render every time this panel is shown
+  (function reloadMailerLite(){
+    // Remove any existing universal.js so it re-initializes cleanly
+    document
+      .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
+      .forEach(s => s.remove());
 
-    setTimeout(() => {
-      if (typeof window.ml === "function") {
+    // Re-add it (this forces a fresh scan of .ml-embedded blocks)
+    const s = document.createElement('script');
+    s.src = 'https://assets.mailerlite.com/js/universal.js';
+    s.async = true;
+
+    s.onload = () => {
+      if (typeof window.ml === 'function') {
         window.ml('account', '2142386');
       }
-    }, 0);
-  }
-}
+    };
 
+    document.head.appendChild(s);
+  })();
+}
 
   // =========================
   // EMBED (for non-music sections like Videos, etc.)
