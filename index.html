@@ -605,6 +605,14 @@ button.stop-pill{
    /* Cursor “peck” */
 	.mm-cursor.pecking img { animation: cursorImgPeck 220ms ease-out 1; }
 
+.mm-cursor{
+  z-index: 1000000;     /* above modal/backdrop */
+}
+
+.modal{
+  z-index: 999999;      /* modal below cursor */
+}
+
 @keyframes cursorImgPeck{
   0%{ transform: rotate(0deg) translateY(0) scale(1); }
   35%{ transform: rotate(-6deg) translateY(4px) scale(.99); }
