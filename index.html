@@ -2701,26 +2701,21 @@ function setDetails(section){
         const card = document.createElement('div');
         card.className = 'release-item';
 
-//troubleshooting help
-
-console.log(r.title, 'cover=', r.cover, 'resolved=', assetUrl(r.cover));
 
 // Build a root-safe cover path:
 // "assets/X.png" -> "/assets/X.png"
 // "http..." stays as-is
 
+const coverPath = (r.cover || "").replace(/^\/+/, ""); // strips leading "/"
 
-const coverPath = r.cover || "";
-const coverResolved = assetUrl(coverPath);
-
-const coverHtml = r.cover
+const coverHtml = coverPath
   ? `<img class="release-cover"
-          src="${encodeURI(r.cover)}"
+          src="${encodeURI(coverPath)}"
           alt="${r.title} cover"
           loading="lazy"
-          onerror="this.onerror=null; this.src='assets/Official%20Logo%20NoTest%20Transparent.png';">`
+          onerror="this.onerror=null; this.src='${encodeURI("assets/Official Logo NoTest Transparent.png")}';">`
   : `<img class="release-cover"
-          src="assets/Official%20Logo%20NoTest%20Transparent.png"
+          src="${encodeURI("assets/Official Logo NoTest Transparent.png")}"
           alt=""
           aria-hidden="true">`;
 
@@ -2743,7 +2738,6 @@ const coverHtml = r.cover
           `
           : '';
 		  
-console.log("RELEASE", r.title, "cover=", r.cover);
 
         card.innerHTML = `
           <div class="release-top">
@@ -2761,8 +2755,6 @@ console.log("RELEASE", r.title, "cover=", r.cover);
         wrap.appendChild(card);
       });
 
-const img = card.querySelector("img.release-cover");
-console.log("IMG SRC ATTR:", img?.getAttribute("src"));
 
       detailContent.appendChild(wrap);
     } else {
