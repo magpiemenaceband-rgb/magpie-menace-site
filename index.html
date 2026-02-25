@@ -2413,6 +2413,7 @@ const SMALL = window.innerWidth <= 720;
 // Default: previews ON only for non-mobile
 let audioEnabled = !MOBILE;
 let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
+let militiaEmbedCache = null;   // ✅ holds MailerLite DOM so it doesn't break on return
 
 if (MOBILE) {
   // previews should never play on iPhone/Android
@@ -2695,18 +2696,29 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // MailerLite embed placeholder
-  const formWrap = document.createElement('div');
-  formWrap.className = 'embed-wrap';
-  formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
-  detailContent.appendChild(formWrap);
+  // ✅ Build once, then reuse (prevents "won't reload after success" issue)
+  if (!militiaEmbedCache) {
+    const formWrap = document.createElement('div');
+    formWrap.className = 'embed-wrap';
+    formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
+    militiaEmbedCache = formWrap;
 
-  // ✅ Re-scan AFTER DOM insertion (single call)
-  setTimeout(() => {
-    if (typeof window.ml === "function") {
-      window.ml('account', '2142386');
-    }
-  }, 0);
+    // Kick MailerLite once AFTER it's in the DOM
+    // (do it after append below)
+  }
+
+  detailContent.appendChild(militiaEmbedCache);
+
+  // ✅ Only try to init when we first create it
+  if (militiaEmbedCache.__mlInited !== true) {
+    militiaEmbedCache.__mlInited = true;
+
+    setTimeout(() => {
+      if (typeof window.ml === "function") {
+        window.ml('account', '2142386');
+      }
+    }, 0);
+  }
 }
 
 
