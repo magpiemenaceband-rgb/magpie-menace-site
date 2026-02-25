@@ -1656,7 +1656,6 @@ html{
     ml('account', '2142386');
 </script>
 <!-- End MailerLite Universal -->
-<!-- End MailerLite Universal -->
 
 </head>
 
@@ -2685,29 +2684,29 @@ function setDetails(section){
       detailContent.appendChild(list);
     }
   }
+  
 // =========================
-  // MAGPIE MILITIA (MailerLite embedded form)
-  // =========================
-  else if (section.id === "militia") {
+// MAGPIE MILITIA (MailerLite embedded form)
+// =========================
+else if (section.id === "militia") {
 
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // ✅ THIS is where the MailerLite embed div goes
+  // MailerLite embed placeholder
   const formWrap = document.createElement('div');
   formWrap.className = 'embed-wrap';
-  formWrap.innerHTML = `
-    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
-  `;
+  formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
   detailContent.appendChild(formWrap);
 
-  // ✅ Force MailerLite to scan this newly added div
-  if (typeof ml === "function") {
-    ml('account', '2142386');
-  }
-
+  // ✅ Re-scan AFTER DOM insertion (single call)
+  setTimeout(() => {
+    if (typeof window.ml === "function") {
+      window.ml('account', '2142386');
+    }
+  }, 0);
 }
 
 
