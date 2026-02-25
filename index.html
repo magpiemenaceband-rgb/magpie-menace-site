@@ -2417,16 +2417,25 @@ const PLATFORM_ICONS = {
   `
 };
 
-function assetUrl(path){
-  if(!path) return '';
-  // Already absolute (http/https)
-  if(/^https?:\/\//i.test(path)) return path;
+function getBasePath() {
+  // For GitHub Pages project sites: /REPO_NAME/
+  if (location.hostname.endsWith("github.io")) {
+    const parts = location.pathname.split("/").filter(Boolean);
+    return parts.length ? `/${parts[0]}/` : "/";
+  }
+  // For custom domain / normal hosting: /
+  return "/";
+}
 
-  // Already root-absolute
-  if(path.startsWith('/')) return encodeURI(path);
+const BASE_PATH = getBasePath();
 
-  // Make it root-absolute
-  return encodeURI('/' + path.replace(/^\.?\//,''));
+function assetUrl(path) {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+
+  // make relative to base path
+  const clean = path.replace(/^\.?\//, "").replace(/^\/+/, "");
+  return encodeURI(BASE_PATH + clean);
 }
 
 function setDetails(section){
@@ -2692,7 +2701,11 @@ function setDetails(section){
         const card = document.createElement('div');
         card.className = 'release-item';
 
-        // Build a root-safe cover path:
+//troubleshooting help
+
+console.log(r.title, 'cover=', r.cover, 'resolved=', assetUrl(r.cover));
+
+// Build a root-safe cover path:
 // "assets/X.png" -> "/assets/X.png"
 // "http..." stays as-is
 const coverSrc = r.cover
@@ -2704,9 +2717,9 @@ const coverHtml = coverSrc
           src="${assetUrl(r.cover)}"
           alt="${r.title} cover"
           loading="lazy"
-          onerror="this.onerror=null; this.src='/assets/Official%20Logo%20NoTest%20Transparent.png';">`
+          onerror="this.onerror=null; this.src=assetUrl('assets/Official Logo NoTest Transparent.png');">`
   : `<img class="release-cover"
-          src="/assets/Official%20Logo%20NoTest%20Transparent.png"
+          src="${assetUrl('assets/Official Logo NoTest Transparent.png')}"
           alt=""
           aria-hidden="true">`;
 
