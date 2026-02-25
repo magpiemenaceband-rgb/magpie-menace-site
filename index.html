@@ -1710,6 +1710,73 @@ html{
   margin-bottom: 6px;
 }
 
+/* ===== PHOTOS STRIP ===== */
+.photo-strip{
+  margin-top: 12px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 24px) / 3); /* 3 visible at once */
+  gap: 12px;
+
+  overflow-x: auto;
+  padding: 6px 2px 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.photo-thumb{
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 0;
+  aspect-ratio: 1 / 1;
+  scroll-snap-align: start;
+
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.photo-thumb:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.26);
+}
+
+.photo-thumb img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Slightly wider thumbs on tiny screens */
+@media (max-width: 520px){
+  .photo-strip{
+    grid-auto-columns: calc((100% - 12px) / 2.2);
+  }
+}
+
+/* ===== PHOTO MODAL tweaks ===== */
+.photo-modal-card{
+  width: min(860px, 94vw);
+  margin: 8vh auto;
+}
+
+.photo-modal-body{
+  padding: 12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#photoModalImg{
+  max-width: 100%;
+  max-height: 72vh;
+  border-radius: 16px;
+  display:block;
+  box-shadow: 0 18px 60px rgba(0,0,0,.35);
+}
 
   </style>
 
@@ -1972,7 +2039,14 @@ html{
       name: "X",
       url: "https://x.com/Magpie__Menace"
     }
-  ]
+  ],
+  
+  photos: [
+  { thumb: "assets/photos/p1-thumb.jpg", full: "assets/photos/p1.jpg", alt: "Live shot" },
+  { thumb: "assets/photos/p2-thumb.jpg", full: "assets/photos/p2.jpg", alt: "Studio" },
+  { thumb: "assets/photos/p3-thumb.jpg", full: "assets/photos/p3.jpg", alt: "Crowd" },
+]
+
 },
       {
   id: "merch",
@@ -2854,32 +2928,123 @@ else if (section.id === "militia") {
     detailContent.appendChild(embedWrap);
   }
 
+/ =========================
+// SOCIAL
+// =========================
+else if (section.id === "social") {
+
+  // FOLLOW US heading
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Follow Us';
+  detailContent.appendChild(h);
+
+  // Links row
+  const linkRow = document.createElement('div');
+  linkRow.className = 'streaming-links';
+
+  (section.links || []).forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'stream-btn';
+    a.href = link.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.dataset.platform = link.platform || '';
+    a.innerHTML = `<span class="stream-label">${link.name}</span>`;
+    linkRow.appendChild(a);
+  });
+
+  detailContent.appendChild(linkRow);
+
   // =========================
-  // SOCIAL
+  // PHOTOS
   // =========================
-  else if (section.id === "social") {
-    const h = document.createElement('div');
-    h.className = 'panel-head';
-    h.textContent = 'Follow Us';
-    detailContent.appendChild(h);
+  if (Array.isArray(section.photos) && section.photos.length) {
+    const ph = document.createElement('div');
+    ph.className = 'panel-head';
+    ph.textContent = 'Photos'; // matches your other headings’ casing style
+    detailContent.appendChild(ph);
 
-    const linkRow = document.createElement('div');
-    linkRow.className = 'streaming-links';
+    const gallery = document.createElement('div');
+    gallery.className = 'photo-strip';
 
-    (section.links || []).forEach(link => {
-      const a = document.createElement('a');
-      a.className = 'stream-btn';
-      a.href = link.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.dataset.platform = link.platform || '';
+    section.photos.forEach((p) => {
+      // Normalize field names so you can use thumb/full OR src
+      const full = p.full || p.src || p.url || '';
+      const thumb = p.thumb || full;
+      const alt = p.alt || 'Photo';
 
-      a.innerHTML = `<span class="stream-label">${link.name}</span>`;
-      linkRow.appendChild(a);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'photo-thumb';
+      btn.setAttribute('aria-label', `Open photo: ${alt}`);
+
+      const img = document.createElement('img');
+      img.src = thumb;
+      img.alt = alt;
+      img.loading = 'lazy';
+
+      btn.appendChild(img);
+
+      btn.addEventListener('click', () => {
+        // Preferred: modal
+        if (typeof window.openPhotoModal === 'function') {
+          window.openPhotoModal(full || thumb, alt);
+          return;
+        }
+
+        // Fallback: open image in new tab
+        if (full || thumb) {
+          window.open(full || thumb, '_blank', 'noopener');
+        }
+      });
+
+      gallery.appendChild(btn);
     });
 
-    detailContent.appendChild(linkRow);
+    detailContent.appendChild(gallery);
   }
+
+}
+
+
+// =========================
+// PHOTO MODAL HELPERS
+// =========================
+
+function openPhotoModal(src, alt=''){
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('photoModalImg');
+  if(!modal || !img || !src) return;
+
+  img.src = src;
+  img.alt = alt;
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closePhotoModal(){
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('photoModalImg');
+  if(!modal || !img) return;
+
+  modal.setAttribute('aria-hidden', 'true');
+  img.src = '';
+}
+
+// Close on backdrop or X
+document.addEventListener('click', (e)=>{
+  if(e.target?.matches?.('#photoModal [data-close]')){
+    closePhotoModal();
+  }
+});
+
+// Close on ESC
+window.addEventListener('keydown', (e)=>{
+  const modal = document.getElementById('photoModal');
+  if(e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false'){
+    closePhotoModal();
+  }
+});
 
   // =========================
   // MERCH
@@ -3315,5 +3480,23 @@ updateStopButton();
       if(contactNote) contactNote.textContent = 'Sending…';
     });
   </script>
+  
+  <div class="modal" id="photoModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close="1"></div>
+
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Photo</div>
+      </div>
+      <button class="modal-x" type="button" data-close="1">×</button>
+    </div>
+
+    <div style="padding: 0;">
+      <img id="photoModalImg" alt="" style="width:100%; height:auto; display:block;">
+    </div>
+  </div>
+</div>
+  
 </body>
 </html>
