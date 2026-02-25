@@ -511,7 +511,7 @@ button.stop-pill{
       gap:20px;
       align-items:center;
 	  justify-content:center;
-      margin-top:16px;
+      margin-top:18px;
       padding:14px;
       border-radius: 18px;
       border:1px dashed rgba(180,58,58,.35);
@@ -992,6 +992,14 @@ html{
 
 .support-note{
   color: rgba(255,255,255,.92);
+  text-align: center;
+}
+
+.support-note h4,
+.support-note p{
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .detail-body iframe{
@@ -1692,8 +1700,15 @@ html{
   z-index: 51;
 }
 
-/* .militia-fallback{ outline: 2px solid lime !important; } */
-/* .militia-fallback .btn{ outline: 2px solid cyan !important; } */
+.qr-text{
+  text-align: center;
+  margin-top: 18x; /* optional breathing room */
+}
+
+.qr-text > div:first-child{
+  font-weight: 900;
+  margin-bottom: 6px;
+}
 
 
   </style>
@@ -1834,7 +1849,7 @@ html{
 
   <div class="qr-text">
     <div style="font-weight:850; margin-bottom:6px;">Support the Band</div>
-    <div class="support-note">We appreciate any and all tips. Thank you for keeping music alive!</div>
+    <div class="support-note">We appreciate all tips, no matter the amount. Thank you for keeping our music alive!</div>
   </div>
 </div>
         </div>
