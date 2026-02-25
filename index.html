@@ -1558,6 +1558,75 @@ html{
   border: 1px solid rgba(255,255,255,.18);
 }
 
+/* Contact modal */
+.modal{ position:fixed; inset:0; z-index:99999; display:none; }
+.modal[aria-hidden="false"]{ display:block; }
+
+.modal-backdrop{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modal-card{
+  position:relative;
+  width: min(560px, 92vw);
+  margin: 10vh auto;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 18px 60px rgba(0,0,0,.35);
+  overflow:hidden;
+  color: #fff;
+}
+
+.modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+
+.modal-title{ font-weight: 950; font-size: 18px; }
+.modal-sub{ margin-top: 4px; font-size: 13px; opacity: .9; }
+
+.modal-x{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color:#fff;
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  font-weight: 900;
+}
+
+.modal-form{ padding: 14px 16px 16px; display:grid; gap: 12px; }
+.modal-form label span{ display:block; font-size:12px; font-weight:900; opacity:.92; margin-bottom:6px; }
+
+.modal-form input,
+.modal-form textarea{
+  width:100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.14);
+  color:#fff;
+  outline:none;
+}
+
+.modal-form input:focus,
+.modal-form textarea:focus{
+  border-color: rgba(255,255,255,.35);
+}
+
+.modal-note{ font-size: 12px; opacity: .92; min-height: 16px; }
+
   </style>
 </head>
 
@@ -1588,7 +1657,7 @@ html{
   <div class="actions">
     <a class="pill" href="#" id="tipLink" target="_blank" rel="noopener">Tip Jar</a>
     <a class="pill" href="#" id="joinMailing">Magpie Militia</a>
-    <a class="pill" href="#" id="bookUs">Book Us</a>
+    <a class="pill" href="#" id="bookUs">Hit Us Up</a>
   </div>
 
 </div>
@@ -2917,10 +2986,46 @@ document.getElementById('joinMailing').addEventListener('click', (e)=>{
     centerStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
+const contactModal = document.getElementById('contactModal');
+const contactNote = document.getElementById('contactNote');
+const contactForm = document.getElementById('contactForm');
+
+function openContact(){
+  if(!contactModal) return;
+  contactModal.setAttribute('aria-hidden', 'false');
+  contactNote.textContent = '';
+  // focus first input
+  const first = contactModal.querySelector('input,textarea,button');
+  if(first) setTimeout(()=> first.focus(), 0);
+}
+
+function closeContact(){
+  if(!contactModal) return;
+  contactModal.setAttribute('aria-hidden', 'true');
+}
+
 document.getElementById('bookUs').addEventListener('click', (e)=>{
   e.preventDefault();
-  alert('Hook this up to your booking email or form.');
+  openContact();
 });
+
+// close on backdrop / X
+contactModal?.addEventListener('click', (e)=>{
+  if(e.target?.matches?.('[data-close]')) closeContact();
+});
+
+// close on ESC
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && contactModal?.getAttribute('aria-hidden') === 'false'){
+    closeContact();
+  }
+});
+
+// optional: show a friendly message after submit (Formspree will still handle emailing)
+contactForm?.addEventListener('submit', ()=>{
+  contactNote.textContent = 'Sending…';
+});
+
 document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -2961,5 +3066,44 @@ window.addEventListener('pointerdown', async () => {
 updateStopButton();
 
   </script>
+  
+  <!-- Contact Modal -->
+<div class="modal" id="contactModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="contactTitle">Hit Us Up</div>
+        <div class="modal-sub">Send a message to Magpie Menace.</div>
+      </div>
+      <button class="modal-x" type="button" data-close aria-label="Close">✕</button>
+    </div>
+
+    <form class="modal-form" id="contactForm" action="https://formspree.io/f/xojnypbd" method="POST">
+      <label>
+        <span>Name</span>
+        <input name="name" autocomplete="name" required>
+      </label>
+
+      <label>
+        <span>Email</span>
+        <input name="email" type="email" autocomplete="email" required>
+      </label>
+
+      <label>
+        <span>Message</span>
+        <textarea name="message" rows="5" required></textarea>
+      </label>
+
+      <!-- optional: helps Formspree route replies -->
+      <input type="hidden" name="_subject" value="New message from MagpieMenace.com">
+
+      <button class="btn" type="submit" id="contactSend">Send</button>
+      <div class="modal-note" id="contactNote" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+  
 </body>
 </html>
