@@ -2539,6 +2539,25 @@ const PLATFORM_ICONS = {
   `
 };
 
+function reloadMailerLite() {
+  // Remove existing universal.js if present
+  const existing = document.querySelector('script[src="https://assets.mailerlite.com/js/universal.js"]');
+  if (existing) existing.remove();
+
+  // Re-add it so it re-scans .ml-embedded blocks
+  const s = document.createElement('script');
+  s.src = 'https://assets.mailerlite.com/js/universal.js';
+  s.async = true;
+
+  s.onload = () => {
+    if (typeof window.ml === 'function') {
+      window.ml('account', '2142386'); // your account id
+    }
+  };
+
+  document.head.appendChild(s);
+}
+
 
 // SET DETAILS SECTION
 
@@ -2669,36 +2688,26 @@ function setDetails(section){
   // MAGPIE MILITIA (MailerLite embedded form)
   // =========================
   else if (section.id === "militia") {
-    // Heading
-    const h = document.createElement('div');
-    h.className = 'panel-head';
-    h.textContent = 'Join the Magpie Militia';
-    detailContent.appendChild(h);
 
-    // MailerLite embed placeholder (this is the exact snippet MailerLite gave you)
-    const formWrap = document.createElement('div');
-    formWrap.className = 'embed-wrap';
-    formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
-    detailContent.appendChild(formWrap);
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Join the Magpie Militia';
+  detailContent.appendChild(h);
 
-    // ✅ Fallback button (opens popup) in case embedded form doesn't render on dynamic injection
-    const ctaRow = document.createElement('div');
-    ctaRow.className = 'cta-row';
-    ctaRow.style.justifyContent = 'center';
+  // ✅ THIS is where the MailerLite embed div goes
+  const formWrap = document.createElement('div');
+  formWrap.className = 'embed-wrap';
+  formWrap.innerHTML = `
+    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
+  `;
+  detailContent.appendChild(formWrap);
 
-    const popupBtn = document.createElement('button');
-    popupBtn.type = 'button';
-    popupBtn.className = 'btn';
-    popupBtn.textContent = 'Open Sign-Up Form';
-    popupBtn.addEventListener('click', () => {
-      if (typeof ml === 'function') {
-        ml('show', section.mlFormId || '3Ktjuu', true);
-      }
-    });
-
-    ctaRow.appendChild(popupBtn);
-    detailContent.appendChild(ctaRow);
+  // ✅ Force MailerLite to scan this newly added div
+  if (typeof ml === "function") {
+    ml('account', '2142386');
   }
+
+}
 
 
   // =========================
