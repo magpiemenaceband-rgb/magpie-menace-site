@@ -3008,44 +3008,6 @@ else if (section.id === "social") {
 }
 
 
-// =========================
-// PHOTO MODAL HELPERS
-// =========================
-
-function openPhotoModal(src, alt=''){
-  const modal = document.getElementById('photoModal');
-  const img = document.getElementById('photoModalImg');
-  if(!modal || !img || !src) return;
-
-  img.src = src;
-  img.alt = alt;
-  modal.setAttribute('aria-hidden', 'false');
-}
-
-function closePhotoModal(){
-  const modal = document.getElementById('photoModal');
-  const img = document.getElementById('photoModalImg');
-  if(!modal || !img) return;
-
-  modal.setAttribute('aria-hidden', 'true');
-  img.src = '';
-}
-
-// Close on backdrop or X
-document.addEventListener('click', (e)=>{
-  if(e.target?.matches?.('#photoModal [data-close]')){
-    closePhotoModal();
-  }
-});
-
-// Close on ESC
-window.addEventListener('keydown', (e)=>{
-  const modal = document.getElementById('photoModal');
-  if(e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false'){
-    closePhotoModal();
-  }
-});
-
   // =========================
   // MERCH
   // =========================
@@ -3214,7 +3176,7 @@ else if (section.id === "releases") {
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
     }
 	
-	function disableHoverAudioForExternalPlayer(){
+function disableHoverAudioForExternalPlayer(){
   fadeToken++;
   stopAll();            // stops preview audio + clears activeAudioId
   audioEnabled = false; // disables hover-trigger audio
@@ -3264,6 +3226,41 @@ function updateStopButton(){
   }, 90);
 }
 
+// =========================
+// PHOTO MODAL HELPERS
+// =========================
+
+function openPhotoModal(src, alt=''){
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('photoModalImg');
+  if(!modal || !img || !src) return;
+
+  img.src = src;
+  img.alt = alt;
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closePhotoModal(){
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('photoModalImg');
+  if(!modal || !img) return;
+
+  modal.setAttribute('aria-hidden', 'true');
+  img.src = '';
+}
+
+document.addEventListener('click', (e)=>{
+  if(e.target?.matches?.('#photoModal [data-close]')){
+    closePhotoModal();
+  }
+});
+
+window.addEventListener('keydown', (e)=>{
+  const modal = document.getElementById('photoModal');
+  if(e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false'){
+    closePhotoModal();
+  }
+});
 
 async function activate(section){
   // Always do visuals + UI updates
