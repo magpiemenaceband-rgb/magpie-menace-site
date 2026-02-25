@@ -3025,8 +3025,9 @@ window.addEventListener('pointerdown', async () => {
   if (!MOBILE && audioEnabled && !audioArmed) await armAudioOnce();
   updateStopButton();
 }, { once:true });
-updateStopButton();
 
+updateStopButton();
+</script>
  
   <!-- Contact Modal -->
 <div class="modal" id="contactModal" aria-hidden="true">
@@ -3065,8 +3066,8 @@ updateStopButton();
     </form>
   </div>
 </div>
-    <!-- ✅ Put THIS inside script, after the modal exists -->
 
+<script>
     const contactModal = document.getElementById('contactModal');
     const contactNote  = document.getElementById('contactNote');
     const contactForm  = document.getElementById('contactForm');
