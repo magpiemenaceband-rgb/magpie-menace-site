@@ -1573,7 +1573,7 @@ html{
   <!-- LEFT: Bird logo -->
   <div class="logo-mark">
   <a href="/">
-    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Logo">
+    <img src="${assetUrl('assets/Official Logo NoTest Transparent.png')}" alt="Magpie Menace logo">
   </a>
 </div>
 
@@ -1642,7 +1642,7 @@ html{
       <div class="detail-body">
       <div id="detailContent">
   <div class="home-logo">
-    <img src="assets/Official Logo NoTest Transparent.png" alt="Magpie Menace logo">
+    <img src="${assetUrl('assets/Official Logo NoTest Transparent.png')}" alt="Magpie Menace logo">
   </div>
 </div>
 
@@ -2096,6 +2096,7 @@ html{
 // HOME (default Magpie Menace view)
 // ============================
 
+
 // Capture the initial home state from the DOM (before setDetails() ever runs)
 const HOME_TITLE = detailTitle.textContent || "Magpie Menace";
 const HOME_SUBTITLE = detailSubtitle.textContent || "Choose a section to explore.";
@@ -2238,9 +2239,9 @@ const venmoLink = document.getElementById('venmoLink');
 
 
 function buildPaymentQrs(){
-  qrPaypal.src  = "assets/qrcode-paypal.png";
-  qrCashApp.src = "assets/qrcode-cashapp.png";
-  qrVenmo.src   = "assets/qrcode-venmo.png";
+  qrPaypal.src  = assetUrl("assets/qrcode-paypal.png");
+  qrCashApp.src = assetUrl("assets/qrcode-cashapp.png");
+  qrVenmo.src   = assetUrl("assets/qrcode-venmo.png");
 
   paypalLink.href  = TIP_JAR_URL;
   cashAppLink.href = CASHAPP_URL;
@@ -2433,10 +2434,17 @@ function assetUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
 
-  // make relative to base path
-  const clean = path.replace(/^\.?\//, "").replace(/^\/+/, "");
+  const clean = String(path).replace(/^\.?\//, "").replace(/^\/+/, "");
   return encodeURI(BASE_PATH + clean);
 }
+
+function toPublicUrl(path) {
+  // Use BASE_PATH so it works both on custom domain AND github.io repo pages
+  return assetUrl(path);
+}
+
+
+// SET DETAILS SECTION
 
 function setDetails(section){
   detailTitle.textContent = section.title;
@@ -2688,99 +2696,90 @@ function setDetails(section){
   // RELEASES
   // =========================
   else if (section.id === "releases") {
-    const h = document.createElement('div');
-    h.className = 'panel-head';
-    h.textContent = 'Releases';
-    detailContent.appendChild(h);
+  const h = document.createElement("div");
+  h.className = "panel-head";
+  h.textContent = "Releases";
+  detailContent.appendChild(h);
 
-    if (Array.isArray(section.releases) && section.releases.length) {
-      const wrap = document.createElement('div');
-      wrap.className = 'release-list';
+  if (!Array.isArray(section.releases) || !section.releases.length) {
+    const empty = document.createElement("div");
+    empty.style.marginTop = "10px";
+    empty.style.opacity = ".85";
+    empty.textContent = "No releases listed yet.";
+    detailContent.appendChild(empty);
+  } else {
+    const wrap = document.createElement("div");
+    wrap.className = "release-list";
 
-      section.releases.forEach(r => {
-        const card = document.createElement('div');
-        card.className = 'release-item';
+    const fallback = assetUrl("assets/Official Logo NoTest Transparent.png");
 
+    section.releases.forEach((r) => {
+      const card = document.createElement("div");
+      card.className = "release-item";
 
-// Build a root-safe cover path:
+      const coverSrc = r.cover ? assetUrl(r.cover) : fallback;
 
-const rawCover = (r.cover || "").trim();
-const coverPath = rawCover.replace(/^\/+/, ""); // keep it relative
-const fallback = "assets/Official%20Logo%20NoTest%20Transparent.png";
-const coverSrc = coverPath ? encodeURI(coverPath) : fallback;
+      const coverHtml = `
+        <img class="release-cover"
+             src="${coverSrc}"
+             alt="${r.cover ? `${r.title} cover` : ""}"
+             loading="lazy"
+             onerror="this.onerror=null; this.src='${fallback}';">
+      `;
 
-const coverHtml = `
-  <img class="release-cover"
-       src="${coverSrc}"
-       data-cover="${coverSrc}"
-       alt="${coverPath ? `${r.title} cover` : ''}"
-       loading="lazy"
-       onerror="
-         console.warn('COVER ERROR for:', '${(r.title || '').replace(/'/g, "\\'")}', 
-                      'src=', this.getAttribute('src'),
-                      'data-cover=', this.dataset.cover);
-         this.onerror=null; 
-         this.src='${fallback}';
-       "
-       onload="
-         console.log('COVER LOAD for:', '${(r.title || '').replace(/'/g, "\\'")}', 
-                     'src=', this.getAttribute('src'),
-                     'data-cover=', this.dataset.cover,
-                     'currentSrc=', this.currentSrc);
-       ">
-`;
-
-        const linksHtml = (Array.isArray(r.links) && r.links.length)
+      const linksHtml =
+        Array.isArray(r.links) && r.links.length
           ? `
             <div class="release-links">
-              ${r.links.map(link => {
-                const icon =
-                  (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
-                    ? PLATFORM_ICONS[link.platform]
-                    : '';
-                return `
-                  <a class="stream-btn" href="${link.url}" target="_blank" rel="noopener" data-platform="${link.platform || ''}">
-                    <span class="stream-ico">${icon}</span>
-                    <span class="stream-label">${link.name}</span>
-                  </a>
-                `;
-              }).join('')}
+              ${r.links
+                .map((link) => {
+                  const icon =
+                    (typeof PLATFORM_ICONS !== "undefined" &&
+                      PLATFORM_ICONS[link.platform])
+                      ? PLATFORM_ICONS[link.platform]
+                      : "";
+
+                  return `
+                    <a class="stream-btn"
+                       href="${link.url}"
+                       target="_blank"
+                       rel="noopener"
+                       data-platform="${link.platform || ""}">
+                      <span class="stream-ico">${icon}</span>
+                      <span class="stream-label">${link.name}</span>
+                    </a>
+                  `;
+                })
+                .join("")}
             </div>
           `
-          : '';
-		  
+          : "";
 
-        card.innerHTML = `
-          <div class="release-top">
-            ${coverHtml}
-            <div class="release-meta">
-              <div class="release-date">${r.date || ''}</div>
-              <div class="release-title">${r.title || ''}</div>
-              <div class="release-type">${r.type || ''}</div>
-              ${r.blurb ? `<div class="release-blurb">${r.blurb}</div>` : ''}
-            </div>
+      card.innerHTML = `
+        <div class="release-top">
+          ${coverHtml}
+          <div class="release-meta">
+            <div class="release-date">${r.date || ""}</div>
+            <div class="release-title">${r.title || ""}</div>
+            <div class="release-type">${r.type || ""}</div>
+            ${r.blurb ? `<div class="release-blurb">${r.blurb}</div>` : ""}
           </div>
-          ${linksHtml}
-        `;
+        </div>
+        ${linksHtml}
+      `;
 
-        wrap.appendChild(card);
-      });
+      wrap.appendChild(card);
+    });
 
-
-      detailContent.appendChild(wrap);
-    } else {
-      const empty = document.createElement('div');
-      empty.style.marginTop = '10px';
-      empty.style.opacity = '.85';
-      empty.textContent = 'No releases listed yet.';
-      detailContent.appendChild(empty);
-    }
+    detailContent.appendChild(wrap);
   }
+}
 
   // =========================
   // TIP JAR (always at bottom)
   // =========================
-  if (tip) detailContent.appendChild(tip);
+ 
+ if (tip) detailContent.appendChild(tip);
 
   // If you still want the top-right button in the card:
   // primaryCta.textContent = section.ctaText || 'Start Here';
@@ -2906,6 +2905,7 @@ btn.addEventListener('click', () => {
 
   tilesEl.appendChild(btn);
 });
+
 
 // Cursor shrink when leaving the top links row
 tilesEl.addEventListener('mouseleave', () => {
