@@ -2703,21 +2703,32 @@ function setDetails(section){
 
 
 // Build a root-safe cover path:
-// "assets/X.png" -> "/assets/X.png"
-// "http..." stays as-is
 
-const coverPath = (r.cover || "").replace(/^\/+/, ""); // strips leading "/"
+const rawCover = (r.cover || "").trim();
 
-const coverHtml = coverPath
-  ? `<img class="release-cover"
-          src="${encodeURI(coverPath)}"
-          alt="${r.title} cover"
-          loading="lazy"
-          onerror="this.onerror=null; this.src='${encodeURI("assets/Official Logo NoTest Transparent.png")}';">`
-  : `<img class="release-cover"
-          src="${encodeURI("assets/Official Logo NoTest Transparent.png")}"
-          alt=""
-          aria-hidden="true">`;
+// Keep absolute URLs unchanged, otherwise make it relative (strip any leading "/")
+const coverPath = /^https?:\/\//i.test(rawCover)
+  ? rawCover
+  : rawCover.replace(/^\/+/, "");
+
+const fallback = "assets/Official%20Logo%20NoTest%20Transparent.png";
+const coverSrc = coverPath ? encodeURI(coverPath) : fallback;
+
+const coverHtml = `
+  <img class="release-cover"
+       src="${coverSrc}"
+       alt="${coverPath ? `${r.title} cover` : ''}"
+       loading="lazy"
+       onerror="this.onerror=null; this.src='${fallback}';">
+`;
+
+const coverHtml = `
+  <img class="release-cover"
+       src="${coverSrc}"
+       alt="${coverPath ? `${r.title} cover` : ''}"
+       loading="lazy"
+       onerror="this.onerror=null; this.src='${fallback}';">
+`;
 
         const linksHtml = (Array.isArray(r.links) && r.links.length)
           ? `
