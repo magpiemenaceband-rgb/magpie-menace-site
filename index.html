@@ -2116,6 +2116,8 @@ function buildHomeBody(){
 }
 
 function showHome(){
+	const tip = document.getElementById('tipJarWrap');
+	
   // Reset title/subtitle
   detailTitle.textContent = HOME_TITLE;
   detailSubtitle.textContent = HOME_SUBTITLE;
@@ -2124,6 +2126,9 @@ function showHome(){
   detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
+  // ✅ Keep tip jar at bottom on Home too
+  if (tip) detailContent.appendChild(tip);
+  
   // Optional: reset cursor + status text to "home" feel
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
