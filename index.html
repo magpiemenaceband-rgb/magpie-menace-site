@@ -2044,10 +2044,10 @@ html{
     },
 	{
       date: "1-17-2025",
-      title: "Out of My Head Logo.png",
+      title: "Out of My Head",
       type: "Single",
       cover: "assets/Out-of-My-Head-Cover.png",
-      blurb: "It's hard to stop thinking about the trials of love.",
+      blurb: "Sometimes thoughts get trapped in your head.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/3KeEEn50tfGb9OitZLSgAh?si=e906853486254f30" },
         { platform: "apple", name: "Apple Music", url: "https://music.apple.com/us/album/out-of-my-head-single/1789390136" },
@@ -2708,18 +2708,19 @@ console.log(r.title, 'cover=', r.cover, 'resolved=', assetUrl(r.cover));
 // Build a root-safe cover path:
 // "assets/X.png" -> "/assets/X.png"
 // "http..." stays as-is
-const coverSrc = r.cover
-  ? (r.cover.startsWith('http') ? r.cover : '/' + r.cover.replace(/^\.?\//, ''))
-  : '';
 
-const coverHtml = coverSrc
+
+const coverPath = r.cover || "";
+const coverResolved = assetUrl(coverPath);
+
+const coverHtml = r.cover
   ? `<img class="release-cover"
-          src="${assetUrl(r.cover)}"
+          src="${encodeURI(r.cover)}"
           alt="${r.title} cover"
           loading="lazy"
-          onerror="this.onerror=null; this.src=assetUrl('assets/Official Logo NoTest Transparent.png');">`
+          onerror="this.onerror=null; this.src='assets/Official%20Logo%20NoTest%20Transparent.png';">`
   : `<img class="release-cover"
-          src="${assetUrl('assets/Official Logo NoTest Transparent.png')}"
+          src="assets/Official%20Logo%20NoTest%20Transparent.png"
           alt=""
           aria-hidden="true">`;
 
@@ -2741,6 +2742,8 @@ const coverHtml = coverSrc
             </div>
           `
           : '';
+		  
+console.log("RELEASE", r.title, "cover=", r.cover);
 
         card.innerHTML = `
           <div class="release-top">
@@ -2757,6 +2760,9 @@ const coverHtml = coverSrc
 
         wrap.appendChild(card);
       });
+
+const img = card.querySelector("img.release-cover");
+console.log("IMG SRC ATTR:", img?.getAttribute("src"));
 
       detailContent.appendChild(wrap);
     } else {
