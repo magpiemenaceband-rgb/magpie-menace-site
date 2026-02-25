@@ -1692,8 +1692,8 @@ html{
   z-index: 51;
 }
 
-.militia-fallback{ outline: 2px solid lime !important; }
-.militia-fallback .btn{ outline: 2px solid cyan !important; }
+/* .militia-fallback{ outline: 2px solid lime !important; } */
+/* .militia-fallback .btn{ outline: 2px solid cyan !important; } */
 
 
   </style>
@@ -2783,17 +2783,33 @@ else if (section.id === "militia") {
     btn.textContent = 'Join the Magpie Militia';
 
     btn.addEventListener('click', () => {
-      if (typeof window.ml === 'function') {
-        try {
-          window.ml('show', formId, true);
-          return;
-        } catch (err) {}
-      }
+  // Try popup first if available…
+  if (typeof window.ml === 'function') {
+    try {
+      window.ml('show', formId, true);
+      // ✅ DO NOT return yet.
+      // If popup fails to show, we'll hard-fallback after a beat.
+    } catch (err) {
+      // ignore and fall through
+    }
+  }
 
-      if (fallbackUrl) {
-        window.location.assign(fallbackUrl);
-      }
-    });
+  // ✅ Hard fallback (same tab works on iPhone)
+  // Give the popup a moment; if it didn't appear, navigate.
+  setTimeout(() => {
+    // If any MailerLite popup-ish element exists, don't redirect.
+    // (This is intentionally broad so it works across ML variations.)
+    const popupOpen =
+      document.querySelector('[class*="ml-form"]') ||
+      document.querySelector('[id*="mlb"]') ||
+      document.querySelector('[class*="ml-overlay"]') ||
+      document.querySelector('[class*="ml-popup"]');
+
+    if (!popupOpen && fallbackUrl) {
+      window.location.assign(fallbackUrl);
+    }
+  }, 250);
+});
 
     fb.appendChild(t);
     fb.appendChild(btn);
