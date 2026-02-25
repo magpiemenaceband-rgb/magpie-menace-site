@@ -2987,45 +2987,6 @@ document.getElementById('joinMailing').addEventListener('click', (e)=>{
   }
 });
 
-const contactModal = document.getElementById('contactModal');
-const contactNote = document.getElementById('contactNote');
-const contactForm = document.getElementById('contactForm');
-
-function openContact(){
-  if(!contactModal) return;
-  contactModal.setAttribute('aria-hidden', 'false');
-  contactNote.textContent = '';
-  // focus first input
-  const first = contactModal.querySelector('input,textarea,button');
-  if(first) setTimeout(()=> first.focus(), 0);
-}
-
-function closeContact(){
-  if(!contactModal) return;
-  contactModal.setAttribute('aria-hidden', 'true');
-}
-
-document.getElementById('bookUs').addEventListener('click', (e)=>{
-  e.preventDefault();
-  openContact();
-});
-
-// close on backdrop / X
-contactModal?.addEventListener('click', (e)=>{
-  if(e.target?.matches?.('[data-close]')) closeContact();
-});
-
-// close on ESC
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' && contactModal?.getAttribute('aria-hidden') === 'false'){
-    closeContact();
-  }
-});
-
-// optional: show a friendly message after submit (Formspree will still handle emailing)
-contactForm?.addEventListener('submit', ()=>{
-  contactNote.textContent = 'Sending…';
-});
 
 document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
