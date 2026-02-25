@@ -2708,8 +2708,7 @@ else if (section.id === "releases") {
     empty.style.opacity = ".85";
     empty.textContent = "No releases listed yet.";
     detailContent.appendChild(empty);
-  } 
-  else {
+  } else {
     const wrap = document.createElement("div");
     wrap.className = "release-list";
 
@@ -2721,54 +2720,46 @@ else if (section.id === "releases") {
 
       const coverSrc = r.cover ? assetUrl(r.cover) : fallback;
 
-      const coverHtml = `
-        <img class="release-cover"
-             src="${coverSrc}"
-             alt="${r.cover ? `${r.title} cover` : ""}"
-             loading="lazy"
-             onerror="this.onerror=null; this.src='${fallback}';">
-      `;
-
       const linksHtml =
-  Array.isArray(r.links) && r.links.length
-    ? `
-      <div class="release-links">
-        ${r.links.map(link => {
-          const icon =
-            (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
-              ? PLATFORM_ICONS[link.platform]
-              : "";
+        Array.isArray(r.links) && r.links.length
+          ? `<div class="release-links">${
+              r.links
+                .map((link) => {
+                  const icon =
+                    (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
+                      ? PLATFORM_ICONS[link.platform]
+                      : "";
 
-          return `
-            <a class="stream-btn"
-               href="${link.url}"
-               target="_blank"
-               rel="noopener"
-               data-platform="${link.platform || ""}">
-              <span class="stream-ico">${icon}</span>
-              <span class="stream-label">${link.name}</span>
-            </a>
-          `;
-        }).join("")}
-      </div>
-    `
-    : "";
+                  return (
+                    `<a class="stream-btn" href="${link.url}" target="_blank" rel="noopener" data-platform="${link.platform || ""}">` +
+                      `<span class="stream-ico">${icon}</span>` +
+                      `<span class="stream-label">${link.name}</span>` +
+                    `</a>`
+                  );
+                })
+                .join("")
+            }</div>`
+          : "";
 
-      card.innerHTML = `
-        <div class="release-top">
-          ${coverHtml}
-          <div class="release-meta">
-            <div class="release-date">${r.date || ""}</div>
-            <div class="release-title">${r.title || ""}</div>
-            <div class="release-type">${r.type || ""}</div>
-            ${r.blurb ? `<div class="release-blurb">${r.blurb}</div>` : ""}
-          </div>
-        </div>
-        ${linksHtml}
-      `;
+      const blurbHtml = r.blurb
+        ? `<div class="release-blurb">${r.blurb}</div>`
+        : "";
+
+      card.innerHTML =
+        `<div class="release-top">` +
+          `<img class="release-cover" src="${coverSrc}" alt="${r.cover ? (r.title + " cover") : ""}" loading="lazy" ` +
+               `onerror="this.onerror=null; this.src='${fallback}';">` +
+          `<div class="release-meta">` +
+            `<div class="release-date">${r.date || ""}</div>` +
+            `<div class="release-title">${r.title || ""}</div>` +
+            `<div class="release-type">${r.type || ""}</div>` +
+            blurbHtml +
+          `</div>` +
+        `</div>` +
+        linksHtml;
 
       wrap.appendChild(card);
-    }); 
+    });
 
     detailContent.appendChild(wrap);
   }
@@ -2783,7 +2774,7 @@ else if (section.id === "releases") {
   // If you still want the top-right button in the card:
   // primaryCta.textContent = section.ctaText || 'Start Here';
   // primaryCta.href = section.ctaHref || '#';
-}
+
 
     function setNowPlaying(section){
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
