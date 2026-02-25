@@ -2721,7 +2721,7 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embed + clean fallback, NO script reload)
+// MAGPIE MILITIA (MailerLite embed + fallback popup/link) — CACHED
 // =========================
 else if (section.id === "militia") {
 
@@ -2731,57 +2731,68 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // Container so we can manage fallback cleanly
-  const militiaWrap = document.createElement('div');
-  detailContent.appendChild(militiaWrap);
+  // Create once, then REUSE (prevents MailerLite from needing to re-scan)
+  if (!militiaEmbedCache) {
+    const wrap = document.createElement('div');
 
-  // Embed container (MailerLite renders into this IF scripts aren't blocked)
-  const formWrap = document.createElement('div');
-  formWrap.className = 'embed-wrap';
-  formWrap.innerHTML = `
-    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
-  `;
-  militiaWrap.appendChild(formWrap);
+    // Embed placeholder (MailerLite renders into this IF scripts aren't blocked)
+    const formWrap = document.createElement('div');
+    formWrap.className = 'embed-wrap';
+    formWrap.innerHTML = `
+      <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
+    `;
+    wrap.appendChild(formWrap);
 
-  // Remove any old fallback that might exist (safety)
-  militiaWrap.querySelectorAll('.militia-fallback').forEach(el => el.remove());
+    // Fallback block (glass styled by your CSS)
+    const fb = document.createElement('div');
+    fb.className = 'militia-fallback';
+    fb.style.display = 'none'; // only show if embed doesn't render
 
-  // ✅ IMPORTANT: re-trigger MailerLite AFTER we inject the placeholder
-  // (this is what makes it work when you come back to the tab)
-  setTimeout(() => {
-    if (typeof window.ml === "function") {
-      window.ml('account', '2142386');
-    }
-  }, 0);
+    const t = document.createElement('div');
+    t.className = 'militia-fallback-text';
+    t.textContent = "Having trouble seeing the embedded form?";
 
-  // Clean fallback: always works (even when MailerLite scripts are blocked)
-  const fallbackUrl = section.mlFallbackUrl || null;
+    const a = document.createElement('a');
+    a.className = 'btn';
+    a.href = '#';
+    a.textContent = 'Join the Magpie Militia!';
 
-  setTimeout(() => {
-    const slot = formWrap.querySelector('.ml-embedded');
-    const rendered = !!(slot && slot.children && slot.children.length > 0);
+    // ✅ Prefer popup; if ML is blocked, fall back to opening the hosted URL
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
 
-    // If ML is blocked, ml() won't exist and embed won't render → show fallback
-    if ((!rendered || typeof window.ml !== "function") && fallbackUrl) {
+      // Popup (only works if ML script loaded)
+      if (typeof window.ml === 'function') {
+        window.ml('show', section.mlFormId || '3Ktjuu', true);
+        return;
+      }
 
-      // Don't duplicate fallback
-      if (militiaWrap.querySelector('.militia-fallback')) return;
+      // Blocked? Open the hosted share URL
+      if (section.mlFallbackUrl) {
+        window.open(section.mlFallbackUrl, '_blank', 'noopener');
+      }
+    });
 
-      const fb = document.createElement('div');
-      fb.className = 'militia-fallback';
+    fb.appendChild(t);
+    fb.appendChild(a);
+    wrap.appendChild(fb);
 
-      const a = document.createElement('a');
-      a.className = 'btn';
-      a.href = fallbackUrl;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'Join the Magpie Militia!';
+    militiaEmbedCache = wrap;
 
-      fb.appendChild(a);
+    // After first creation, give ML a moment to render; if it didn't, show fallback.
+    setTimeout(() => {
+      const slot = formWrap.querySelector('.ml-embedded');
+      const rendered = !!(slot && slot.children && slot.children.length > 0);
 
-      formWrap.insertAdjacentElement('afterend', fb);
-    }
-  }, 900);
+      // Show fallback if embed didn't render (or ml is missing)
+      if (!rendered || typeof window.ml !== 'function') {
+        fb.style.display = '';
+      }
+    }, 1200);
+  }
+
+  // Re-attach the same cached DOM (keeps the already-rendered iframe alive)
+  detailContent.appendChild(militiaEmbedCache);
 }
 
   // =========================
