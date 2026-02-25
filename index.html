@@ -2705,21 +2705,29 @@ function setDetails(section){
 // Build a root-safe cover path:
 
 const rawCover = (r.cover || "").trim();
-
-// Keep absolute URLs unchanged, otherwise make it relative (strip any leading "/")
-const coverPath = /^https?:\/\//i.test(rawCover)
-  ? rawCover
-  : rawCover.replace(/^\/+/, "");
-
+const coverPath = rawCover.replace(/^\/+/, ""); // keep it relative
 const fallback = "assets/Official%20Logo%20NoTest%20Transparent.png";
 const coverSrc = coverPath ? encodeURI(coverPath) : fallback;
 
 const coverHtml = `
   <img class="release-cover"
        src="${coverSrc}"
+       data-cover="${coverSrc}"
        alt="${coverPath ? `${r.title} cover` : ''}"
        loading="lazy"
-       onerror="this.onerror=null; this.src='${fallback}';">
+       onerror="
+         console.warn('COVER ERROR for:', '${(r.title || '').replace(/'/g, "\\'")}', 
+                      'src=', this.getAttribute('src'),
+                      'data-cover=', this.dataset.cover);
+         this.onerror=null; 
+         this.src='${fallback}';
+       "
+       onload="
+         console.log('COVER LOAD for:', '${(r.title || '').replace(/'/g, "\\'")}', 
+                     'src=', this.getAttribute('src'),
+                     'data-cover=', this.dataset.cover,
+                     'currentSrc=', this.currentSrc);
+       ">
 `;
 
         const linksHtml = (Array.isArray(r.links) && r.links.length)
