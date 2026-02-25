@@ -2688,7 +2688,7 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embedded form) — BULLETPROOF
+// MAGPIE MILITIA (MailerLite embedded form) — CLEAN + STABLE
 // =========================
 else if (section.id === "militia") {
 
@@ -2698,11 +2698,10 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // Embed placeholder (MailerLite will render into this)
+  // Embed wrapper
   const formWrap = document.createElement('div');
   formWrap.className = 'embed-wrap';
 
-  // Nonce helps force a fresh render when returning after success state
   const nonce = Date.now();
 
   formWrap.innerHTML = `
@@ -2710,26 +2709,50 @@ else if (section.id === "militia") {
   `;
   detailContent.appendChild(formWrap);
 
-  // ✅ Force MailerLite to re-scan / re-render every time this panel is shown
-  (function reloadMailerLite(){
-    // Remove any existing universal.js so it re-initializes cleanly
-    document
-      .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
-      .forEach(s => s.remove());
+  // ---- Reload MailerLite FIRST ----
+  document
+    .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
+    .forEach(s => s.remove());
 
-    // Re-add it (this forces a fresh scan of .ml-embedded blocks)
-    const s = document.createElement('script');
-    s.src = 'https://assets.mailerlite.com/js/universal.js';
-    s.async = true;
+  const s = document.createElement('script');
+  s.src = 'https://assets.mailerlite.com/js/universal.js';
+  s.async = true;
 
-    s.onload = () => {
-      if (typeof window.ml === 'function') {
-        window.ml('account', '2142386');
+  s.onload = () => {
+    if (typeof window.ml === 'function') {
+      window.ml('account', '2142386');
+    }
+
+    // ---- AFTER script loads, check if embed rendered ----
+    setTimeout(() => {
+      const slot = formWrap.querySelector('.ml-embedded');
+      const rendered = slot && slot.children && slot.children.length > 0;
+
+      if (!rendered) {
+        const note = document.createElement('div');
+        note.style.marginTop = '10px';
+        note.style.textAlign = 'center';
+        note.style.opacity = '.9';
+        note.textContent = "If the embedded form doesn't load (ad/tracker blockers), use the button below:";
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn';
+        btn.style.marginTop = '10px';
+        btn.textContent = 'Open Sign-Up Form';
+        btn.addEventListener('click', () => {
+          if (typeof window.ml === 'function') {
+            window.ml('show', section.mlFormId || '3Ktjuu', true);
+          }
+        });
+
+        detailContent.appendChild(note);
+        detailContent.appendChild(btn);
       }
-    };
+    }, 1200);
+  };
 
-    document.head.appendChild(s);
-  })();
+  document.head.appendChild(s);
 }
 
   // =========================
