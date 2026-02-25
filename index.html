@@ -999,6 +999,10 @@ html{
   box-shadow: 0 18px 50px rgba(0,0,0,.28);
 }
 
+.militia-fallback{
+  position: relative;
+  z-index: 20;   /* higher than iframe-guard */
+}
 
 /* Invisible “first click” catcher */
 .iframe-guard{
@@ -2760,10 +2764,10 @@ else if (section.id === "militia") {
     t.className = 'militia-fallback-text';
     t.textContent = "";
 
-    const a = document.createElement('a');
-    a.className = 'btn';
-    a.href = '#';
-    a.textContent = 'Join the Magpie Militia!';
+    const a = document.createElement('button');
+a.type = 'button';
+a.className = 'btn';
+a.textContent = 'Join the Magpie Militia!';
 
     // ✅ Prefer popup; if ML is blocked, fall back to opening the hosted URL
     a.addEventListener('click', (e) => {
