@@ -1645,6 +1645,15 @@ html{
   max-width: 100%;
 }
 
+.militia-fallback{
+  margin-top: 10px;
+  text-align: center;
+  opacity: .95;
+}
+.militia-fallback .btn{
+  justify-content: center;
+}
+
   </style>
 
 <!-- MailerLite Universal -->
@@ -2687,7 +2696,7 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embedded form) — FIXED PLACEMENT + WORKING FALLBACK
+// MAGPIE MILITIA (MailerLite embed + clean fallback, no script reload)
 // =========================
 else if (section.id === "militia") {
 
@@ -2697,94 +2706,45 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // Section container (everything militia stays inside here)
-  const militiaWrap = document.createElement('div');
-  militiaWrap.className = 'militia-wrap';
-  detailContent.appendChild(militiaWrap);
-
-  // Embed wrapper
+  // Embed container (MailerLite renders into this IF scripts aren't blocked)
   const formWrap = document.createElement('div');
   formWrap.className = 'embed-wrap';
-
-  // Nonce helps force a fresh render
-  const nonce = Date.now();
-
   formWrap.innerHTML = `
-    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}" data-nonce="${nonce}"></div>
+    <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
   `;
-  militiaWrap.appendChild(formWrap);
+  detailContent.appendChild(formWrap);
 
-  // Fallback container goes RIGHT UNDER the form area (so it stays above Tip Jar)
-  const fallbackWrap = document.createElement('div');
-  fallbackWrap.className = 'cta-row';
-  fallbackWrap.style.justifyContent = 'center';
-  fallbackWrap.style.marginTop = '10px';
-  militiaWrap.appendChild(fallbackWrap);
+  // Clean fallback: always works (even when MailerLite scripts are blocked)
+  const fallbackUrl = section.mlFallbackUrl || null;
 
-  // IMPORTANT: Use a real URL as the fallback (works even if ml is blocked)
-  // 👉 Replace this with your MailerLite hosted form URL (see note below)
-  const FALLBACK_FORM_URL = section.mlFallbackUrl || "#";
+  // Wait a moment; if embed didn't render, show a link button ABOVE the tip jar
+  setTimeout(() => {
+    const slot = formWrap.querySelector('.ml-embedded');
+    const rendered = !!(slot && slot.children && slot.children.length > 0);
 
-  function showFallback() {
-    // prevent duplicates
-    if (fallbackWrap.__shown) return;
-    fallbackWrap.__shown = true;
+    if (!rendered && fallbackUrl) {
+      const fb = document.createElement('div');
+      fb.className = 'militia-fallback';
 
-    const note = document.createElement('div');
-    note.style.width = '100%';
-    note.style.textAlign = 'center';
-    note.style.opacity = '.9';
-    note.style.marginBottom = '8px';
-    note.textContent = "If the embedded form doesn't load (ad/tracker blockers), use the button below:";
+      fb.innerHTML = `
+        <div style="margin-bottom:8px;">
+          If the embedded form doesn’t load (ad/tracker blockers), use this:
+        </div>
+      `;
 
-    // Use <a> so it works even when scripts are blocked
-    const link = document.createElement('a');
-    link.className = 'btn';
-    link.target = "_blank";
-    link.rel = "noopener";
-    link.textContent = 'Open Sign-Up Form';
+      const a = document.createElement('a');
+      a.className = 'btn';
+      a.href = fallbackUrl;     // ✅ normal URL, works everywhere
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = 'Open Sign-Up Form';
 
-    // If MailerLite JS is available, use popup; otherwise open the real URL
-    if (typeof window.ml === 'function') {
-      link.href = "#";
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.ml('show', section.mlFormId || '3Ktjuu', true);
-      });
-    } else {
-      link.href = FALLBACK_FORM_URL;
+      fb.appendChild(a);
+
+      // Insert fallback right after the form area
+      formWrap.insertAdjacentElement('afterend', fb);
     }
-
-    fallbackWrap.appendChild(note);
-    fallbackWrap.appendChild(link);
-  }
-
-  // Reload MailerLite to re-scan / render
-  document
-    .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
-    .forEach(s => s.remove());
-
-  const s = document.createElement('script');
-  s.src = 'https://assets.mailerlite.com/js/universal.js';
-  s.async = true;
-
-  s.onload = () => {
-    if (typeof window.ml === 'function') {
-      window.ml('account', '2142386');
-    }
-
-    // After load, check whether embed rendered; if not, show fallback
-    setTimeout(() => {
-      const slot = formWrap.querySelector('.ml-embedded');
-      const rendered = slot && slot.children && slot.children.length > 0;
-      if (!rendered) showFallback();
-    }, 1200);
-  };
-
-  // If the script never loads (blocked), show fallback anyway
-  s.onerror = () => showFallback();
-
-  document.head.appendChild(s);
+  }, 900);
 }
 
   // =========================
