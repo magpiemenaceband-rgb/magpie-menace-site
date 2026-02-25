@@ -2101,6 +2101,36 @@ html{
 const HOME_TITLE = detailTitle.textContent || "Magpie Menace";
 const HOME_SUBTITLE = detailSubtitle.textContent || "Choose a section to explore.";
 
+
+function getBasePath() {
+  // GitHub Pages project site: /REPO_NAME/
+  if (location.hostname.endsWith("github.io")) {
+    const parts = location.pathname.split("/").filter(Boolean);
+    return parts.length ? `/${parts[0]}/` : "/";
+  }
+  // Custom domain / normal hosting: /
+  return "/";
+}
+
+function assetUrl(path) {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path; // already absolute
+
+  const base = getBasePath();
+  const clean = String(path)
+    .trim()
+    .replace(/^\.?\//, "")
+    .replace(/^\/+/, "");
+
+  return encodeURI(base + clean);
+}
+
+function toPublicUrl(path) {
+  // same behavior, just a clearer name for "turn into usable URL"
+  return assetUrl(path);
+}
+
+
 // Build a reusable "home" body (avoid cloning IDs by reusing the existing tipJarBlock node)
 function buildHomeBody(){
   const frag = document.createDocumentFragment();
@@ -2116,29 +2146,27 @@ function buildHomeBody(){
 }
 
 function showHome(){
-	const tip = document.getElementById('tipJarWrap');
-	
-  // Reset title/subtitle
   detailTitle.textContent = HOME_TITLE;
   detailSubtitle.textContent = HOME_SUBTITLE;
 
-  // Reset right panel content
+  const tip = document.getElementById('tipJarWrap');
+
   detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
-  // ✅ Keep tip jar at bottom on Home too
+  // ✅ keep Tip Jar at bottom on Home too
   if (tip) detailContent.appendChild(tip);
-  
-  // Optional: reset cursor + status text to "home" feel
+
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
 
-  if (typeof stopAll === "function") stopAll(); // stop any preview audio
+  if (typeof stopAll === "function") stopAll();
   if (typeof updateStopButton === "function") updateStopButton();
 
   const np = document.getElementById('nowPlaying');
   if (np) np.textContent = 'Hover a section to play a preview';
 }
+
 	// Custom cursor state
 const cursorEl = document.getElementById('mmCursor');
 const cursorImg = document.getElementById('mmCursorImg');
@@ -2252,10 +2280,7 @@ function buildPaymentQrs(){
   cashAppLink.href = CASHAPP_URL;
   venmoLink.href   = VENMO_URL;
 
-  // Top “Tip Jar” should still go to your primary (PayPal here)
   tipLink.href = TIP_JAR_URL;
-
-  // Only set this if the button exists
   if (tipButton) tipButton.href = TIP_JAR_URL;
 }
 
@@ -2423,30 +2448,7 @@ const PLATFORM_ICONS = {
   `
 };
 
-function getBasePath() {
-  // For GitHub Pages project sites: /REPO_NAME/
-  if (location.hostname.endsWith("github.io")) {
-    const parts = location.pathname.split("/").filter(Boolean);
-    return parts.length ? `/${parts[0]}/` : "/";
-  }
-  // For custom domain / normal hosting: /
-  return "/";
-}
 
-const BASE_PATH = getBasePath();
-
-function assetUrl(path) {
-  if (!path) return "";
-  if (/^https?:\/\//i.test(path)) return path;
-
-  const clean = String(path).replace(/^\.?\//, "").replace(/^\/+/, "");
-  return encodeURI(BASE_PATH + clean);
-}
-
-function toPublicUrl(path) {
-  // Use BASE_PATH so it works both on custom domain AND github.io repo pages
-  return assetUrl(path);
-}
 
 
 // SET DETAILS SECTION
@@ -2717,20 +2719,16 @@ function setDetails(section){
     wrap.className = "release-list";
 
     const fallback = assetUrl("assets/Official Logo NoTest Transparent.png");
+	
+	const coverSrc = r.cover ? assetUrl(r.cover) : fallback;
 
-    section.releases.forEach((r) => {
-      const card = document.createElement("div");
-      card.className = "release-item";
-
-      const coverSrc = r.cover ? assetUrl(r.cover) : fallback;
-
-      const coverHtml = `
-        <img class="release-cover"
-             src="${coverSrc}"
-             alt="${r.cover ? `${r.title} cover` : ""}"
-             loading="lazy"
-             onerror="this.onerror=null; this.src='${fallback}';">
-      `;
+	const coverHtml = `
+	<img class="release-cover"
+       src="${coverSrc}"
+       alt="${r.cover ? `${r.title} cover` : ""}"
+       loading="lazy"
+       onerror="this.onerror=null; this.src='${fallback}';">
+`;
 
       const linksHtml =
         Array.isArray(r.links) && r.links.length
