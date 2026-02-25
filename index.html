@@ -2163,11 +2163,10 @@ html{
         shinyBg: "assets/shiny-badge.png",
         cursorSrc: "assets/cursor-magpie-militia.png",
         previewSrc: "audio/militia-preview.mp3",
-        subtitle: "Join the flock. Get perks. Be first to the shinies.",
+        subtitle: "Join the Magpie Militia for all things shiny.",
         bullets: [],
 		mlFormId: "3Ktjuu",
-        ctaText: "Join",
-        ctaHref: "#"
+		mlFallbackUrl: "https://preview.mailerlite.io/forms/2142386/180386422412281483/share",
       }
     ];
 
@@ -2688,7 +2687,7 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embedded form) — CLEAN + STABLE
+// MAGPIE MILITIA (MailerLite embedded form) — FIXED PLACEMENT + WORKING FALLBACK
 // =========================
 else if (section.id === "militia") {
 
@@ -2698,18 +2697,69 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
+  // Section container (everything militia stays inside here)
+  const militiaWrap = document.createElement('div');
+  militiaWrap.className = 'militia-wrap';
+  detailContent.appendChild(militiaWrap);
+
   // Embed wrapper
   const formWrap = document.createElement('div');
   formWrap.className = 'embed-wrap';
 
+  // Nonce helps force a fresh render
   const nonce = Date.now();
 
   formWrap.innerHTML = `
     <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}" data-nonce="${nonce}"></div>
   `;
-  detailContent.appendChild(formWrap);
+  militiaWrap.appendChild(formWrap);
 
-  // ---- Reload MailerLite FIRST ----
+  // Fallback container goes RIGHT UNDER the form area (so it stays above Tip Jar)
+  const fallbackWrap = document.createElement('div');
+  fallbackWrap.className = 'cta-row';
+  fallbackWrap.style.justifyContent = 'center';
+  fallbackWrap.style.marginTop = '10px';
+  militiaWrap.appendChild(fallbackWrap);
+
+  // IMPORTANT: Use a real URL as the fallback (works even if ml is blocked)
+  // 👉 Replace this with your MailerLite hosted form URL (see note below)
+  const FALLBACK_FORM_URL = section.mlFallbackUrl || "#";
+
+  function showFallback() {
+    // prevent duplicates
+    if (fallbackWrap.__shown) return;
+    fallbackWrap.__shown = true;
+
+    const note = document.createElement('div');
+    note.style.width = '100%';
+    note.style.textAlign = 'center';
+    note.style.opacity = '.9';
+    note.style.marginBottom = '8px';
+    note.textContent = "If the embedded form doesn't load (ad/tracker blockers), use the button below:";
+
+    // Use <a> so it works even when scripts are blocked
+    const link = document.createElement('a');
+    link.className = 'btn';
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = 'Open Sign-Up Form';
+
+    // If MailerLite JS is available, use popup; otherwise open the real URL
+    if (typeof window.ml === 'function') {
+      link.href = "#";
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.ml('show', section.mlFormId || '3Ktjuu', true);
+      });
+    } else {
+      link.href = FALLBACK_FORM_URL;
+    }
+
+    fallbackWrap.appendChild(note);
+    fallbackWrap.appendChild(link);
+  }
+
+  // Reload MailerLite to re-scan / render
   document
     .querySelectorAll('script[src="https://assets.mailerlite.com/js/universal.js"]')
     .forEach(s => s.remove());
@@ -2723,34 +2773,16 @@ else if (section.id === "militia") {
       window.ml('account', '2142386');
     }
 
-    // ---- AFTER script loads, check if embed rendered ----
+    // After load, check whether embed rendered; if not, show fallback
     setTimeout(() => {
       const slot = formWrap.querySelector('.ml-embedded');
       const rendered = slot && slot.children && slot.children.length > 0;
-
-      if (!rendered) {
-        const note = document.createElement('div');
-        note.style.marginTop = '10px';
-        note.style.textAlign = 'center';
-        note.style.opacity = '.9';
-        note.textContent = "If the embedded form doesn't load (ad/tracker blockers), use the button below:";
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'btn';
-        btn.style.marginTop = '10px';
-        btn.textContent = 'Open Sign-Up Form';
-        btn.addEventListener('click', () => {
-          if (typeof window.ml === 'function') {
-            window.ml('show', section.mlFormId || '3Ktjuu', true);
-          }
-        });
-
-        detailContent.appendChild(note);
-        detailContent.appendChild(btn);
-      }
+      if (!rendered) showFallback();
     }, 1200);
   };
+
+  // If the script never loads (blocked), show fallback anyway
+  s.onerror = () => showFallback();
 
   document.head.appendChild(s);
 }
