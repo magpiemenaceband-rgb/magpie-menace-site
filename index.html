@@ -1635,7 +1635,28 @@ html{
 
 .modal-note{ font-size: 12px; opacity: .92; min-height: 16px; }
 
+/* ✅ MailerLite form wrapper polish */
+.ml-embedded,
+.ml-form-embedContainer{
+  width: 100%;
+}
+
+.ml-embedded iframe{
+  max-width: 100%;
+}
+
   </style>
+  
+  <!-- MailerLite Universal -->
+<script>
+    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+    ml('account', '2142386');
+</script>
+<!-- End MailerLite Universal -->
+
 </head>
 
 <body>
@@ -2143,11 +2164,8 @@ html{
         cursorSrc: "assets/cursor-magpie-militia.png",
         previewSrc: "audio/militia-preview.mp3",
         subtitle: "Join the flock. Get perks. Be first to the shinies.",
-        bullets: [
-          "Early demos + secret videos",
-          "Discount codes",
-          "Private announcements"
-        ],
+        bullets: [],
+		mlFormId: "3Ktjuu",
         ctaText: "Join",
         ctaHref: "#"
       }
@@ -2647,6 +2665,41 @@ function setDetails(section){
       detailContent.appendChild(list);
     }
   }
+// =========================
+  // MAGPIE MILITIA (MailerLite embedded form)
+  // =========================
+  else if (section.id === "militia") {
+    // Heading
+    const h = document.createElement('div');
+    h.className = 'panel-head';
+    h.textContent = 'Join the Magpie Militia';
+    detailContent.appendChild(h);
+
+    // MailerLite embed placeholder (this is the exact snippet MailerLite gave you)
+    const formWrap = document.createElement('div');
+    formWrap.className = 'embed-wrap';
+    formWrap.innerHTML = `<div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>`;
+    detailContent.appendChild(formWrap);
+
+    // ✅ Fallback button (opens popup) in case embedded form doesn't render on dynamic injection
+    const ctaRow = document.createElement('div');
+    ctaRow.className = 'cta-row';
+    ctaRow.style.justifyContent = 'center';
+
+    const popupBtn = document.createElement('button');
+    popupBtn.type = 'button';
+    popupBtn.className = 'btn';
+    popupBtn.textContent = 'Open Sign-Up Form';
+    popupBtn.addEventListener('click', () => {
+      if (typeof ml === 'function') {
+        ml('show', section.mlFormId || '3Ktjuu', true);
+      }
+    });
+
+    ctaRow.appendChild(popupBtn);
+    detailContent.appendChild(ctaRow);
+  }
+
 
   // =========================
   // EMBED (for non-music sections like Videos, etc.)
