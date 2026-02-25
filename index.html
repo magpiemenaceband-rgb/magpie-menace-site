@@ -2419,14 +2419,8 @@ const PLATFORM_ICONS = {
 
 function assetUrl(path){
   if(!path) return '';
-  // Already absolute (http/https)
   if(/^https?:\/\//i.test(path)) return path;
-
-  // Already root-absolute
-  if(path.startsWith('/')) return encodeURI(path);
-
-  // Make it root-absolute
-  return encodeURI('/' + path.replace(/^\.?\//,''));
+  return encodeURI(path.replace(/^\.?\//,''));
 }
 
 function setDetails(section){
