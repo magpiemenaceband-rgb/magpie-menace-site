@@ -501,6 +501,7 @@ button.stop-pill{
       align-items:center;
       gap:8px;
       transition: transform .12s ease, background .12s ease;
+	  justify-content: center;
     }
 
     .btn:hover{ transform: translateY(-1px); background: rgba(180,58,58,.18); }
@@ -2753,14 +2754,14 @@ else if (section.id === "militia") {
 
   const text = document.createElement('div');
   text.className = 'militia-fallback-text';
-  text.textContent = "Having trouble seeing the embedded form?";
+  text.textContent = "";
 
   const a = document.createElement('a');
   a.className = 'btn';
   a.href = fallbackUrl;
   a.target = '_blank';
   a.rel = 'noopener';
-  a.textContent = 'Open Sign-Up Form';
+  a.textContent = 'Join the Magpie Militia!';
 
   fb.appendChild(text);
   fb.appendChild(a);
