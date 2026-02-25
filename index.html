@@ -1777,7 +1777,8 @@ html{
     <img src="assets/Official%20Logo%20NoTest%20Transparent.png" alt="Magpie Menace logo">
   </div>
 </div>
-
+<!-- ✅ Militia lives outside detailContent so it never gets destroyed -->
+<div id="militiaPersist" style="display:none;"></div>
 <!-- ✅ Put tip jar OUTSIDE detailContent so it never gets wiped -->
 <div id="tipJarWrap">
   <div class="qr" id="tipJarBlock">
@@ -2721,78 +2722,66 @@ function setDetails(section){
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embed + fallback popup/link) — CACHED
+// MAGPIE MILITIA (persistent embed + modal fallback)
 // =========================
 else if (section.id === "militia") {
 
-  // Heading
+  // Hide tip jar while on Militia (optional; remove if you want it visible)
+  if (tip) tip.style.display = 'none';
+
+  // Heading inside detailContent (this part can change normally)
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  // Create once, then REUSE (prevents MailerLite from needing to re-scan)
-  if (!militiaEmbedCache) {
-    const wrap = document.createElement('div');
+  const persist = document.getElementById('militiaPersist');
+  if (!persist) return;
 
-    // Embed placeholder (MailerLite renders into this IF scripts aren't blocked)
+  // Show the persistent area
+  persist.style.display = '';
+
+  // Build once
+  if (!persist.__built) {
+    persist.__built = true;
+
     const formWrap = document.createElement('div');
     formWrap.className = 'embed-wrap';
     formWrap.innerHTML = `
       <div class="ml-embedded" data-form="${section.mlFormId || '3Ktjuu'}"></div>
     `;
-    wrap.appendChild(formWrap);
 
-    // Fallback block (glass styled by your CSS)
     const fb = document.createElement('div');
     fb.className = 'militia-fallback';
-    fb.style.display = 'none'; // only show if embed doesn't render
+    fb.style.display = 'none';
 
     const t = document.createElement('div');
     t.className = 'militia-fallback-text';
-    t.textContent = "Having trouble seeing the embedded form?";
+    t.textContent = "If the embedded form doesn’t load, use the button below:";
 
-    const a = document.createElement('a');
-    a.className = 'btn';
-    a.href = '#';
-    a.textContent = 'Join the Magpie Militia!';
-
-    // ✅ Prefer popup; if ML is blocked, fall back to opening the hosted URL
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      // Popup (only works if ML script loaded)
-      if (typeof window.ml === 'function') {
-        window.ml('show', section.mlFormId || '3Ktjuu', true);
-        return;
-      }
-
-      // Blocked? Open the hosted share URL
-      if (section.mlFallbackUrl) {
-        window.open(section.mlFallbackUrl, '_blank', 'noopener');
-      }
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn';
+    btn.textContent = 'Join the Magpie Militia!';
+    btn.addEventListener('click', () => {
+      // ✅ Does NOT rely on window.ml — always works
+      openMilitiaModal(section.mlFallbackUrl);
     });
 
     fb.appendChild(t);
-    fb.appendChild(a);
-    wrap.appendChild(fb);
+    fb.appendChild(btn);
 
-    militiaEmbedCache = wrap;
+    persist.appendChild(formWrap);
+    persist.appendChild(fb);
 
-    // After first creation, give ML a moment to render; if it didn't, show fallback.
+    // After a moment, detect if MailerLite rendered anything into the slot
     setTimeout(() => {
       const slot = formWrap.querySelector('.ml-embedded');
       const rendered = !!(slot && slot.children && slot.children.length > 0);
 
-      // Show fallback if embed didn't render (or ml is missing)
-      if (!rendered || typeof window.ml !== 'function') {
-        fb.style.display = '';
-      }
+      if (!rendered) fb.style.display = '';
     }, 1200);
   }
-
-  // Re-attach the same cached DOM (keeps the already-rendered iframe alive)
-  detailContent.appendChild(militiaEmbedCache);
 }
 
   // =========================
@@ -2988,6 +2977,13 @@ else if (section.id === "releases") {
     detailContent.appendChild(wrap);
   }
 }
+
+// Hide persistent militia area on non-militia sections
+const persist = document.getElementById('militiaPersist');
+if (persist) persist.style.display = (section.id === 'militia') ? '' : 'none';
+
+// Ensure tip jar is visible again unless you want it always hidden
+if (tip) tip.style.display = '';
 
   // =========================
   // TIP JAR (always at bottom)
@@ -3265,6 +3261,64 @@ updateStopButton();
     contactForm?.addEventListener('submit', ()=>{
       if(contactNote) contactNote.textContent = 'Sending…';
     });
+	
+	 // ==========================================
+    // MAGPIE MILITIA MODAL (ADD THIS BELOW)
+    // ==========================================
+
+    function openMilitiaModal(url){
+      const modal = document.getElementById('militiaModal');
+      const frame = document.getElementById('militiaModalFrame');
+      if(!modal || !frame || !url) return;
+
+      frame.src = url;
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMilitiaModal(){
+      const modal = document.getElementById('militiaModal');
+      const frame = document.getElementById('militiaModalFrame');
+      if(!modal || !frame) return;
+
+      modal.setAttribute('aria-hidden', 'true');
+      frame.src = '';
+    }
+
+    // Close on backdrop / X
+    document.getElementById('militiaModal')?.addEventListener('click', (e)=>{
+      if(e.target?.matches?.('[data-close]')) closeMilitiaModal();
+    });
+
+    // Close on ESC
+    window.addEventListener('keydown', (e)=>{
+      const modal = document.getElementById('militiaModal');
+      if(e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false'){
+        closeMilitiaModal();
+      }
+    });
+
   </script>
+  
+  <!-- Militia Modal -->
+<div class="modal" id="militiaModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="militiaTitle">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="militiaTitle">Join the Magpie Militia</div>
+        <div class="modal-sub">Sign up to get shiny updates.</div>
+      </div>
+      <button class="modal-x" type="button" data-close aria-label="Close">✕</button>
+    </div>
+
+    <div style="padding:14px 16px 16px;">
+      <div class="video-embed" style="aspect-ratio: 10 / 12;">
+        <iframe id="militiaModalFrame" src="" title="Magpie Militia signup" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
