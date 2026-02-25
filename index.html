@@ -1692,6 +1692,10 @@ html{
   z-index: 51;
 }
 
+.militia-fallback{ outline: 2px solid lime !important; }
+.militia-fallback .btn{ outline: 2px solid cyan !important; }
+
+
   </style>
 
 <!-- MailerLite Universal -->
@@ -2770,7 +2774,7 @@ else if (section.id === "militia") {
 
     const t = document.createElement('div');
     t.className = 'militia-fallback-text';
-    t.textContent = "Can't see the embedded form? Use this button:";
+    t.textContent = "";
 
     const btn = document.createElement('button');
     btn.type = 'button';
