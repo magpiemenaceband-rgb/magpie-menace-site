@@ -1683,11 +1683,19 @@ html{
 
 <!-- MailerLite Universal -->
 <script>
-    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-    ml('account', '2142386');
+  window.__mlLoaded = false;
+
+  (function(w,d,e,u,f,l,n){
+    w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};
+    l=d.createElement(e); l.async=1; l.src=u;
+
+    // ✅ mark as loaded only when the real script actually loads
+    l.onload = function(){ w.__mlLoaded = true; };
+
+    n=d.getElementsByTagName(e)[0]; n.parentNode.insertBefore(l,n);
+  })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+
+  ml('account', '2142386');
 </script>
 <!-- End MailerLite Universal -->
 
@@ -2759,19 +2767,21 @@ else if (section.id === "militia") {
 
     // ✅ Prefer popup; if ML is blocked, fall back to opening the hosted URL
     a.addEventListener('click', (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      // Popup (only works if ML script loaded)
-      if (typeof window.ml === 'function') {
-        window.ml('show', section.mlFormId || '3Ktjuu', true);
-        return;
-      }
+  const id = section.mlFormId || '3Ktjuu';
 
-      // Blocked? Open the hosted share URL
-      if (section.mlFallbackUrl) {
-        window.open(section.mlFallbackUrl, '_blank', 'noopener');
-      }
-    });
+  // ✅ Only try popup if the REAL script loaded
+  if (window.__mlLoaded && typeof window.ml === 'function') {
+    window.ml('show', id, true);
+    return;
+  }
+
+  // ✅ Otherwise always open hosted URL fallback
+  if (section.mlFallbackUrl) {
+    window.open(section.mlFallbackUrl, '_blank', 'noopener');
+  }
+});
 
     fb.appendChild(t);
     fb.appendChild(a);
