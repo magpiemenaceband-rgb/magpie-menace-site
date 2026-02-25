@@ -2986,6 +2986,7 @@ document.getElementById('joinMailing').addEventListener('click', (e)=>{
     centerStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
+
 const contactModal = document.getElementById('contactModal');
 const contactNote = document.getElementById('contactNote');
 const contactForm = document.getElementById('contactForm');
@@ -3104,6 +3105,50 @@ updateStopButton();
     </form>
   </div>
 </div>
-  
+    <!-- ✅ Put THIS inside script, after the modal exists -->
+  <script>
+    const contactModal = document.getElementById('contactModal');
+    const contactNote  = document.getElementById('contactNote');
+    const contactForm  = document.getElementById('contactForm');
+    const bookBtn      = document.getElementById('bookUs');
+
+    function openContact(){
+      if(!contactModal) return;
+      contactModal.setAttribute('aria-hidden', 'false');
+      if(contactNote) contactNote.textContent = '';
+      const first = contactModal.querySelector('input,textarea,button');
+      if(first) setTimeout(()=> first.focus(), 0);
+    }
+
+    function closeContact(){
+      if(!contactModal) return;
+      contactModal.setAttribute('aria-hidden', 'true');
+    }
+
+    if(bookBtn){
+      bookBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        openContact();
+      });
+    } else {
+      console.warn('Could not find #bookUs button');
+    }
+
+    // close on backdrop / X
+    contactModal?.addEventListener('click', (e)=>{
+      if(e.target?.matches?.('[data-close]')) closeContact();
+    });
+
+    // close on ESC
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && contactModal?.getAttribute('aria-hidden') === 'false'){
+        closeContact();
+      }
+    });
+
+    contactForm?.addEventListener('submit', ()=>{
+      if(contactNote) contactNote.textContent = 'Sending…';
+    });
+  </script>
 </body>
 </html>
