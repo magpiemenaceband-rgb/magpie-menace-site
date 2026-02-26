@@ -3677,34 +3677,43 @@ document.getElementById('joinMailing').addEventListener('click', (e)=>{
 });
 
 
-document.getElementById('stopAudio').addEventListener('click', async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
+// ✅ Wipe any old stopAudio listeners by replacing the node
+(function resetStopButton(){
+  const oldBtn = document.getElementById('stopAudio');
+  if(!oldBtn) return;
 
-  // short cooldown prevents immediate re-trigger on hover
-  hoverCooldownUntil = performance.now() + 450;
+  const newBtn = oldBtn.cloneNode(true);
+  oldBtn.parentNode.replaceChild(newBtn, oldBtn);
 
-  // If currently disabled, this acts as "Enable Audio"
-  if (!audioEnabled) {
-    audioEnabled = true;
+  // ✅ Attach exactly ONE handler
+  newBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    if (!MOBILE && !audioArmed) await armAudioOnce();
+    // short cooldown prevents immediate re-trigger on hover
+    hoverCooldownUntil = performance.now() + 600;
 
-    nowPlaying.textContent = 'Hover a section to play a preview';
+    // If currently disabled, this acts as "Enable Audio"
+    if (!audioEnabled) {
+      audioEnabled = true;
+      if (!MOBILE && !audioArmed) await armAudioOnce();
+
+      nowPlaying.textContent = 'Hover a section to play a preview';
+      updateStopButton();
+      return;
+    }
+
+    // Audio enabled -> STOP and DISABLE so hover won't restart
+    fadeToken++;
+    stopAll();
+    audioEnabled = false;
+
+    nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
+    setCursorBig(false);
+    setCursorSrc('assets/cursor-magpie.png');
     updateStopButton();
-    return;
-  }
-
-  // Audio enabled -> STOP and DISABLE so hover won't restart
-  fadeToken++;
-  stopAll();
-  audioEnabled = false;
-
-  nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
-  setCursorBig(false);
-  setCursorSrc('assets/cursor-magpie.png');
-  updateStopButton();
-});
+  });
+})();
 
 // Footer year
 document.getElementById('year').textContent = new Date().getFullYear();
