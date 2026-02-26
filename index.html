@@ -2020,31 +2020,7 @@ html{
 
       <div class="detail-body">
       <div id="detailContent">
-	   <!-- 👇 Add your bio text HERE -->
-    <div class="home-bio">
-      <p>
-        Members: 
-		Derek Harlan (Vocals, Guitar, Bass, Percussion, Keys, Production)
-		Tim Long (Vocals, Guitar, Bass, Percussion, Keys, Production)
-	  </p>
-	  <p>
-		Established in 2025 by Derek Harlan and Tim Long, Magpie Menace
-        blends Iowa roots with Carolina grit — music for your soul.
-        Both members grew up in southern Iowa. Derek eventually moved to
-		North Carolina and began performing as Smokin' D and has released 
-		three albums since 2017. Tim stayed in the Hawkeye state and began 
-		producing music as Tim Long and the Timlongs, releasing his debut 
-		album in 2024 with <em>After Hours</em>.
-      </p>
-	  <p>
-        The duo released their first song, <em>After Hours</em>, in January
-		of 2025, and they haven't slowed down since. Sending tracks back
-		and forth over the internet, and frequently collaborating with
-		other artists, Magpie Menace has already released 12 singles in
-		just over a year. And they're just getting started!
-      </p>
-    </div>
-	   
+		 
   <div class="home-logo">
     <img src="assets/Official%20Logo%20NoTest%20Transparent.png" alt="Magpie Menace logo">
   </div>
@@ -2100,7 +2076,8 @@ html{
   </footer>
 
   <script>
-    // ============================
+    
+	// ============================
     // 1) CONFIG — update these
     // ============================
 
@@ -2111,7 +2088,36 @@ html{
     // Replace these placeholders with your real links and preview audio files.
     // Put shiny object PNGs/JPGs under /assets and audio previews under /audio.
     const SECTIONS = [
-      {
+      
+	  {
+  id: "home",
+  title: "Magpie Menace",
+  subtitle: "Welcome to our nest.",
+  bio: `
+    <div class="home-bio">
+      <p><strong>Members:</strong></p>
+      <p>Derek Harlan (Vocals, Guitar, Bass, Percussion, Keys, Production)</p>	
+	  <p>Tim Long (Vocals, Guitar, Bass, Percussion, Keys, Production)</p>
+	  <p>
+	    Established in 2025 by Derek Harlan and Tim Long, Magpie Menace
+        blends Iowa roots with Carolina grit — music for your soul.
+        Both members grew up in southern Iowa. Derek eventually moved to
+		North Carolina and began performing as Smokin' D and has released 
+		three albums since 2017. Tim stayed in the Hawkeye state and began 
+		producing music as Tim Long and the Timlongs, releasing his debut 
+		album in 2024 with <em>After Hours</em>.
+      </p>
+	  <p>
+        The duo released their first song, <em>Out of My Head</em>, in January
+		of 2025, and they haven't slowed down since. Sending tracks back
+		and forth over the internet, and frequently collaborating with
+		other artists, Magpie Menace has already released 12 singles in
+		just over a year. And they're just getting started!
+      </p>
+    </div>
+  `
+	},	  
+	  {
         id: "music",
         title: "Music",
         kicker: "Downloads • Streaming",
@@ -2889,10 +2895,29 @@ function setDetails(section){
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
 
+// =========================
+// HOME
+// =========================
+if (section.id === "home") {
+
+  // Insert bio HTML from SECTIONS config
+  detailContent.innerHTML = section.bio || '';
+
+  // Add logo under bio
+  const logo = document.createElement('div');
+  logo.className = 'home-logo';
+  logo.innerHTML = `
+    <img src="assets/Official%20Logo%20NoTest%20Transparent.png"
+         alt="Magpie Menace logo">
+  `;
+
+  detailContent.appendChild(logo);
+}
+
   // =========================
   // MUSIC
   // =========================
-  if (section.id === "music") {
+  else if (section.id === "music") {
 
     // 1) Streaming Sites heading + buttons
     if (Array.isArray(section.links) && section.links.length) {
