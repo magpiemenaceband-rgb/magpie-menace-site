@@ -2750,21 +2750,23 @@ const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
-const MQ_ANY_HOVER  = window.matchMedia('(any-hover: hover)');
-const MQ_ANY_COARSE = window.matchMedia('(any-pointer: coarse)');
 
-const CAN_HOVER = MQ_ANY_HOVER.matches;
+// ✅ Reliable device capability detection
+// "fine" pointer + hover = real mouse/trackpad hover (desktop behavior)
+const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-// True on iPhone/Android and most touch devices
-const TOUCH = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || MQ_ANY_COARSE.matches;
+// Touch-first devices (phones/tablets)
+const MOBILE = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
-// Treat as “mobile/touch-first” if it’s touch and not truly hover-first
-const MOBILE = TOUCH && !CAN_HOVER;
+// Optional: if you still want to know "has any touch at all"
+const TOUCH = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
 // Hovering the header restores the main Magpie Menace "home" view (desktop only)
 const headerEl = document.querySelector('header');
 if (headerEl && CAN_HOVER){
-  headerEl.addEventListener('mouseenter', showHome);
+  headerEl.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'mouse') showHome();   // ✅ only mouse hover
+  });
 }
 
 // Clicking the logo/name restores home without reloading
@@ -3594,7 +3596,9 @@ SECTIONS.forEach(section => {
 
 // Desktop/laptop devices that can hover get hover previews
 if (CAN_HOVER) {
-  btn.addEventListener('mouseenter', () => activate(section));
+  btn.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'mouse') activate(section);
+  });
 }
 
 btn.addEventListener('click', () => {
@@ -3602,12 +3606,12 @@ btn.addEventListener('click', () => {
   if (MOBILE || SMALL) scrollToDetails();
 });
 
-  tilesEl.appendChild(btn);
+tilesEl.appendChild(btn);
 });
 
-
-// Cursor shrink when leaving the top links row
-tilesEl.addEventListener('mouseleave', () => {
+// Cursor shrink when leaving the top links row (mouse only)
+tilesEl.addEventListener('pointerleave', (e) => {
+  if (e.pointerType !== 'mouse') return;
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
 });
