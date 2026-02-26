@@ -1782,55 +1782,72 @@ html{
 /* ===== PHOTOS GALLERY ===== */
 .photo-gallery{
   position: relative;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
-/* The scrollable strip */
+/* Scroll strip */
 .photo-strip{
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  gap: 12px;
+
+  /* 3 visible (ish) */
+  grid-auto-columns: calc((100% - 24px) / 3);
+
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 10px 44px;              /* space so arrows don't cover thumbs */
+  padding: 10px 44px;               /* leaves room for arrows */
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+
+  scrollbar-width: thin;
 }
 
-/* Make sure it actually scrolls on phones */
-.photo-strip::-webkit-scrollbar{
-  height: 8px;
-}
+/* iOS/Safari scrollbars (optional) */
+.photo-strip::-webkit-scrollbar{ height: 8px; }
 .photo-strip::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,.18);
   border-radius: 999px;
 }
 
-/* Thumbnail buttons */
 .photo-thumb{
-  flex: 0 0 auto;
-  width: 120px;
-  height: 86px;
-  border-radius: 14px;
   border: 1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.08);
+  border-radius: 16px;
   overflow: hidden;
   padding: 0;
+  aspect-ratio: 1 / 1;              /* square thumbs */
   scroll-snap-align: start;
-  pointer-events: auto;            /* IMPORTANT */
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+
+  flex: 0 0 auto;
+  pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* The actual image */
+.photo-thumb:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.26);
+}
+
 .photo-thumb img{
   width: 100%;
   height: 100%;
-  display: block;                  /* IMPORTANT for mobile */
+  display: block;
   object-fit: cover;
 }
 
-/* Arrows */
-.photo-arrow{
+/* Phones: make them a bit bigger */
+@media (max-width: 520px){
+  .photo-strip{
+    grid-auto-columns: calc((100% - 12px) / 2.2);
+  }
+}
+
+/* Arrow buttons */
+.photo-nav{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -1842,21 +1859,16 @@ html{
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
-  font-size: 22px;
   font-weight: 900;
-  line-height: 1;
   display: grid;
   place-items: center;
   z-index: 5;
-  pointer-events: auto;
 }
 
-.photo-arrow.left{ left: 8px; }
-.photo-arrow.right{ right: 8px; }
+.photo-nav.prev{ left: 6px; }
+.photo-nav.next{ right: 6px; }
 
-.photo-arrow:active{
-  transform: translateY(-50%) scale(.98);
-}
+.photo-nav:active{ transform: translateY(-50%) scale(.96); }
 
 /* Mobile tuning */
 @media (max-width: 520px){
@@ -3044,89 +3056,92 @@ else if (section.id === "social") {
 
   detailContent.appendChild(linkRow);
 
-// =========================
-// PHOTOS (swipe + arrows)
-// =========================
-if (Array.isArray(section.photos) && section.photos.length) {
-  const ph = document.createElement('div');
-  ph.className = 'panel-head';
-  ph.textContent = 'Photos';
-  detailContent.appendChild(ph);
+  // =========================
+  // PHOTOS (swipe + arrows)
+  // =========================
+  if (Array.isArray(section.photos) && section.photos.length) {
 
-  // Outer wrap so arrows can overlay the strip
-  const wrap = document.createElement('div');
-  wrap.className = 'photo-gallery';
+    const ph = document.createElement('div');
+    ph.className = 'panel-head';
+    ph.textContent = 'Photos';
+    detailContent.appendChild(ph);
 
-  // Scroll strip
-  const strip = document.createElement('div');
-  strip.className = 'photo-strip';
+    const wrap = document.createElement('div');
+    wrap.className = 'photo-gallery';
 
-  // Left / right arrow buttons
-  const left = document.createElement('button');
-  left.type = 'button';
-  left.className = 'photo-arrow left';
-  left.setAttribute('aria-label', 'Scroll photos left');
-  left.innerHTML = '‹';
+    const strip = document.createElement('div');
+    strip.className = 'photo-strip';
 
-  const right = document.createElement('button');
-  right.type = 'button';
-  right.className = 'photo-arrow right';
-  right.setAttribute('aria-label', 'Scroll photos right');
-  right.innerHTML = '›';
+    // Arrows
+    const left = document.createElement('button');
+    left.type = 'button';
+    left.className = 'photo-arrow left';
+    left.setAttribute('aria-label', 'Scroll photos left');
+    left.innerHTML = '‹';
 
-  // Build thumbs
-  section.photos.forEach((p) => {
-    const full  = p.full || p.src || p.url || '';
-    const thumb = p.thumb || full;
-    const alt   = p.alt || 'Photo';
+    const right = document.createElement('button');
+    right.type = 'button';
+    right.className = 'photo-arrow right';
+    right.setAttribute('aria-label', 'Scroll photos right');
+    right.innerHTML = '›';
 
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'photo-thumb';
-    btn.setAttribute('aria-label', `Open photo: ${alt}`);
+    // Build thumbnails
+    section.photos.forEach((p) => {
 
-    const img = document.createElement('img');
-    img.src = thumb;
-    img.alt = alt;
-    img.loading = 'lazy';
-    img.decoding = 'async';
+      const full  = p.full || p.src || p.url || '';
+      const thumb = p.thumb || full;
+      const alt   = p.alt || 'Photo';
 
-    btn.appendChild(img);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'photo-thumb';
+      btn.setAttribute('aria-label', `Open photo: ${alt}`);
 
-    btn.addEventListener('click', () => {
-      if (typeof window.openPhotoModal === 'function') {
-        window.openPhotoModal(full || thumb, alt);
-      } else {
-        window.open(full || thumb, '_blank', 'noopener');
-      }
+      const img = document.createElement('img');
+      img.src = thumb;
+      img.alt = alt;
+      img.loading = 'eager';     // iOS-safe
+      img.decoding = 'async';
+
+      // 🔥 important mobile fallback
+      img.onerror = () => {
+        if (img.src !== full) img.src = full;
+      };
+
+      btn.appendChild(img);
+
+      btn.addEventListener('click', () => {
+        if (typeof window.openPhotoModal === 'function') {
+          window.openPhotoModal(full || thumb, alt);
+        } else {
+          window.open(full || thumb, '_blank', 'noopener');
+        }
+      });
+
+      strip.appendChild(btn);
     });
 
-    strip.appendChild(btn);
-  });
+    // Arrow scroll logic
+    const scrollByAmount = () => {
+      const thumb = strip.querySelector('.photo-thumb');
+      const w = thumb ? thumb.getBoundingClientRect().width : 140;
+      return Math.round(w * 2.5);
+    };
 
-  // Arrow behavior
-  const scrollByAmount = () => {
-    // scroll about 2.5 thumbnails
-    const thumb = strip.querySelector('.photo-thumb');
-    const w = thumb ? thumb.getBoundingClientRect().width : 140;
-    return Math.round(w * 2.5);
-  };
+    left.addEventListener('click', () => {
+      strip.scrollBy({ left: -scrollByAmount(), behavior: 'smooth' });
+    });
 
-  left.addEventListener('click', () => {
-    strip.scrollBy({ left: -scrollByAmount(), behavior: 'smooth' });
-  });
+    right.addEventListener('click', () => {
+      strip.scrollBy({ left: scrollByAmount(), behavior: 'smooth' });
+    });
 
-  right.addEventListener('click', () => {
-    strip.scrollBy({ left: scrollByAmount(), behavior: 'smooth' });
-  });
+    wrap.appendChild(left);
+    wrap.appendChild(strip);
+    wrap.appendChild(right);
 
-  wrap.appendChild(left);
-  wrap.appendChild(strip);
-  wrap.appendChild(right);
-
-  detailContent.appendChild(wrap);
-}
-
+    detailContent.appendChild(wrap);
+  }
 }
 
 
