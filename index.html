@@ -377,12 +377,18 @@ button.stop-pill{
 
 #stopAudio{
   position: relative;
-  z-index: 10000; /* higher than anything else on the page */
-  pointer-events: auto;
+  z-index: 9999999; /* higher than anything else on the page */
+  pointer-events: auto !important;
 }
 
 #stopAudio *{
-  pointer-events: none;
+  pointer-events: none !important;
+}
+
+/* ensure the status row itself doesn't get covered */
+.status-row{
+  position: relative;
+  z-index: 9999998;
 }
     .dot{
       width:8px; height:8px; border-radius:999px;
@@ -1958,6 +1964,24 @@ html{
   color: rgba(255,255,255,.92);
 }
 
+/* ✅ Make Stop pill more visible */
+#stopAudio{
+  border-color: rgba(255,255,255,.35) !important;
+  background: rgba(0,0,0,.18) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,.25) !important;
+}
+
+#stopAudio .wave i{
+  background: rgba(255,255,255,.85) !important;
+}
+
+/* When live, stronger red pulse */
+.stop-pill.live{
+  border-color: rgba(255,80,80,.55) !important;
+  background: rgba(255,80,80,.18) !important;
+}
+
   </style>
 
 <!-- MailerLite Universal -->
@@ -2743,11 +2767,13 @@ function buildPaymentQrs(){
 
 buildPaymentQrs();
 
+// GLOBALS
 // Create audio elements
 const audios = new Map();
 let activeAudioId = null;
 let fadeToken = 0;
 let audioArmed = false;
+let hoverCooldownUntil = 0;
 
 // ✅ Reliable device capability detection
 // "fine" pointer + hover = real mouse/trackpad hover (desktop behavior)
@@ -3554,6 +3580,10 @@ window.addEventListener('keydown', (e)=>{
 });
 
 async function activate(section){
+
+  // ✅ Cooldown guard FIRST
+  if (performance.now() < hoverCooldownUntil) return;
+
   // Always do visuals + UI updates
   setCursorSrc(section.cursorSrc || 'assets/cursor-magpie.png');
   setCursorBig(true);
@@ -3563,8 +3593,8 @@ async function activate(section){
 
   setDetails(section);
 
-  // ✅ Mobile: never preview audio
-  if (MOBILE) {
+  // Mobile: never preview audio
+  if (MOBILE){
     return;
   }
 
@@ -3651,11 +3681,13 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  // 1) If currently disabled, this button acts as "Enable Audio"
+  // short cooldown prevents immediate re-trigger on hover
+  hoverCooldownUntil = performance.now() + 450;
+
+  // If currently disabled, this acts as "Enable Audio"
   if (!audioEnabled) {
     audioEnabled = true;
 
-    // This click counts as a gesture, so arm if needed
     if (!MOBILE && !audioArmed) await armAudioOnce();
 
     nowPlaying.textContent = 'Hover a section to play a preview';
@@ -3663,16 +3695,14 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
     return;
   }
 
-  // 2) Audio is enabled:
-  // Stop everything and DISABLE audio so hover won't restart
+  // Audio enabled -> STOP and DISABLE so hover won't restart
   fadeToken++;
-  stopAll();              // pauses + clears activeAudioId
-  audioEnabled = false;   // key: prevents hover from starting again
+  stopAll();
+  audioEnabled = false;
 
   nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
-
   updateStopButton();
 });
 
