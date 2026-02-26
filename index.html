@@ -755,6 +755,8 @@ footer a{
 .top-links-row{
   display:flex;
   gap:12px;
+  flex-wrap: nowrap;      /* force one row on desktop */
+  justify-content: center;
   padding: 10px 6px 6px;
 
   /* ✅ no scrolling */
@@ -764,6 +766,12 @@ footer a{
   /* ✅ wrap to new lines instead of scroll */
   flex-wrap: wrap;
   justify-content: center;
+}
+
+@media (max-width: 1100px){
+  .top-links-row{
+    flex-wrap: wrap;      /* allow wrap on smaller screens */
+  }
 }
 
 html{
@@ -776,8 +784,9 @@ html{
   position: relative;            /* no absolute positioning anymore */
   transform: none;               /* remove translate */
   pointer-events: auto;
-  flex: 0 1 140px;   /* ✅ can shrink a bit */
-  width: 140px;      /* ✅ smaller */
+  flex: 0 1 120px;   /* ✅ can shrink a bit */
+  width: 120px;      /* ✅ smaller */
+  max-width: 125px;
   padding: 10px;
   height: auto;
   border-radius: 18px;
