@@ -2780,13 +2780,14 @@ document.querySelectorAll('header a[href="/"]').forEach(a => {
 // Layout breakpoint (just for scrolling/layout decisions)
 const SMALL = window.innerWidth <= 720;
 
-// Default: previews ON only for non-mobile
-let audioEnabled = !MOBILE;
-let musicEmbedCache = null; // holds Spotify DOM node so it doesn't reload
-let militiaEmbedCache = null;   // ✅ holds MailerLite DOM so it doesn't break on return
+// Default: previews ON only when a real mouse/trackpad hover exists
+let audioEnabled = CAN_HOVER;
 
+let musicEmbedCache = null;      // holds Spotify DOM node so it doesn't reload
+let militiaEmbedCache = null;    // holds MailerLite DOM so it doesn't break on return
+
+// Hard safety: never preview on true touch-first devices
 if (MOBILE) {
-  // previews should never play on iPhone/Android
   audioEnabled = false;
   stopAll();
 }
