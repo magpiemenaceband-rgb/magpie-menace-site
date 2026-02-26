@@ -2851,12 +2851,12 @@ function fadeTo(audio, target, ms=220){
 }
 
 async function crossfade(toId){
-  async function crossfade(toId){
-  // ✅ If that section has no audio, just stop any current preview
+// ✅ If that section has no audio, just stop any current preview
   if (!audios.has(toId)){
     stopAll();
     return;
   }
+
   const myToken = ++fadeToken;
   if(activeAudioId === toId) return;
 
