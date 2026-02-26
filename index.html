@@ -2799,10 +2799,14 @@ window.addEventListener('touchstart', () => {
 }, { passive: true });
 
 async function armAudioOnce(){
-  if(audioArmed) return true;
+  if (audioArmed) return true;
 
-  const first = audios.get(SECTIONS[0].id);
-  if(!first) return false;
+  // ✅ pick the first section that actually has a previewSrc
+  const firstPlayableSection = SECTIONS.find(s => s.previewSrc);
+  if (!firstPlayableSection) return false;
+
+  const first = audios.get(firstPlayableSection.id);
+  if (!first) return false;
 
   try{
     first.volume = 0;
@@ -2817,10 +2821,12 @@ async function armAudioOnce(){
   }
 }
 
-// Create audio elements
+// Create audio elements (ONLY for sections with previewSrc)
 SECTIONS.forEach(s => {
+  if (!s.previewSrc) return; // ✅ skip home/bio (no audio)
+
   const a = document.createElement('audio');
-  a.src = s.previewSrc;
+  a.src = assetUrl(s.previewSrc); // ✅ important if you host on GitHub pages/custom paths
   a.preload = 'auto';
   a.loop = true;
   a.volume = 0; // start muted; we'll fade in
@@ -2845,6 +2851,12 @@ function fadeTo(audio, target, ms=220){
 }
 
 async function crossfade(toId){
+  async function crossfade(toId){
+  // ✅ If that section has no audio, just stop any current preview
+  if (!audios.has(toId)){
+    stopAll();
+    return;
+  }
   const myToken = ++fadeToken;
   if(activeAudioId === toId) return;
 
