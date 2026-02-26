@@ -3651,23 +3651,23 @@ document.getElementById('stopAudio').addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  // If currently disabled, this button acts as "Enable Audio"
-  if(!audioEnabled){
+  // 1) If currently disabled, this button acts as "Enable Audio"
+  if (!audioEnabled) {
     audioEnabled = true;
 
-    // this click counts as a gesture, so we can arm
-    if (!MOBILE && audioEnabled && !audioArmed) await armAudioOnce();
+    // This click counts as a gesture, so arm if needed
+    if (!MOBILE && !audioArmed) await armAudioOnce();
 
     nowPlaying.textContent = 'Hover a section to play a preview';
     updateStopButton();
     return;
   }
 
-  // If enabled but nothing is playing, still allow disabling audio
-  // (so it becomes "Enable Audio" again)
+  // 2) Audio is enabled:
+  // Stop everything and DISABLE audio so hover won't restart
   fadeToken++;
-  stopAll();           // stops + clears activeAudioId
-  audioEnabled = false;
+  stopAll();              // pauses + clears activeAudioId
+  audioEnabled = false;   // key: prevents hover from starting again
 
   nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
   setCursorBig(false);
