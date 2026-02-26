@@ -1053,6 +1053,7 @@ html{
   gap:8px;                 /* slightly tighter spacing */
   justify-content:center;
   align-items:center;
+  max-width: 100%
 }
 
 .stream-btn{
@@ -1134,16 +1135,16 @@ html{
 .stream-btn[data-platform="bandcamp"]{     --glow: rgba(30, 180, 200, .30); }
 .stream-btn[data-platform="soundcloud"]{   --glow: rgba(255, 85, 0, .30); }
 
-/* ===== Larger Social Media Buttons ===== */
-.detail-card .streaming-links{
-  gap:14px;              /* more breathing room */
+
+/* ===== Larger buttons ONLY on Social Media section ===== */
+#detailTitle[data-section="social"] ~ .detail-body .streaming-links{
+  gap:14px;
 }
 
-.detail-card .stream-btn{
-  padding: 10px 20px;    /* bigger pill */
-  font-size: 14px;       /* larger text */
+#detailTitle[data-section="social"] ~ .detail-body .stream-btn{
+  padding: 10px 20px;
+  font-size: 14px;
   font-weight: 800;
-  border-width: 1.5px;
 }
 
 .detail-card .stream-btn .stream-ico{
@@ -2932,6 +2933,7 @@ function reloadMailerLite() {
 
 function setDetails(section){
   detailTitle.textContent = section.title;
+  detailTitle.dataset.section = section.id;
   detailSubtitle.textContent = section.subtitle;
 
   // Keep tip jar visible everywhere (move the same DOM node around)
