@@ -1778,6 +1778,91 @@ html{
   box-shadow: 0 18px 60px rgba(0,0,0,.35);
 }
 
+
+/* ===== PHOTOS GALLERY ===== */
+.photo-gallery{
+  position: relative;
+  margin-top: 10px;
+}
+
+/* The scrollable strip */
+.photo-strip{
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 44px;              /* space so arrows don't cover thumbs */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Make sure it actually scrolls on phones */
+.photo-strip::-webkit-scrollbar{
+  height: 8px;
+}
+.photo-strip::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
+}
+
+/* Thumbnail buttons */
+.photo-thumb{
+  flex: 0 0 auto;
+  width: 120px;
+  height: 86px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+  padding: 0;
+  scroll-snap-align: start;
+  pointer-events: auto;            /* IMPORTANT */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The actual image */
+.photo-thumb img{
+  width: 100%;
+  height: 100%;
+  display: block;                  /* IMPORTANT for mobile */
+  object-fit: cover;
+}
+
+/* Arrows */
+.photo-arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.photo-arrow.left{ left: 8px; }
+.photo-arrow.right{ right: 8px; }
+
+.photo-arrow:active{
+  transform: translateY(-50%) scale(.98);
+}
+
+/* Mobile tuning */
+@media (max-width: 520px){
+  .photo-thumb{ width: 104px; height: 78px; }
+  .photo-strip{ padding: 10px 40px; }
+}
   </style>
 
 <!-- MailerLite Universal -->
@@ -2959,54 +3044,88 @@ else if (section.id === "social") {
 
   detailContent.appendChild(linkRow);
 
-  // =========================
-  // PHOTOS
-  // =========================
-  if (Array.isArray(section.photos) && section.photos.length) {
-    const ph = document.createElement('div');
-    ph.className = 'panel-head';
-    ph.textContent = 'Photos'; // matches your other headings’ casing style
-    detailContent.appendChild(ph);
+// =========================
+// PHOTOS (swipe + arrows)
+// =========================
+if (Array.isArray(section.photos) && section.photos.length) {
+  const ph = document.createElement('div');
+  ph.className = 'panel-head';
+  ph.textContent = 'Photos';
+  detailContent.appendChild(ph);
 
-    const gallery = document.createElement('div');
-    gallery.className = 'photo-strip';
+  // Outer wrap so arrows can overlay the strip
+  const wrap = document.createElement('div');
+  wrap.className = 'photo-gallery';
 
-    section.photos.forEach((p) => {
-      // Normalize field names so you can use thumb/full OR src
-      const full = p.full || p.src || p.url || '';
-      const thumb = p.thumb || full;
-      const alt = p.alt || 'Photo';
+  // Scroll strip
+  const strip = document.createElement('div');
+  strip.className = 'photo-strip';
 
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'photo-thumb';
-      btn.setAttribute('aria-label', `Open photo: ${alt}`);
+  // Left / right arrow buttons
+  const left = document.createElement('button');
+  left.type = 'button';
+  left.className = 'photo-arrow left';
+  left.setAttribute('aria-label', 'Scroll photos left');
+  left.innerHTML = '‹';
 
-      const img = document.createElement('img');
-      img.src = thumb;
-      img.alt = alt;
-      img.loading = 'lazy';
+  const right = document.createElement('button');
+  right.type = 'button';
+  right.className = 'photo-arrow right';
+  right.setAttribute('aria-label', 'Scroll photos right');
+  right.innerHTML = '›';
 
-      btn.appendChild(img);
+  // Build thumbs
+  section.photos.forEach((p) => {
+    const full  = p.full || p.src || p.url || '';
+    const thumb = p.thumb || full;
+    const alt   = p.alt || 'Photo';
 
-      btn.addEventListener('click', () => {
-        // Preferred: modal
-        if (typeof window.openPhotoModal === 'function') {
-          window.openPhotoModal(full || thumb, alt);
-          return;
-        }
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'photo-thumb';
+    btn.setAttribute('aria-label', `Open photo: ${alt}`);
 
-        // Fallback: open image in new tab
-        if (full || thumb) {
-          window.open(full || thumb, '_blank', 'noopener');
-        }
-      });
+    const img = document.createElement('img');
+    img.src = thumb;
+    img.alt = alt;
+    img.loading = 'lazy';
+    img.decoding = 'async';
 
-      gallery.appendChild(btn);
+    btn.appendChild(img);
+
+    btn.addEventListener('click', () => {
+      if (typeof window.openPhotoModal === 'function') {
+        window.openPhotoModal(full || thumb, alt);
+      } else {
+        window.open(full || thumb, '_blank', 'noopener');
+      }
     });
 
-    detailContent.appendChild(gallery);
-  }
+    strip.appendChild(btn);
+  });
+
+  // Arrow behavior
+  const scrollByAmount = () => {
+    // scroll about 2.5 thumbnails
+    const thumb = strip.querySelector('.photo-thumb');
+    const w = thumb ? thumb.getBoundingClientRect().width : 140;
+    return Math.round(w * 2.5);
+  };
+
+  left.addEventListener('click', () => {
+    strip.scrollBy({ left: -scrollByAmount(), behavior: 'smooth' });
+  });
+
+  right.addEventListener('click', () => {
+    strip.scrollBy({ left: scrollByAmount(), behavior: 'smooth' });
+  });
+
+  wrap.appendChild(left);
+  wrap.appendChild(strip);
+  wrap.appendChild(right);
+
+  detailContent.appendChild(wrap);
+}
 
 }
 
