@@ -3241,7 +3241,9 @@ else if (section.id === "militia") {
   detailContent.appendChild(h);
 
   const formId = section.mlFormId || '3Ktjuu';
-  const fallbackUrl = section.mlFallbackUrl || 'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
+  const fallbackUrl =
+    section.mlFallbackUrl ||
+    'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
   // Put the already-existing dock into the panel
   const dock = document.getElementById('mlDock');
@@ -3259,33 +3261,28 @@ else if (section.id === "militia") {
   btn.type = 'button';
   btn.className = 'btn';
   btn.textContent = 'Join the Magpie Militia';
-  
+
+  // Direct click handler (most reliable for popups)
   btn.addEventListener('click', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-  const formId = section.mlFormId || '3Ktjuu';
-  const fallbackUrl =
-    section.mlFallbackUrl ||
-    'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
-
-  // 1) Try MailerLite popup first (if available)
-  if (typeof window.ml === 'function') {
-    try {
-      window.ml('show', formId, true);
-      return;
-    } catch (err) {
-      // fall through
+    // 1) Try MailerLite popup first (if available)
+    if (typeof window.ml === 'function') {
+      try {
+        window.ml('show', formId, true);
+        return;
+      } catch (err) {
+        // fall through
+      }
     }
-  }
 
-  // 2) Popup fallback
-  const w = openCenteredPopup(fallbackUrl, 520, 720);
+    // 2) Popup fallback
+    const w = openCenteredPopup(fallbackUrl, 520, 720);
 
-  // 3) If popup blocked, use same tab
-  if (!w) window.location.assign(fallbackUrl);
-});
-
+    // 3) If popup blocked, use same tab
+    if (!w) window.location.assign(fallbackUrl);
+  });
 
   fb.appendChild(btn);
   detailContent.appendChild(fb);
@@ -3294,7 +3291,6 @@ else if (section.id === "militia") {
   setTimeout(() => {
     const slot = dock?.querySelector?.('.ml-embedded');
     const rendered = !!(slot && slot.children && slot.children.length > 0);
-
     if (!rendered) fb.style.display = '';
   }, 900);
 }
