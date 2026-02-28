@@ -2579,6 +2579,38 @@ html{
   );
 }
 
+document.addEventListener('pointerup', (e) => {
+  const btn = e.target.closest('.militia-fallback .btn');
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const militia = SECTIONS.find(s => s.id === 'militia');
+  if (!militia) return;
+
+  const formId = militia.mlFormId || '3Ktjuu';
+  const fallbackUrl =
+    militia.mlFallbackUrl ||
+    'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
+
+  // 1) Try MailerLite popup first
+  if (typeof window.ml === 'function') {
+    try {
+      window.ml('show', formId, true);
+      return;
+    } catch (err) {
+      // fall through
+    }
+  }
+
+  // 2) Popup fallback
+  const w = openCenteredPopup(fallbackUrl, 520, 720);
+
+  // 3) If popup blocked, use same tab (guarantees it works)
+  if (!w) window.location.assign(fallbackUrl);
+});
+
 function parkNode(id){
   const node = document.getElementById(id);
   const park = document.getElementById('persistentParking');
@@ -3227,29 +3259,6 @@ else if (section.id === "militia") {
   btn.type = 'button';
   btn.className = 'btn';
   btn.textContent = 'Join the Magpie Militia';
-
-btn.addEventListener('click', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  // 1) Try MailerLite popup first
-  if (typeof window.ml === 'function') {
-    try {
-      window.ml('show', formId, true);
-      return;
-    } catch (err) {
-      // fall through to popup fallback
-    }
-  }
-
-  // 2) Fallback popup window
-  const popup = openCenteredPopup(fallbackUrl);
-
-  // 3) If popup blocked, navigate same tab (guarantees something happens)
-  if (!popup) {
-    window.location.assign(fallbackUrl);
-  }
-});
 
   fb.appendChild(btn);
   detailContent.appendChild(fb);
