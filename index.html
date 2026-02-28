@@ -3252,12 +3252,13 @@ else if (section.id === "militia") {
     detailContent.appendChild(dock);
   }
 
-  // Create fallback UI (hidden unless embed is missing)
+// Create fallback UI (hidden unless embed is missing)
 const fb = document.createElement('div');
 fb.className = 'militia-fallback';
+fb.id = 'militiaFallback';
 fb.style.display = 'none';
 
-// Make it a REAL link (guaranteed fallback)
+// REAL link (guaranteed fallback)
 const link = document.createElement('a');
 link.className = 'btn';
 link.textContent = 'Join the Magpie Militia';
@@ -3289,8 +3290,8 @@ link.addEventListener('click', (e) => {
     return;
   }
 
-  // 3) If popup blocked, do NOTHING here:
-  // letting the <a> default happen will open a new tab reliably.
+  // 3) If popup blocked, do nothing:
+  // the <a> default will open a new tab reliably.
 });
 
 fb.appendChild(link);
@@ -3298,10 +3299,10 @@ detailContent.appendChild(fb);
 
   // Only show fallback if the embed truly didn't render
   setTimeout(() => {
-    const slot = dock?.querySelector?.('.ml-embedded');
-    const rendered = !!(slot && slot.children && slot.children.length > 0);
-    if (!rendered) fb.style.display = '';
-  }, 900);
+  const slot = dock?.querySelector?.('.ml-embedded');
+  const rendered = !!(slot && slot.querySelector('form, input, iframe'));
+  if (!rendered) fb.style.display = '';
+	}, 900);
 }
 
   // =========================
