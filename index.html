@@ -1685,6 +1685,74 @@ html{
 
 .modal-note{ font-size: 12px; opacity: .92; min-height: 16px; }
 
+
+/* Lyrics modal */
+#lyricsModal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 9999;
+}
+
+#lyricsModal.open{ display:block; }
+
+#lyricsModal .lyrics-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+}
+
+#lyricsModal .lyrics-dialog{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 920px);
+  max-height: 86vh;
+  background: rgba(30,30,30,.35);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  padding: 12px;
+  overflow: hidden;
+}
+
+#lyricsModal .lyrics-title{
+  font-weight: 800;
+  font-size: 14px;
+  padding: 6px 42px 10px 6px;
+  color: #fff;
+  opacity: .95;
+}
+
+#lyricsModal .lyrics-img{
+  width: 100%;
+  height: auto;
+  max-height: calc(86vh - 62px);
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+}
+
+#lyricsModal .lyrics-close{
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-size: 22px;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+/* prevent background scroll when modal open */
+.modal-open{ overflow: hidden; }
+
 /* ✅ MailerLite form wrapper polish */
 .ml-embedded,
 .ml-form-embedContainer{
@@ -2642,6 +2710,78 @@ html{
  // ============================
 // 2) RENDER
 // ============================
+
+// =========================
+// LYRICS LIGHTBOX (for release cover click)
+// =========================
+let lyricsModalEl = null;
+
+function ensureLyricsModal() {
+  if (lyricsModalEl) return lyricsModalEl;
+
+  const modal = document.createElement('div');
+  modal.id = 'lyricsModal';
+  modal.innerHTML = `
+    <div class="lyrics-backdrop" data-close="1"></div>
+    <div class="lyrics-dialog" role="dialog" aria-modal="true" aria-label="Lyrics image">
+      <button class="lyrics-close" type="button" aria-label="Close" data-close="1">×</button>
+      <div class="lyrics-title" id="lyricsTitle"></div>
+      <img class="lyrics-img" id="lyricsImg" alt="">
+    </div>
+  `;
+  document.body.appendChild(modal);
+  lyricsModalEl = modal;
+
+  // close on backdrop or X
+  modal.addEventListener('click', (e) => {
+    if (e.target?.dataset?.close) closeLyricsModal();
+  });
+
+  // close on Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLyricsModal();
+  });
+
+  return modal;
+}
+
+function openLyricsModal(src, titleText = '') {
+  const modal = ensureLyricsModal();
+  const img = modal.querySelector('#lyricsImg');
+  const title = modal.querySelector('#lyricsTitle');
+
+  title.textContent = titleText || '';
+  img.src = src;
+  img.alt = titleText ? `${titleText} lyrics` : 'Lyrics';
+
+  modal.classList.add('open');
+  document.documentElement.classList.add('modal-open');
+}
+
+function closeLyricsModal() {
+  if (!lyricsModalEl) return;
+  lyricsModalEl.classList.remove('open');
+
+  const img = lyricsModalEl.querySelector('#lyricsImg');
+  if (img) img.src = '';
+
+  document.documentElement.classList.remove('modal-open');
+}
+
+// Delegated click: works even though releases are injected via innerHTML
+document.addEventListener('click', (e) => {
+  const cover = e.target.closest('.release-cover');
+  if (!cover) return;
+
+  const lyricsSrc = cover.getAttribute('data-lyrics');
+  if (!lyricsSrc) return; // only open if you provided a lyrics image
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const title = cover.getAttribute('data-title') || '';
+  openLyricsModal(lyricsSrc, title);
+});
 
 (function setupReleaseLyricsLightbox(){
   const modal = document.getElementById('imgModal');
