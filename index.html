@@ -3253,39 +3253,48 @@ else if (section.id === "militia") {
   }
 
   // Create fallback UI (hidden unless embed is missing)
-  const fb = document.createElement('div');
-  fb.className = 'militia-fallback';
-  fb.style.display = 'none';
+const fb = document.createElement('div');
+fb.className = 'militia-fallback';
+fb.style.display = 'none';
 
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.className = 'btn';
-  btn.textContent = 'Join the Magpie Militia';
+// Make it a REAL link (guaranteed fallback)
+const link = document.createElement('a');
+link.className = 'btn';
+link.textContent = 'Join the Magpie Militia';
+link.href = fallbackUrl;
+link.target = '_blank';
+link.rel = 'noopener';
 
-  // Direct click handler (most reliable for popups)
-  btn.addEventListener('click', (e) => {
+link.addEventListener('click', (e) => {
+  // 1) Try MailerLite popup first (if available)
+  if (typeof window.ml === 'function') {
+    try {
+      e.preventDefault();
+      e.stopPropagation();
+      window.ml('show', formId, true);
+      return;
+    } catch (err) {
+      // fall through
+    }
+  }
+
+  // 2) Try centered popup
+  const w = openCenteredPopup(fallbackUrl, 520, 720);
+
+  // If popup opened, prevent normal link behavior
+  if (w) {
     e.preventDefault();
     e.stopPropagation();
+    w.focus?.();
+    return;
+  }
 
-    // 1) Try MailerLite popup first (if available)
-    if (typeof window.ml === 'function') {
-      try {
-        window.ml('show', formId, true);
-        return;
-      } catch (err) {
-        // fall through
-      }
-    }
+  // 3) If popup blocked, do NOTHING here:
+  // letting the <a> default happen will open a new tab reliably.
+});
 
-    // 2) Popup fallback
-    const w = openCenteredPopup(fallbackUrl, 520, 720);
-
-    // 3) If popup blocked, use same tab
-    if (!w) window.location.assign(fallbackUrl);
-  });
-
-  fb.appendChild(btn);
-  detailContent.appendChild(fb);
+fb.appendChild(link);
+detailContent.appendChild(fb);
 
   // Only show fallback if the embed truly didn't render
   setTimeout(() => {
