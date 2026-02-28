@@ -2565,7 +2565,7 @@ html{
     // 2) RENDER
     // ============================
 
-	function openCenteredPopup(url, width = 520, height = 720) {
+  function openCenteredPopup(url, width = 520, height = 720) {
   const left = window.screenX + (window.outerWidth - width) / 2;
   const top = window.screenY + (window.outerHeight - height) / 2;
 
@@ -2574,6 +2574,14 @@ html{
     'magpieMilitiaSignup',
     `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
   );
+}
+
+function parkNode(id){
+  const node = document.getElementById(id);
+  const park = document.getElementById('persistentParking');
+  if (node && park && node.parentNode !== park) {
+    park.appendChild(node); // move node out of the wipe zone
+  }
 }
 
     const tilesEl = document.getElementById('topLinks');
@@ -3047,7 +3055,10 @@ function setDetails(section){
 
   // Keep tip jar visible everywhere (move the same DOM node around)
   const tip = document.getElementById('tipJarWrap');
-
+  
+  parkNode('mlDock');
+  parkNode('tipJarWrap');
+  
   // Clear first (IMPORTANT)
   detailContent.innerHTML = '';
 
@@ -3197,53 +3208,46 @@ else if (section.id === "militia") {
   const formId = section.mlFormId || '3Ktjuu';
   const fallbackUrl = section.mlFallbackUrl || 'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
-  // ✅ Move the *existing* docked embed into the panel (so it was present at page load)
+  // Put the already-existing dock into the panel
   const dock = document.getElementById('mlDock');
   if (dock) {
-    dock.style.display = '';       // show it
+    dock.style.display = '';
     detailContent.appendChild(dock);
   }
 
-  // Fallback UI (hidden by default)
+  // Create fallback UI (hidden unless embed is missing)
   const fb = document.createElement('div');
   fb.className = 'militia-fallback';
   fb.style.display = 'none';
-
-  const t = document.createElement('div');
-  t.className = 'militia-fallback-text';
-  t.textContent = "";
 
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'btn';
   btn.textContent = 'Join the Magpie Militia';
 
-btn.addEventListener('click', () => {
+  btn.addEventListener('click', () => {
+    // Try MailerLite popup first (if available)
+    if (typeof window.ml === 'function') {
+      try {
+        window.ml('show', formId, true);
+        return;
+      } catch (e) {}
+    }
 
-  // 1️⃣ Try MailerLite native popup first
-  if (typeof window.ml === 'function') {
-    try {
-      window.ml('show', formId, true);
-      return;
-    } catch (e) {}
-  }
+    // Popup-window fallback (no full-page redirect)
+    openCenteredPopup(fallbackUrl);
+  });
 
-  // 2️⃣ Fallback popup window (centered)
-  openCenteredPopup(fallbackUrl);
-});
-
-  fb.appendChild(t);
   fb.appendChild(btn);
   detailContent.appendChild(fb);
 
-  // ✅ After a moment, detect whether ML rendered. If not, show fallback button.
+  // Only show fallback if the embed truly didn't render
   setTimeout(() => {
     const slot = dock?.querySelector?.('.ml-embedded');
     const rendered = !!(slot && slot.children && slot.children.length > 0);
 
-    // If not rendered, show fallback button
     if (!rendered) fb.style.display = '';
-  }, 1400);
+  }, 900);
 }
 
   // =========================
@@ -3880,6 +3884,9 @@ updateStopButton();
   <div id="mlDock" style="display:none">
   <div class="ml-embedded" data-form="3Ktjuu"></div>
 </div>
+
+<!-- Persistent parking (keeps nodes alive so innerHTML wipes don't destroy them) -->
+<div id="persistentParking" style="display:none"></div>
 
 </body>
 </html>
