@@ -3718,22 +3718,22 @@ tilesEl.addEventListener('pointerleave', (e) => {
 
 
 // Top CTA placeholders
-document.getElementById('joinMailing').addEventListener('click', (e)=>{
-  e.preventDefault();
+const joinMailingBtn = document.getElementById('joinMailing');
+if (joinMailingBtn) {
+  joinMailingBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
 
-  // Find the Militia section config
-  const militiaSection = SECTIONS.find(s => s.id === 'militia');
-  if(!militiaSection) return;
+    const militiaSection = SECTIONS.find(s => s.id === 'militia');
+    if(!militiaSection) return;
 
-  // Activate it (same behavior as clicking the tile)
-  activate(militiaSection);
+    activate(militiaSection);
 
-  // Scroll to the center stage detail panel
-  const centerStage = document.querySelector('.center-stage');
-  if(centerStage){
-    centerStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-});
+    const centerStage = document.querySelector('.center-stage');
+    if(centerStage){
+      centerStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+}
 
 
 // ✅ Wipe any old stopAudio listeners by replacing the node
