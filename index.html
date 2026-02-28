@@ -2858,15 +2858,21 @@ SECTIONS.forEach(s => {
   audios.set(s.id, a);
 });
 
-function fadeTo(audio, target, ms=220){
+function fadeTo(audio, target, ms = 220, tokenAtStart = fadeToken){
   if(!audio) return Promise.resolve();
+
   const start = audio.volume;
   const delta = target - start;
   const startTime = performance.now();
+
   return new Promise((resolve)=>{
     function tick(now){
+      // ✅ if anything bumped fadeToken, abort this fade immediately
+      if (tokenAtStart !== fadeToken) return resolve();
+
       const t = Math.min(1, (now - startTime) / ms);
       audio.volume = Math.max(0, Math.min(1, start + delta * t));
+
       if(t < 1) requestAnimationFrame(tick);
       else resolve();
     }
@@ -2875,7 +2881,7 @@ function fadeTo(audio, target, ms=220){
 }
 
 async function crossfade(toId){
-// ✅ If that section has no audio, just stop any current preview
+  // If that section has no audio, just stop any current preview
   if (!audios.has(toId)){
     stopAll();
     return;
@@ -2884,32 +2890,52 @@ async function crossfade(toId){
   const myToken = ++fadeToken;
   if(activeAudioId === toId) return;
 
-  const prevId = activeAudioId;                 // <-- add
+  const prevId = activeAudioId;
   const from = prevId ? audios.get(prevId) : null;
   const to = audios.get(toId);
   activeAudioId = toId;
 
-  if(to){
-    try{ await to.play(); } catch {}
+  // Start play (can be async/racy on some browsers)
+  if (to){
+    try{
+      await to.play();
+    }catch{}
   }
 
+  // ✅ if Stop was clicked while play() was pending, abort
+  if (myToken !== fadeToken) return;
+
   await Promise.all([
-    fadeTo(from, 0, 260).then(()=>{ if(from){ from.pause(); from.currentTime = 0; } }),
-    fadeTo(to, 0.75, 260)
+    fadeTo(from, 0, 260, myToken).then(()=>{
+      if(from){
+        from.pause();
+        from.currentTime = 0;
+        from.volume = 0;
+      }
+    }),
+    fadeTo(to, 0.75, 260, myToken)
   ]);
 
-  if(myToken !== fadeToken) return;
+  // ✅ check again at end
+  if (myToken !== fadeToken) return;
+
   updateStopButton();
-  
 }
 
-    function stopAll(exceptId=null){
+function stopAll(exceptId=null){
+  // ✅ cancel any active crossfade/fades immediately
+  fadeToken++;
+
   audios.forEach((a, id) => {
     if(exceptId && id === exceptId) return;
     a.pause();
     a.currentTime = 0;
     a.volume = 0;
+
+    // Optional: extra “hard stop” if a browser is being stubborn
+    // a.load();
   });
+
   if(!exceptId) activeAudioId = null;
   updateStopButton();
 }
