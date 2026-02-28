@@ -3177,84 +3177,67 @@ if (section.id === "home") {
 // MAGPIE MILITIA (MailerLite embed + fallback) — CACHED + CLICK-SAFE
 // =========================
 else if (section.id === "militia") {
-  
+
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
   const formId = section.mlFormId || '3Ktjuu';
-  
-   // ✅ REQUIRED: put your real MailerLite hosted/share URL here
-  const HARD_FALLBACK_URL = 'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
-  const fallbackUrl = section.mlFallbackUrl || HARD_FALLBACK_URL;
+  const fallbackUrl = section.mlFallbackUrl || 'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
-  if (!militiaEmbedCache) {
-    const wrap = document.createElement('div');
-
-    const formWrap = document.createElement('div');
-    formWrap.className = 'embed-wrap';
-    formWrap.innerHTML = `<div class="ml-embedded" data-form="${formId}"></div>`;
-    wrap.appendChild(formWrap);
-
-    const fb = document.createElement('div');
-    fb.className = 'militia-fallback';
-    fb.style.display = 'none';
-
-    const t = document.createElement('div');
-    t.className = 'militia-fallback-text';
-    t.textContent = "";
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn';
-    btn.textContent = 'Join the Magpie Militia';
-
-    btn.addEventListener('click', () => {
-  // Try popup first if available…
-  if (typeof window.ml === 'function') {
-    try {
-      window.ml('show', formId, true);
-      // ✅ DO NOT return yet.
-      // If popup fails to show, we'll hard-fallback after a beat.
-    } catch (err) {
-      // ignore and fall through
-    }
+  // ✅ Move the *existing* docked embed into the panel (so it was present at page load)
+  const dock = document.getElementById('mlDock');
+  if (dock) {
+    dock.style.display = '';       // show it
+    detailContent.appendChild(dock);
   }
 
-  // ✅ Hard fallback (same tab works on iPhone)
-  // Give the popup a moment; if it didn't appear, navigate.
+  // Fallback UI (hidden by default)
+  const fb = document.createElement('div');
+  fb.className = 'militia-fallback';
+  fb.style.display = 'none';
+
+  const t = document.createElement('div');
+  t.className = 'militia-fallback-text';
+  t.textContent = "If the embed doesn't load, use the button below.";
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn';
+  btn.textContent = 'Join the Magpie Militia';
+
+  btn.addEventListener('click', () => {
+    // 1) Preferred: MailerLite popup (if available)
+    if (typeof window.ml === 'function') {
+      try {
+        window.ml('show', formId, true);
+        return;
+      } catch (e) { /* fall through */ }
+    }
+
+    // 2) Popup window fallback (not a full-page redirect)
+    if (fallbackUrl) {
+      window.open(
+        fallbackUrl,
+        'mlPopup',
+        'popup=yes,width=520,height=720,scrollbars=yes'
+      );
+    }
+  });
+
+  fb.appendChild(t);
+  fb.appendChild(btn);
+  detailContent.appendChild(fb);
+
+  // ✅ After a moment, detect whether ML rendered. If not, show fallback button.
   setTimeout(() => {
-    // If any MailerLite popup-ish element exists, don't redirect.
-    // (This is intentionally broad so it works across ML variations.)
-    const popupOpen =
-      document.querySelector('[class*="ml-form"]') ||
-      document.querySelector('[id*="mlb"]') ||
-      document.querySelector('[class*="ml-overlay"]') ||
-      document.querySelector('[class*="ml-popup"]');
+    const slot = dock?.querySelector?.('.ml-embedded');
+    const rendered = !!(slot && slot.children && slot.children.length > 0);
 
-    if (!popupOpen && fallbackUrl) {
-      window.location.assign(fallbackUrl);
-    }
-  }, 250);
-});
-
-    fb.appendChild(t);
-    fb.appendChild(btn);
-    wrap.appendChild(fb);
-
-    militiaEmbedCache = wrap;
-
-    setTimeout(() => {
-      const slot = formWrap.querySelector('.ml-embedded');
-      const rendered = !!(slot && slot.children && slot.children.length > 0);
-      const hasPopup = (typeof window.ml === 'function');
-
-      if (!rendered || !hasPopup) fb.style.display = '';
-    }, 1200);
-  }
-
-  detailContent.appendChild(militiaEmbedCache);
+    // If not rendered, show fallback button
+    if (!rendered) fb.style.display = '';
+  }, 1400);
 }
 
   // =========================
@@ -3888,5 +3871,9 @@ updateStopButton();
   </div>
 </div>
   
+  <div id="mlDock" style="display:none">
+  <div class="ml-embedded" data-form="3Ktjuu"></div>
+</div>
+
 </body>
 </html>
