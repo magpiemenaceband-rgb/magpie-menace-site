@@ -2621,6 +2621,14 @@ function getBasePath() {
   return "/";
 }
 
+function parkNode(id){
+  const el = document.getElementById(id);
+  const lot = document.getElementById('mmParking');
+  if (!el || !lot) return;
+  lot.appendChild(el);          // moving keeps the same DOM node alive
+  el.style.display = 'none';    // hide while parked
+}
+
 function assetUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
@@ -2656,7 +2664,9 @@ function showHome(){
 
   const tip = document.getElementById('tipJarWrap');
 
-  detailContent.innerHTML = "";
+  parkNode('mlDock');      // ✅ prevents header-hover from killing the embed
+parkNode('tipJarWrap');
+detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
   // ✅ keep Tip Jar at bottom on Home too
@@ -3060,11 +3070,8 @@ function setDetails(section){
 
   // Keep tip jar visible everywhere (move the same DOM node around)
   const tip = document.getElementById('tipJarWrap');
-  
-  parkNode('mlDock');
-  parkNode('tipJarWrap');
-  
-  // Clear first (IMPORTANT)
+  parkNode('mlDock');      // ✅ keep MailerLite alive across section changes
+  parkNode('tipJarWrap');  // (optional, but matches your “move same node around” pattern)
   detailContent.innerHTML = '';
 
 // =========================
@@ -3201,11 +3208,10 @@ if (section.id === "home") {
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embed + fallback) — STICKY + CLICK-SAFE
+// MAGPIE MILITIA (MailerLite embed + fallback) — STICKY EMBED
 // =========================
 else if (section.id === "militia") {
 
-  // Header
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
@@ -3216,19 +3222,19 @@ else if (section.id === "militia") {
     section.mlFallbackUrl ||
     'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
-  // 1) Put the already-existing dock into the panel (keeps embed consistent across revisits)
+  // Bring the dock back from parking and show it
   const dock = document.getElementById('mlDock');
   if (dock) {
     dock.style.display = '';
     detailContent.appendChild(dock);
   }
 
-  // 2) Fallback container (we create ONCE per render)
+  // Fallback container
   const fb = document.createElement('div');
   fb.className = 'militia-fallback';
   fb.style.display = 'none';
 
-  // 3) REAL link fallback (guaranteed to work even if JS is blocked)
+  // Real link fallback (always works if clicks aren't intercepted)
   const link = document.createElement('a');
   link.className = 'btn';
   link.href = fallbackUrl;
@@ -3236,50 +3242,14 @@ else if (section.id === "militia") {
   link.rel = 'noopener';
   link.textContent = 'Join the Magpie Militia';
 
-  // 4) Try popup modes first; otherwise let the <a> do its normal thing
-  // Use CAPTURE to beat other global click handlers that might stop propagation
-  link.addEventListener('click', (e) => {
-
-    // A) Try MailerLite popup first (if available)
-    if (typeof window.ml === 'function') {
-      try {
-        e.preventDefault();
-        e.stopPropagation();
-        window.ml('show', formId, true);
-        return;
-      } catch (err) {
-        // fall through
-      }
-    }
-
-    // B) Try centered popup
-    const w = openCenteredPopup(fallbackUrl, 520, 720);
-    if (w) {
-      e.preventDefault();
-      e.stopPropagation();
-      w.focus?.();
-      return;
-    }
-
-    // C) If popup blocked, do NOTHING:
-    // letting the <a> default happen will open a new tab reliably.
-  }, true);
-
   fb.appendChild(link);
   detailContent.appendChild(fb);
 
-  // 5) Decide whether embed rendered; show fallback only if embed is missing
-  // IMPORTANT: always HIDE fallback first on each visit, then show only if needed
+  // After a beat, decide whether embed rendered
   setTimeout(() => {
-    fb.style.display = 'none';
-
-    // Look for something "real" inside the dock that indicates the embed loaded
     const rendered = !!(dock && dock.querySelector('.ml-embedded form, .ml-embedded input, .ml-embedded iframe'));
-
-    if (!rendered) {
-      fb.style.display = '';
-    }
-  }, 600);
+    fb.style.display = rendered ? 'none' : '';
+  }, 700);
 }
 
   // =========================
@@ -3919,6 +3889,8 @@ updateStopButton();
 
 <!-- Persistent parking (keeps nodes alive so innerHTML wipes don't destroy them) -->
 <div id="persistentParking" style="display:none"></div>
+
+<div id="mmParking" style="display:none"></div>
 
 </body>
 </html>
