@@ -1720,7 +1720,7 @@ html{
 }
 
 .militia-fallback *{
-  pointer-events: auto;
+  pointer-events: auto !important;
 }
 
 @keyframes fadeMilitia{
@@ -3228,18 +3228,28 @@ else if (section.id === "militia") {
   btn.className = 'btn';
   btn.textContent = 'Join the Magpie Militia';
 
-  btn.addEventListener('click', () => {
-    // Try MailerLite popup first (if available)
-    if (typeof window.ml === 'function') {
-      try {
-        window.ml('show', formId, true);
-        return;
-      } catch (e) {}
-    }
+btn.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-    // Popup-window fallback (no full-page redirect)
-    openCenteredPopup(fallbackUrl);
-  });
+  // 1) Try MailerLite popup first
+  if (typeof window.ml === 'function') {
+    try {
+      window.ml('show', formId, true);
+      return;
+    } catch (err) {
+      // fall through to popup fallback
+    }
+  }
+
+  // 2) Fallback popup window
+  const popup = openCenteredPopup(fallbackUrl);
+
+  // 3) If popup blocked, navigate same tab (guarantees something happens)
+  if (!popup) {
+    window.location.assign(fallbackUrl);
+  }
+});
 
   fb.appendChild(btn);
   detailContent.appendChild(fb);
