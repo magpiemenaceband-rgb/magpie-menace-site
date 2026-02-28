@@ -2881,9 +2881,12 @@ function fadeTo(audio, target, ms = 220, tokenAtStart = fadeToken){
 }
 
 async function crossfade(toId){
+  // If hover previews are disabled, never start audio
+  if (!audioEnabled) return;
+
   // If that section has no audio, just stop any current preview
   if (!audios.has(toId)){
-    stopAll();
+    stopEverything();
     return;
   }
 
@@ -2895,15 +2898,20 @@ async function crossfade(toId){
   const to = audios.get(toId);
   activeAudioId = toId;
 
-  // Start play (can be async/racy on some browsers)
+  // If disabled mid-flight, abort
+  if (!audioEnabled || myToken !== fadeToken) return;
+
   if (to){
     try{
       await to.play();
     }catch{}
   }
 
-  // ✅ if Stop was clicked while play() was pending, abort
-  if (myToken !== fadeToken) return;
+  // Abort if Stop was clicked during play()
+  if (!audioEnabled || myToken !== fadeToken){
+    try{ to.pause(); to.currentTime = 0; to.volume = 0; }catch{}
+    return;
+  }
 
   await Promise.all([
     fadeTo(from, 0, 260, myToken).then(()=>{
@@ -2916,8 +2924,7 @@ async function crossfade(toId){
     fadeTo(to, 0.75, 260, myToken)
   ]);
 
-  // ✅ check again at end
-  if (myToken !== fadeToken) return;
+  if (!audioEnabled || myToken !== fadeToken) return;
 
   updateStopButton();
 }
@@ -2937,6 +2944,32 @@ function stopAll(exceptId=null){
   });
 
   if(!exceptId) activeAudioId = null;
+  updateStopButton();
+}
+
+function stopEverything(){
+  // Cancel any in-flight fades/crossfades
+  fadeToken++;
+
+  // Stop the preview map audios
+  audios.forEach(a => {
+    try{
+      a.pause();
+      a.currentTime = 0;
+      a.volume = 0;
+    }catch{}
+  });
+
+  // Also stop ANY other audio/video tags that might exist (duplicates, embeds, etc.)
+  document.querySelectorAll('audio, video').forEach(m => {
+    try{
+      m.pause();
+      m.currentTime = 0;
+      if ('volume' in m) m.volume = 0;
+    }catch{}
+  });
+
+  activeAudioId = null;
   updateStopButton();
 }
 
@@ -3521,7 +3554,7 @@ else if (section.id === "releases") {
 	
 function disableHoverAudioForExternalPlayer(){
   fadeToken++;
-  stopAll();            // stops preview audio + clears activeAudioId
+  stopEverything();            // stops preview audio + clears activeAudioId
   audioEnabled = false; // disables hover-trigger audio
   nowPlaying.textContent = 'Spotify active (hover audio disabled)';
   updateStopButton();
@@ -3730,9 +3763,10 @@ document.getElementById('joinMailing').addEventListener('click', (e)=>{
     }
 
     // Audio enabled -> STOP and DISABLE so hover won't restart
-    fadeToken++;
-    stopAll();
-    audioEnabled = false;
+    //fadeToken++;
+	audioEnabled = false;
+    stopEverything();
+    
 
     nowPlaying.textContent = 'Audio disabled (click Enable Audio)';
     setCursorBig(false);
