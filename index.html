@@ -1985,6 +1985,69 @@ html{
   background: rgba(255,80,80,.18) !important;
 }
 
+.img-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+
+.img-modal[aria-hidden="false"]{
+  display: block;
+}
+
+.img-modal-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+}
+
+.img-modal-card{
+  position: relative;
+  max-width: min(920px, 92vw);
+  max-height: 88vh;
+  margin: 6vh auto 0;
+  background: rgba(20,20,22,.86);
+  border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  overflow: hidden;
+}
+
+.img-modal-title{
+  padding: 12px 44px 10px 14px;
+  font-weight: 900;
+  color: rgba(255,255,255,.95);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  letter-spacing: .2px;
+}
+
+#imgModalImg{
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(88vh - 48px);
+  object-fit: contain;
+  background: rgba(255,255,255,.04);
+}
+
+.img-modal-x{
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color: #fff;
+  font-size: 22px;
+  line-height: 0;
+  cursor: pointer;
+}
+
+
   </style>
 
 <!-- MailerLite Universal -->
@@ -2396,6 +2459,7 @@ html{
       title: "Koozie Vows",
       type: "Single",
       cover: "assets/Koozie-Vows-Camo-Cover.png",
+	  lyricsImg: "assets/lyrics/koozie-vows-lyrics.jpg",
       blurb: "Vows we thought would last.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/39cN2nSwOGvBh3nVVs8yML?si=19a13b01d62d43bd" },
@@ -2409,6 +2473,7 @@ html{
       title: "Suffocation",
       type: "Single",
       cover: "assets/Suffocation-Cover.png",
+	  lyricsImg: "assets/lyrics/suffocation-lyrics.jpg",
       blurb: "A bear hug from life.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/5859YShAuk1bicGi16uWv3?si=698afc61a9074723" },
@@ -2422,6 +2487,7 @@ html{
       title: "Reflections",
       type: "Single",
       cover: "assets/Reflections-Cover.png",
+	  lyricsImg: "assets/lyrics/reflections-lyrics.jpg",
       blurb: "Sometimes it's good to look back.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/0B7E3Ud34KFTkUTOtNLfvX?si=62e4de6e7dfb4e8c" },
@@ -2435,6 +2501,7 @@ html{
       title: "Who I Am",
       type: "Single",
       cover: "assets/Who-I-Am-Cover.png",
+	  lyricsImg: "assets/lyrics/who-i-am-lyrics.jpg",
       blurb: "Discovering oneself amidst others' expectations.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/1OIla8Fux3lj94TsvrY0Ps?si=13d44a0e37ad42cd" },
@@ -2448,6 +2515,7 @@ html{
       title: "Help",
       type: "Single",
       cover: "assets/HELP-Cover.png",
+	  lyricsImg: "assets/lyrics/help-lyrics.jpg",
       blurb: "Behind every addiction is a human.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/4R2O9d8LluAMSbyuCyhdgM?si=b2a606cf2d614518" },
@@ -2461,6 +2529,7 @@ html{
       title: "Masquerade",
       type: "Single",
       cover: "assets/Masquerade-Cover.png",
+	  lyricsImg: "assets/lyrics/masquerade-lyrics.jpg",
       blurb: "What lies behind the mask of illusions?",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/1zSmetzmue49byOp9tl96l?si=cc51ce02b2054e5b" },
@@ -2474,6 +2543,7 @@ html{
       title: "Until It Happens To You",
       type: "Single",
       cover: "assets/Until-It-Happens-to-You-Cover.png",
+	  lyricsImg: "assets/lyrics/until-it-happens-to-you-lyrics.jpg",
       blurb: "It's frustrating to be judged by someone who hasn't been through what you are going through.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/42IfKc78NnT6s8GKnUx33U?si=5d96d19ff9234c98" },
@@ -2487,6 +2557,7 @@ html{
       title: "Midwest Goodbye (Featuring Geoff White)",
       type: "Single",
       cover: "assets/Midwest-Goodbye-Cover.png",
+	  lyricsImg: "assets/lyrics/midwest-goodbye-lyrics.jpg",
       blurb: "A goodbye that hits like headlights in the rearview.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/0HB0o2kvOSdXrPcoRnOzrj?si=2ddd2bd45706426c" },
@@ -2500,6 +2571,7 @@ html{
       title: "Eternity",
       type: "Single",
       cover: "assets/Eternity-Cover.png",
+	  lyricsImg: "assets/lyrics/eternity-lyrics.jpg",
       blurb: "A song about eternal love.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/7gq9ZHdYgOJxryrhOlnC6V?si=f8def89d029a498f" },
@@ -2513,6 +2585,7 @@ html{
       title: "Kaleidoscopin",
       type: "Single",
       cover: "assets/Kaleidoscopin-Cover.png",
+	  lyricsImg: "assets/lyrics/kaleidoscopin-lyrics.jpg",
       blurb: "Open up your mind and begin to see the truth.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/5xUhaxeKPNkCpBeb7V7XVG?si=3f52723409254b82" },
@@ -2526,6 +2599,7 @@ html{
       title: "Let's Fly",
       type: "Single",
       cover: "assets/Lets-Fly-Cover.png",
+	  lyricsImg: "assets/lyrics/lets-fly-lyrics.jpg",
       blurb: "Life is but a dream.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/30aonDe4bt8OL2fU3qj4z0?si=7b008076ed1a4ce6" },
@@ -2539,6 +2613,7 @@ html{
       title: "Out of My Head",
       type: "Single",
       cover: "assets/Out-of-My-Head-Cover.png",
+	  lyricsImg: "assets/lyrics/out-of-my-head-lyrics.jpg",
       blurb: "Sometimes thoughts get trapped in your head.",
       links: [
         { platform: "spotify", name: "Spotify", url: "https://open.spotify.com/track/3KeEEn50tfGb9OitZLSgAh?si=e906853486254f30" },
@@ -2567,6 +2642,68 @@ html{
  // ============================
 // 2) RENDER
 // ============================
+
+(function setupReleaseLyricsLightbox(){
+  const modal = document.getElementById('imgModal');
+  const img = document.getElementById('imgModalImg');
+  const title = document.getElementById('imgModalTitle');
+
+  if(!modal || !img || !title) return;
+
+  function openModal(src, t){
+    if(!src) return;
+    img.src = src;
+    img.alt = t ? (t + " lyrics") : "Lyrics";
+    title.textContent = t ? (t + " — Lyrics") : "Lyrics";
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    modal.setAttribute('aria-hidden','true');
+    img.src = '';
+    document.body.style.overflow = '';
+  }
+
+  // Close on backdrop / X
+  modal.addEventListener('click', (e) => {
+    if (e.target?.dataset?.close) closeModal();
+  });
+
+  // Close on ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+  });
+
+  // Open when clicking a release cover (event delegation)
+  document.addEventListener('click', (e) => {
+    const cover = e.target.closest('.release-cover');
+    if(!cover) return;
+
+    const src = cover.getAttribute('data-lyrics');
+    if(!src) return; // no lyrics image set for this release
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const t = cover.getAttribute('data-title') || '';
+    openModal(src, t);
+  }, true);
+
+  // Optional: open with keyboard (Enter/Space) when focused
+  document.addEventListener('keydown', (e) => {
+    const el = document.activeElement;
+    if(!el || !el.classList || !el.classList.contains('release-cover')) return;
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+
+    const src = el.getAttribute('data-lyrics');
+    if(!src) return;
+
+    e.preventDefault();
+    const t = el.getAttribute('data-title') || '';
+    openModal(src, t);
+  });
+})();
 
 function openCenteredPopup(url, width = 520, height = 720) {
   const left = window.screenX + (window.outerWidth - width) / 2;
@@ -2664,7 +2801,7 @@ function showHome(){
 
   const tip = document.getElementById('tipJarWrap');
 
-  parkNode('mlDock');      // ✅ prevents header-hover from killing the embed
+parkNode('mlDock');      // ✅ prevents header-hover from killing the embed
 parkNode('tipJarWrap');
 detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
@@ -3516,18 +3653,27 @@ else if (section.id === "releases") {
         ? `<div class="release-blurb">${r.blurb}</div>`
         : "";
 
-      card.innerHTML =
-        `<div class="release-top">` +
-          `<img class="release-cover" src="${coverSrc}" alt="${r.cover ? (r.title + " cover") : ""}" loading="lazy" ` +
-               `onerror="this.onerror=null; this.src='${fallback}';">` +
-          `<div class="release-meta">` +
-            `<div class="release-date">${r.date || ""}</div>` +
-            `<div class="release-title">${r.title || ""}</div>` +
-            `<div class="release-type">${r.type || ""}</div>` +
-            blurbHtml +
-          `</div>` +
-        `</div>` +
-        linksHtml;
+card.innerHTML = `
+  <div class="release-top">
+    <img class="release-cover"
+         src="${coverSrc}"
+         alt="${r.cover ? (r.title + ' cover') : ''}"
+         loading="lazy"
+         data-lyrics="${r.lyricsImg ? assetUrl(r.lyricsImg) : ''}"
+         data-title="${(r.title || '').replaceAll(/"/g, '&quot;')}"
+         role="button"
+         tabindex="0"
+         style="cursor:pointer"
+         onerror="this.onerror=null; this.src='${fallback}';">
+    <div class="release-meta">
+      <div class="release-date">${r.date || ''}</div>
+      <div class="release-title">${r.title || ''}</div>
+      <div class="release-type">${r.type || ''}</div>
+      ${blurbHtml}
+    </div>
+  </div>
+  ${linksHtml}
+`;
 
       wrap.appendChild(card);
     });
@@ -3891,6 +4037,15 @@ updateStopButton();
 <div id="persistentParking" style="display:none"></div>
 
 <div id="mmParking" style="display:none"></div>
+
+<div id="imgModal" class="img-modal" aria-hidden="true">
+  <div class="img-modal-backdrop" data-close="1"></div>
+  <div class="img-modal-card" role="dialog" aria-modal="true" aria-label="Image preview">
+    <button class="img-modal-x" type="button" data-close="1" aria-label="Close">×</button>
+    <div class="img-modal-title" id="imgModalTitle"></div>
+    <img id="imgModalImg" alt="">
+  </div>
+</div>
 
 </body>
 </html>
