@@ -2564,9 +2564,9 @@ html{
       }
     ];
 
-    // ============================
-    // 2) RENDER
-    // ============================
+ // ============================
+// 2) RENDER
+// ============================
 
 function openCenteredPopup(url, width = 520, height = 720) {
   const left = window.screenX + (window.outerWidth - width) / 2;
@@ -2579,37 +2579,7 @@ function openCenteredPopup(url, width = 520, height = 720) {
   );
 }
 
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.militia-fallback .btn');
-  if (!btn) return;
 
-  e.preventDefault();
-  e.stopPropagation();
-
-  const militia = SECTIONS.find(s => s.id === 'militia');
-  if (!militia) return;
-
-  const formId = militia.mlFormId || '3Ktjuu';
-  const fallbackUrl =
-    militia.mlFallbackUrl ||
-    'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
-
-  // 1) Try MailerLite popup first
-  if (typeof window.ml === 'function') {
-    try {
-      window.ml('show', formId, true);
-      return;
-    } catch (err) {
-      // fall through
-    }
-  }
-
-  // 2) Popup fallback
-  const w = openCenteredPopup(fallbackUrl, 520, 720);
-
-  // 3) If popup blocked, use same tab (guarantees it works)
-  if (!w) window.location.assign(fallbackUrl);
-});
 
 function parkNode(id){
   const node = document.getElementById(id);
@@ -3231,10 +3201,11 @@ if (section.id === "home") {
   }
   
 // =========================
-// MAGPIE MILITIA (MailerLite embed + fallback) — CACHED + CLICK-SAFE
+// MAGPIE MILITIA (MailerLite embed + fallback) — STICKY + CLICK-SAFE
 // =========================
 else if (section.id === "militia") {
 
+  // Header
   const h = document.createElement('div');
   h.className = 'panel-head';
   h.textContent = 'Join the Magpie Militia';
@@ -3245,64 +3216,70 @@ else if (section.id === "militia") {
     section.mlFallbackUrl ||
     'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
-  // Put the already-existing dock into the panel
+  // 1) Put the already-existing dock into the panel (keeps embed consistent across revisits)
   const dock = document.getElementById('mlDock');
   if (dock) {
     dock.style.display = '';
     detailContent.appendChild(dock);
   }
 
-// Create fallback UI (hidden unless embed is missing)
-const fb = document.createElement('div');
-fb.className = 'militia-fallback';
-fb.id = 'militiaFallback';
-fb.style.display = 'none';
+  // 2) Fallback container (we create ONCE per render)
+  const fb = document.createElement('div');
+  fb.className = 'militia-fallback';
+  fb.style.display = 'none';
 
-// REAL link (guaranteed fallback)
-const link = document.createElement('a');
-link.className = 'btn';
-link.textContent = 'Join the Magpie Militia';
-link.href = fallbackUrl;
-link.target = '_blank';
-link.rel = 'noopener';
+  // 3) REAL link fallback (guaranteed to work even if JS is blocked)
+  const link = document.createElement('a');
+  link.className = 'btn';
+  link.href = fallbackUrl;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.textContent = 'Join the Magpie Militia';
 
-link.addEventListener('click', (e) => {
-  // 1) Try MailerLite popup first (if available)
-  if (typeof window.ml === 'function') {
-    try {
+  // 4) Try popup modes first; otherwise let the <a> do its normal thing
+  // Use CAPTURE to beat other global click handlers that might stop propagation
+  link.addEventListener('click', (e) => {
+
+    // A) Try MailerLite popup first (if available)
+    if (typeof window.ml === 'function') {
+      try {
+        e.preventDefault();
+        e.stopPropagation();
+        window.ml('show', formId, true);
+        return;
+      } catch (err) {
+        // fall through
+      }
+    }
+
+    // B) Try centered popup
+    const w = openCenteredPopup(fallbackUrl, 520, 720);
+    if (w) {
       e.preventDefault();
       e.stopPropagation();
-      window.ml('show', formId, true);
+      w.focus?.();
       return;
-    } catch (err) {
-      // fall through
     }
-  }
 
-  // 2) Try centered popup
-  const w = openCenteredPopup(fallbackUrl, 520, 720);
+    // C) If popup blocked, do NOTHING:
+    // letting the <a> default happen will open a new tab reliably.
+  }, true);
 
-  // If popup opened, prevent normal link behavior
-  if (w) {
-    e.preventDefault();
-    e.stopPropagation();
-    w.focus?.();
-    return;
-  }
+  fb.appendChild(link);
+  detailContent.appendChild(fb);
 
-  // 3) If popup blocked, do nothing:
-  // the <a> default will open a new tab reliably.
-});
-
-fb.appendChild(link);
-detailContent.appendChild(fb);
-
-  // Only show fallback if the embed truly didn't render
+  // 5) Decide whether embed rendered; show fallback only if embed is missing
+  // IMPORTANT: always HIDE fallback first on each visit, then show only if needed
   setTimeout(() => {
-  const slot = dock?.querySelector?.('.ml-embedded');
-  const rendered = !!(slot && slot.querySelector('form, input, iframe'));
-  if (!rendered) fb.style.display = '';
-	}, 900);
+    fb.style.display = 'none';
+
+    // Look for something "real" inside the dock that indicates the embed loaded
+    const rendered = !!(dock && dock.querySelector('.ml-embedded form, .ml-embedded input, .ml-embedded iframe'));
+
+    if (!rendered) {
+      fb.style.display = '';
+    }
+  }, 600);
 }
 
   // =========================
