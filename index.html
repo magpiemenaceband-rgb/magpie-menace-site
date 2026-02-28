@@ -2568,18 +2568,18 @@ html{
     // 2) RENDER
     // ============================
 
-  function openCenteredPopup(url, width = 520, height = 720) {
+function openCenteredPopup(url, width = 520, height = 720) {
   const left = window.screenX + (window.outerWidth - width) / 2;
-  const top = window.screenY + (window.outerHeight - height) / 2;
+  const top  = window.screenY + (window.outerHeight - height) / 2;
 
-  window.open(
+  return window.open(
     url,
     'magpieMilitiaSignup',
     `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
   );
 }
 
-document.addEventListener('pointerup', (e) => {
+document.addEventListener('click', (e) => {
   const btn = e.target.closest('.militia-fallback .btn');
   if (!btn) return;
 
