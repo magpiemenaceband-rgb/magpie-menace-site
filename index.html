@@ -2565,6 +2565,17 @@ html{
     // 2) RENDER
     // ============================
 
+	function openCenteredPopup(url, width = 520, height = 720) {
+  const left = window.screenX + (window.outerWidth - width) / 2;
+  const top = window.screenY + (window.outerHeight - height) / 2;
+
+  window.open(
+    url,
+    'magpieMilitiaSignup',
+    `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+  );
+}
+
     const tilesEl = document.getElementById('topLinks');
     const audioRack = document.getElementById('audioRack');
 
@@ -2808,7 +2819,7 @@ const SMALL = window.innerWidth <= 720;
 let audioEnabled = CAN_HOVER;
 
 let musicEmbedCache = null;      // holds Spotify DOM node so it doesn't reload
-let militiaEmbedCache = null;    // holds MailerLite DOM so it doesn't break on return
+//let militiaEmbedCache = null;    // holds MailerLite DOM so it doesn't break on return
 
 // Hard safety: never preview on true touch-first devices
 if (MOBILE) {
@@ -3200,31 +3211,26 @@ else if (section.id === "militia") {
 
   const t = document.createElement('div');
   t.className = 'militia-fallback-text';
-  t.textContent = "If the embed doesn't load, use the button below.";
+  t.textContent = "";
 
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'btn';
   btn.textContent = 'Join the Magpie Militia';
 
-  btn.addEventListener('click', () => {
-    // 1) Preferred: MailerLite popup (if available)
-    if (typeof window.ml === 'function') {
-      try {
-        window.ml('show', formId, true);
-        return;
-      } catch (e) { /* fall through */ }
-    }
+btn.addEventListener('click', () => {
 
-    // 2) Popup window fallback (not a full-page redirect)
-    if (fallbackUrl) {
-      window.open(
-        fallbackUrl,
-        'mlPopup',
-        'popup=yes,width=520,height=720,scrollbars=yes'
-      );
-    }
-  });
+  // 1️⃣ Try MailerLite native popup first
+  if (typeof window.ml === 'function') {
+    try {
+      window.ml('show', formId, true);
+      return;
+    } catch (e) {}
+  }
+
+  // 2️⃣ Fallback popup window (centered)
+  openCenteredPopup(fallbackUrl);
+});
 
   fb.appendChild(t);
   fb.appendChild(btn);
