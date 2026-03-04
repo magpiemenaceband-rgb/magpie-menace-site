@@ -2864,8 +2864,10 @@ function openCenteredPopup(url, width = 520, height = 720) {
 
 
 function parkNode(id){
+  if (id === 'tipJarWrap') return;
   const node = document.getElementById(id);
   const park = document.getElementById('persistentParking');
+  
   if (node && park && node.parentNode !== park) {
     park.appendChild(node); // move node out of the wipe zone
   }
@@ -2903,14 +2905,6 @@ function getBasePath() {
   return "/";
 }
 
-function parkNode(id){
-  const el = document.getElementById(id);
-  const lot = document.getElementById('mmParking');
-  if (!el || !lot) return;
-  lot.appendChild(el);          // moving keeps the same DOM node alive
-  el.style.display = 'none';    // hide while parked
-}
-
 function assetUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
@@ -2943,11 +2937,12 @@ function buildHomeBody(){
 function showHome(){
   detailTitle.textContent = HOME_TITLE;
   detailSubtitle.textContent = HOME_SUBTITLE;
-
   const tip = document.getElementById('tipJarWrap');
+  if (tip) { tip.style.display = ''; document.getElementById('tipJarHome')?.appendChild(tip); }
+  
 
 parkNode('mlDock');      // ✅ prevents header-hover from killing the embed
-//parkNode('tipJarWrap');
+
 detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
@@ -3353,7 +3348,6 @@ function setDetails(section){
   // Keep tip jar visible everywhere (move the same DOM node around)
   const tip = document.getElementById('tipJarWrap');
   parkNode('mlDock');      // ✅ keep MailerLite alive across section changes
- // parkNode('tipJarWrap');  // (optional, but matches your “move same node around” pattern)
   detailContent.innerHTML = '';
 
 // =========================
