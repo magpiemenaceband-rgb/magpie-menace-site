@@ -2115,6 +2115,9 @@ html{
   cursor: pointer;
 }
 
+#tipJarWrap {
+  display: block !important;
+}
 
   </style>
 
@@ -2944,12 +2947,12 @@ function showHome(){
   const tip = document.getElementById('tipJarWrap');
 
 parkNode('mlDock');      // ✅ prevents header-hover from killing the embed
-parkNode('tipJarWrap');
+//parkNode('tipJarWrap');
 detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
   // ✅ keep Tip Jar at bottom on Home too
-  if (tip) detailContent.appendChild(tip);
+ // if (tip) detailContent.appendChild(tip);
 
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
@@ -3350,7 +3353,7 @@ function setDetails(section){
   // Keep tip jar visible everywhere (move the same DOM node around)
   const tip = document.getElementById('tipJarWrap');
   parkNode('mlDock');      // ✅ keep MailerLite alive across section changes
-  parkNode('tipJarWrap');  // (optional, but matches your “move same node around” pattern)
+ // parkNode('tipJarWrap');  // (optional, but matches your “move same node around” pattern)
   detailContent.innerHTML = '';
 
 // =========================
