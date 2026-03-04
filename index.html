@@ -2937,7 +2937,7 @@ function buildHomeBody(){
 function showHome(){
   detailTitle.textContent = HOME_TITLE;
   detailSubtitle.textContent = HOME_SUBTITLE;
-  const tip = document.getElementById('tipJarWrap');
+
   if (tip) { tip.style.display = ''; document.getElementById('tipJarHome')?.appendChild(tip); }
   
 
@@ -2947,7 +2947,6 @@ detailContent.innerHTML = "";
   detailContent.appendChild(buildHomeBody());
 
   // ✅ keep Tip Jar at bottom on Home too
- // if (tip) detailContent.appendChild(tip);
 
   setCursorBig(false);
   setCursorSrc('assets/cursor-magpie.png');
@@ -3345,8 +3344,6 @@ function setDetails(section){
   detailTitle.dataset.section = section.id;
   detailSubtitle.textContent = section.subtitle;
 
-  // Keep tip jar visible everywhere (move the same DOM node around)
-  const tip = document.getElementById('tipJarWrap');
   parkNode('mlDock');      // ✅ keep MailerLite alive across section changes
   detailContent.innerHTML = '';
 
@@ -3528,15 +3525,7 @@ else if (section.id === "militia") {
   }, 700);
 }
 
-  // =========================
-  // EMBED (for non-music sections like Videos, etc.)
-  // =========================
-  else if (section.embed) {
-    const embedWrap = document.createElement('div');
-    embedWrap.className = 'embed-wrap';
-    embedWrap.innerHTML = section.embed;
-    detailContent.appendChild(embedWrap);
-  }
+  
 
 // =========================
 // SOCIAL
@@ -3565,6 +3554,7 @@ else if (section.id === "social") {
   });
 
   detailContent.appendChild(linkRow);
+}
 
   // =========================
   // PHOTOS (swipe + arrows)
@@ -3652,7 +3642,7 @@ else if (section.id === "social") {
 
     detailContent.appendChild(wrap);
   }
-}
+
 
 
   // =========================
@@ -3706,43 +3696,43 @@ else if (section.id === "social") {
     detailContent.appendChild(grid);
   }
 
-  // =========================
-  // NEWS
-  // =========================
-  else if (section.id === "news") {
-    const h = document.createElement('div');
-    h.className = 'panel-head';
-    h.textContent = 'Latest News';
-    detailContent.appendChild(h);
+// =========================
+// NEWS
+// =========================
+else if (section.id === "news") {
+  const h = document.createElement('div');
+  h.className = 'panel-head';
+  h.textContent = 'Latest News';
+  detailContent.appendChild(h);
 
-    if (Array.isArray(section.posts) && section.posts.length) {
-      const wrap = document.createElement('div');
-      wrap.className = 'news-list';
+  if (Array.isArray(section.posts) && section.posts.length) {
+    const wrap = document.createElement('div');
+    wrap.className = 'news-list';
 
-      section.posts.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'news-item';
-        card.innerHTML = `
-          <div class="news-date">${p.date || ''}</div>
-          <div class="news-title">${p.title || ''}</div>
-          <div class="news-text">${p.text || ''}</div>
-        `;
-        wrap.appendChild(card);
-      });
+    section.posts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'news-item';
+      card.innerHTML = `
+        <div class="news-date">${p.date || ''}</div>
+        <div class="news-title">${p.title || ''}</div>
+        <div class="news-text">${p.text || ''}</div>
+      `;
+      wrap.appendChild(card);
+    });
 
-      detailContent.appendChild(wrap);
-    } else {
-      const empty = document.createElement('p');
-      empty.style.margin = '10px 0 0';
-      empty.style.opacity = '.85';
-      empty.textContent = 'No updates yet — check back soon.';
-      detailContent.appendChild(empty);
-    }
+    detailContent.appendChild(wrap);
+  } else {
+    const empty = document.createElement('p');
+    empty.style.margin = '10px 0 0';
+    empty.style.opacity = '.85';
+    empty.textContent = 'No updates yet — check back soon.';
+    detailContent.appendChild(empty);
+  }
   }
 
-  // =========================
-  // RELEASES
-  // =========================
+// =========================
+// RELEASES
+// =========================
 else if (section.id === "releases") {
   const h = document.createElement("div");
   h.className = "panel-head";
@@ -3770,49 +3760,44 @@ else if (section.id === "releases") {
       const linksHtml =
         Array.isArray(r.links) && r.links.length
           ? `<div class="release-links">${
-              r.links
-                .map((link) => {
-                  const icon =
-                    (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
-                      ? PLATFORM_ICONS[link.platform]
-                      : "";
-
-                  return (
-                    `<a class="stream-btn" href="${link.url}" target="_blank" rel="noopener" data-platform="${link.platform || ""}">` +
-                      `<span class="stream-ico">${icon}</span>` +
-                      `<span class="stream-label">${link.name}</span>` +
-                    `</a>`
-                  );
-                })
-                .join("")
+              r.links.map((link) => {
+                const icon =
+                  (typeof PLATFORM_ICONS !== "undefined" && PLATFORM_ICONS[link.platform])
+                    ? PLATFORM_ICONS[link.platform]
+                    : "";
+                return (
+                  `<a class="stream-btn" href="${link.url}" target="_blank" rel="noopener" data-platform="${link.platform || ""}">` +
+                    `<span class="stream-ico">${icon}</span>` +
+                    `<span class="stream-label">${link.name}</span>` +
+                  `</a>`
+                );
+              }).join("")
             }</div>`
           : "";
 
-      const blurbHtml = r.blurb
-        ? `<div class="release-blurb">${r.blurb}</div>`
-        : "";
+      const blurbHtml = r.blurb ? `<div class="release-blurb">${r.blurb}</div>` : "";
 
-card.innerHTML = `
-  <div class="release-top">
-    <img class="release-cover"
-         src="${coverSrc}"
-         alt="${r.cover ? (r.title + ' cover') : ''}"
-         loading="lazy"
-         data-lyrics="${r.lyricsImg ? assetUrl(r.lyricsImg) : ''}"
-         data-title="${(r.title || '').replaceAll(/"/g, '&quot;')}"
-         role="button"
-         tabindex="0"
-         style="cursor:pointer"
-         onerror="this.onerror=null; this.src='${fallback}';">
-    <div class="release-meta">
-      <div class="release-date">${r.date || ''}</div>
-      <div class="release-title">${r.title || ''}</div>
-      <div class="release-type">${r.type || ''}</div>
-      ${blurbHtml}
-    </div>
-  </div>
-  ${linksHtml}
-`;
+      card.innerHTML = `
+        <div class="release-top">
+          <img class="release-cover"
+               src="${coverSrc}"
+               alt="${r.cover ? (r.title + ' cover') : ''}"
+               loading="lazy"
+               data-lyrics="${r.lyricsImg ? assetUrl(r.lyricsImg) : ''}"
+               data-title="${(r.title || '').replaceAll(/"/g, '&quot;')}"
+               role="button"
+               tabindex="0"
+               style="cursor:pointer"
+               onerror="this.onerror=null; this.src='${fallback}';">
+          <div class="release-meta">
+            <div class="release-date">${r.date || ''}</div>
+            <div class="release-title">${r.title || ''}</div>
+            <div class="release-type">${r.type || ''}</div>
+            ${blurbHtml}
+          </div>
+        </div>
+        ${linksHtml}
+      `;
 
       wrap.appendChild(card);
     });
@@ -3821,14 +3806,20 @@ card.innerHTML = `
   }
 }
 
-  // =========================
-  // TIP JAR (always at bottom)
-  // =========================
- 
- if (tip) detailContent.appendChild(tip);
-
+// =========================
+// EMBED (catch-all for non-music sections like Videos, etc.)
+// =========================
+else if (section.embed) {
+  const embedWrap = document.createElement('div');
+  embedWrap.className = 'embed-wrap';
+  embedWrap.innerHTML = section.embed;
+  detailContent.appendChild(embedWrap);
 }
-    function setNowPlaying(section){
+  
+}
+ 
+
+function setNowPlaying(section){
       nowPlaying.textContent = `Now playing: ${section.title} preview`;
     }
 	
