@@ -1809,6 +1809,85 @@ html{
   z-index: 51;
 }
 
+.militia-login-form{
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.militia-input{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.14);
+  color: #fff;
+  outline: none;
+}
+
+.militia-input::placeholder{
+  color: rgba(255,255,255,.65);
+}
+
+.militia-input:focus{
+  border-color: rgba(255,255,255,.34);
+}
+
+.militia-note{
+  min-height: 18px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255,255,255,.88);
+}
+
+.militia-vault{
+  margin-top: 14px;
+}
+
+.militia-status{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin: 10px 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.militia-signed-in{
+  color: rgba(255,255,255,.92);
+  font-size: 13px;
+}
+
+.vault-grid{
+  display:grid;
+  gap:12px;
+}
+
+.vault-card{
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+}
+
+.vault-card audio,
+.vault-card video{
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 14px;
+  display:block;
+}
+
 .qr-text{
   text-align: center;
   margin-top: 18x; /* optional breathing room */
@@ -3490,39 +3569,180 @@ else if (section.id === "militia") {
   h.textContent = 'Join the Magpie Militia';
   detailContent.appendChild(h);
 
-  const formId = section.mlFormId || '3Ktjuu';
   const fallbackUrl =
     section.mlFallbackUrl ||
     'https://preview.mailerlite.io/forms/2142386/180386422412281483/share';
 
-  // Bring the dock back from parking and show it
-  const dock = document.getElementById('mlDock');
-  if (dock) {
-    dock.style.display = '';
-    detailContent.appendChild(dock);
+  const boot = window.__MILITIA_BOOTSTRAP__ || null;
+  const app = document.createElement('div');
+  app.id = 'militiaApp';
+  detailContent.appendChild(app);
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
 
-  // Fallback container
-  const fb = document.createElement('div');
-  fb.className = 'militia-fallback';
-  fb.style.display = 'none';
+  async function getSession() {
+    if (!boot) return { authenticated: false };
 
-  // Real link fallback (always works if clicks aren't intercepted)
-  const link = document.createElement('a');
-  link.className = 'btn';
-  link.href = fallbackUrl;
-  link.target = '_blank';
-  link.rel = 'noopener';
-  link.textContent = 'Join the Magpie Militia';
+    const res = await fetch(boot.sessionEndpoint, {
+      credentials: 'same-origin',
+      cache: 'no-store'
+    });
 
-  fb.appendChild(link);
-  detailContent.appendChild(fb);
+    if (!res.ok) return { authenticated: false };
+    return await res.json();
+  }
 
-  // After a beat, decide whether embed rendered
-  setTimeout(() => {
-    const rendered = !!(dock && dock.querySelector('.ml-embedded form, .ml-embedded input, .ml-embedded iframe'));
-    fb.style.display = rendered ? 'none' : '';
-  }, 700);
+  function renderLogin() {
+    app.innerHTML = `
+      <div class="militia-fallback">
+        <div class="militia-fallback-text">
+          Enter the email address you used to join the Magpie Militia.
+        </div>
+
+        <form id="militiaLoginForm" class="militia-login-form">
+          <input
+            class="militia-input"
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+          <button class="btn" type="submit">Enter the Vault</button>
+        </form>
+
+        <div class="militia-note" id="militiaNote"></div>
+
+        <div class="cta-row" style="justify-content:center; margin-top:12px;">
+          <a class="btn" href="${fallbackUrl}" target="_blank" rel="noopener">
+            Join the Magpie Militia
+          </a>
+        </div>
+      </div>
+    `;
+
+    const form = document.getElementById('militiaLoginForm');
+    const note = document.getElementById('militiaNote');
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fd = new FormData(form);
+      const email = String(fd.get('email') || '').trim();
+
+      note.textContent = 'Checking access...';
+
+      try {
+        const res = await fetch(boot.authEndpoint, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          note.textContent = data.message || 'Access denied.';
+          return;
+        }
+
+        note.textContent = 'Access granted.';
+        renderVault(data.email || email);
+      } catch (err) {
+        note.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  }
+
+  function renderVault(email) {
+    app.innerHTML = `
+      <div class="militia-vault">
+        <div class="militia-status">
+          <div class="militia-signed-in">
+            Signed in as <strong>${escapeHtml(email || '')}</strong>
+          </div>
+          <button class="btn" type="button" id="militiaLogoutBtn">Log Out</button>
+        </div>
+
+        <div class="vault-grid">
+          <div class="vault-card">
+            <div class="panel-head">EXPLICIT UNRELEASED UNDERGROUND AUDIO</div>
+            <audio controls preload="none" src="${boot.mediaBase}sob.mp3"></audio>
+          </div>
+
+          <div class="vault-card">
+            <div class="panel-head">EXPLICIT UNRELEASED UNDERGROUND VIDEO</div>
+            <video controls preload="metadata" playsinline src="${boot.mediaBase}sob.mp4"></video>
+          </div>
+
+          <div class="vault-card">
+            <div class="panel-head">New LP/EP Covers</div>
+            <div class="photo-strip" style="padding:10px 2px;">
+              <button class="photo-thumb" type="button" data-open-vault-img="${boot.mediaBase}lp-cover-front.jpg" aria-label="Open lyrics image 1">
+                <img src="${boot.mediaBase}lp-cover-front.jpg" alt="New LP: Things We Meant To Keep">
+              </button>
+
+              <button class="photo-thumb" type="button" data-open-vault-img="${boot.mediaBase}act1-front.jpg" aria-label="Open lyrics image 2">
+                <img src="${boot.mediaBase}act1-front.jpg" alt="Act I: Summer Said Forever">
+              </button>
+			  
+			  <button class="photo-thumb" type="button" data-open-vault-img="${boot.mediaBase}act2-front.jpg" aria-label="Open lyrics image 2">
+                <img src="${boot.mediaBase}act2-front.jpg" alt="Act II: Neon Illusions">
+              </button>
+			  
+			  <button class="photo-thumb" type="button" data-open-vault-img="${boot.mediaBase}act3-front.jpg" aria-label="Open lyrics image 2">
+                <img src="${boot.mediaBase}act3-front.jpg" alt="Act III: The Things We Thought Were True">
+              </button>
+			  
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('militiaLogoutBtn')?.addEventListener('click', async () => {
+      await fetch(boot.logoutEndpoint, {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      renderLogin();
+    });
+
+    app.querySelectorAll('[data-open-vault-img]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const src = btn.getAttribute('data-open-vault-img');
+        const alt = btn.querySelector('img')?.alt || 'Militia image';
+
+        if (typeof window.openPhotoModal === 'function') {
+          window.openPhotoModal(src, alt);
+        } else {
+          window.open(src, '_blank', 'noopener');
+        }
+      });
+    });
+  }
+
+  (async () => {
+    if (!boot) {
+      renderLogin();
+      return;
+    }
+
+    const session = await getSession();
+
+    if (session.authenticated) {
+      renderVault(session.email);
+    } else {
+      renderLogin();
+    }
+  })();
 }
 
   
@@ -4056,6 +4276,31 @@ window.addEventListener('pointerdown', async () => {
 }, { once:true });
 
 updateStopButton();
+
+(function autoOpenMilitiaOnProtectedRoute(){
+  const boot = window.__MILITIA_BOOTSTRAP__;
+  if (!boot || boot.sectionId !== 'militia') return;
+
+  function openMilitiaSection() {
+    const militiaSection = SECTIONS.find(s => s.id === 'militia');
+    if (!militiaSection || typeof activate !== 'function') return;
+
+    activate(militiaSection);
+
+    const panel = document.getElementById('detailPanel');
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', openMilitiaSection, { once: true });
+  } else {
+    openMilitiaSection();
+  }
+})();
+
+
 </script>
  
   <!-- Contact Modal -->
@@ -4139,6 +4384,8 @@ updateStopButton();
     contactForm?.addEventListener('submit', ()=>{
       if(contactNote) contactNote.textContent = 'Sending…';
     });
+	
+	
 	
   </script>
   
