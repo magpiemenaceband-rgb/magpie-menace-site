@@ -3646,17 +3646,25 @@ else if (section.id === "militia") {
           body: JSON.stringify({ email })
         });
 
-        const data = await res.json();
+        const raw = await res.text();
+        let data = null;
+
+        try {
+          data = JSON.parse(raw);
+        } catch (e) {
+          note.textContent = `Server returned: ${raw.slice(0, 160)}`;
+          return;
+        }
 
         if (!res.ok || !data.ok) {
-          note.textContent = data.message || 'Access denied.';
+          note.textContent = data.message || `Access denied (${res.status}).`;
           return;
         }
 
         note.textContent = 'Access granted.';
         renderVault(data.email || email);
       } catch (err) {
-        note.textContent = 'Something went wrong. Please try again.';
+        note.textContent = `Request failed: ${err.message}`;
       }
     });
   }
