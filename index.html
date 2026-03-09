@@ -3600,24 +3600,42 @@ else if (section.id === "militia") {
   }
 
   function renderLogin() {
+    const onProtectedRoute = !!boot;
+
     app.innerHTML = `
       <div class="militia-fallback">
         <div class="militia-fallback-text">
-          Enter the email address you used to join the Magpie Militia.
+          ${
+            onProtectedRoute
+              ? 'Enter the email address you used to join the Magpie Militia.'
+              : 'For subscriber-only access, open the dedicated Militia vault page.'
+          }
         </div>
 
-        <form id="militiaLoginForm" class="militia-login-form">
-          <input
-            class="militia-input"
-            type="email"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <button class="btn" type="submit">Enter the Vault</button>
-        </form>
-
-        <div class="militia-note" id="militiaNote"></div>
+        ${
+          onProtectedRoute
+            ? `
+              <form id="militiaLoginForm" class="militia-login-form">
+                <input
+                  class="militia-input"
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  required
+                />
+                <button class="btn" type="submit">Enter the Vault</button>
+              </form>
+              <div class="militia-note" id="militiaNote"></div>
+            `
+            : `
+              <div class="cta-row" style="justify-content:center; margin-top:12px;">
+                <a class="btn" href="/militia">Open the Vault</a>
+              </div>
+              <div class="militia-note" style="margin-top:10px;">
+                Use the subscriber login on the dedicated vault page.
+              </div>
+            `
+        }
 
         <div class="cta-row" style="justify-content:center; margin-top:12px;">
           <a class="btn" href="${fallbackUrl}" target="_blank" rel="noopener">
@@ -3626,6 +3644,8 @@ else if (section.id === "militia") {
         </div>
       </div>
     `;
+
+    if (!onProtectedRoute) return;
 
     const form = document.getElementById('militiaLoginForm');
     const note = document.getElementById('militiaNote');
@@ -3651,7 +3671,7 @@ else if (section.id === "militia") {
 
         try {
           data = JSON.parse(raw);
-        } catch (e) {
+        } catch (err) {
           note.textContent = `Server returned: ${raw.slice(0, 160)}`;
           return;
         }
