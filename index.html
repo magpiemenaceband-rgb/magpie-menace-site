@@ -111,25 +111,27 @@ body{
 .header-center{
   display:flex;
   align-items:center;
-  justify-content:center;
-  gap:18px;
+  justify-content:flex-end;
+  gap:10px;
   min-width:0;
 }
 
 .sob-callout{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:6px;
+  margin-right:-6px;
   flex: 0 0 auto;
 }
 
 .sob-words{
-  min-width: 170px;
-  height: 58px;
+  min-width: 135px;        /* smaller width */
+  height: 46px;            /* smaller height */
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 0 16px;
+  padding: 0 12px;
+
   position: relative;
   overflow: hidden;
 
@@ -139,12 +141,14 @@ body{
       #111 0 10px,
       #1b1b1b 10px 20px
     );
+
   border: 3px solid #39ff14;
   box-shadow:
     0 0 0 2px rgba(0,0,0,.55) inset,
     0 0 10px rgba(57,255,20,.35),
     0 0 24px rgba(57,255,20,.18);
-  transform: rotate(-1.5deg);
+
+  transform: rotate(-1deg);  /* slightly less tilt */
 }
 
 .sob-words::before{
@@ -185,8 +189,8 @@ body{
   z-index: 1;
   display:block;
   font-weight: 1000;
-  font-size: 20px;
-  letter-spacing: 1.2px;
+  font-size: 16px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: #f5f5f5;
   text-shadow:
@@ -196,6 +200,7 @@ body{
     -2px 0 0 rgba(0,255,255,.18);
   white-space: nowrap;
   transition: opacity .14s ease, transform .14s ease, filter .14s ease;
+  animation: sobGlitch 3s infinite;
 }
 
 .sob-words.flash span{
@@ -205,7 +210,7 @@ body{
 }
 
 .sob-arrow{
-  font-size: 50px;
+  font-size: 40px;
   line-height: 1;
   font-weight: 1000;
   color: #39ff14;
@@ -235,6 +240,14 @@ body{
   100%{
     transform: translateX(130%);
   }
+}
+
+@keyframes sobGlitch{
+  0%,100%{transform:translateX(0)}
+  96%{transform:translateX(0)}
+  97%{transform:translateX(-2px)}
+  98%{transform:translateX(2px)}
+  99%{transform:translateX(-1px)}
 }
 
 @media (max-width: 980px){
@@ -2415,6 +2428,40 @@ html{
 .btn-buy{
   background:rgba(255,255,255,.18);
   border:1px solid rgba(255,255,255,.3);
+}
+
+.btn-buy:hover ~ .sob-callout .sob-arrow,
+.sob-callout:hover .sob-arrow{
+  transform: translateX(14px) scale(1.2);
+  filter: brightness(1.6);
+  text-shadow:
+    0 0 8px #39ff14,
+    0 0 20px #39ff14,
+    0 0 40px #39ff14;
+}
+
+.btn-buy:hover ~ .sob-callout .sob-words{
+  border-color:#ff2b2b;
+  box-shadow:
+    0 0 12px rgba(255,43,43,.6),
+    0 0 30px rgba(255,43,43,.35);
+}
+
+.btn-buy{
+  animation: sobPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes sobPulse{
+  0%,100%{
+    transform: scale(1);
+    box-shadow:0 0 0 rgba(0,0,0,0);
+  }
+  50%{
+    transform: scale(1.05);
+    box-shadow:
+      0 0 12px rgba(255,255,255,.25),
+      0 0 22px rgba(57,255,20,.25);
+  }
 }
 
   </style>
