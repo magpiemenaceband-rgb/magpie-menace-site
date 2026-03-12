@@ -220,6 +220,7 @@ body{
     0 2px 8px rgba(0,0,0,.45);
   animation: sobArrowJab .7s steps(2, end) infinite;
   transform-origin: left center;
+  transition: transform .18s ease-out;
 }
 
 @keyframes sobArrowJab{
@@ -2426,18 +2427,39 @@ html{
 }
 
 .btn-buy{
-  background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.3);
+  background: linear-gradient(
+    180deg,
+    #ff4b4b,
+    #d10000
+  );
+
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .4px;
+
+  border: 1px solid #ff6b6b;
+
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.4) inset,
+    0 3px 10px rgba(0,0,0,.35),
+    0 0 14px rgba(255,0,0,.25);
+
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.btn-buy:hover ~ .sob-callout .sob-arrow,
-.sob-callout:hover .sob-arrow{
-  transform: translateX(14px) scale(1.2);
-  filter: brightness(1.6);
-  text-shadow:
-    0 0 8px #39ff14,
-    0 0 20px #39ff14,
-    0 0 40px #39ff14;
+.btn-buy:hover{
+  background: linear-gradient(
+    180deg,
+    #ff6a6a,
+    #ff0000
+  );
+
+  transform: translateY(-1px) scale(1.04);
+
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.4) inset,
+    0 5px 14px rgba(0,0,0,.35),
+    0 0 22px rgba(255,0,0,.45);
 }
 
 .btn-buy:hover ~ .sob-callout .sob-words{
@@ -3978,7 +4000,8 @@ else if (section.id === "militia") {
         </div>
 
         <div class="vault-grid">
-          <!-- <div class="vault-card"> -->
+          
+		  <!-- <div class="vault-card"> -->
             <!-- <div class="panel-head">EXPLICIT UNRELEASED UNDERGROUND AUDIO</div> -->
             <!-- <audio controls preload="none" src="${boot.mediaBase}sob.mp3"></audio> -->
           <!-- </div> -->
@@ -4705,10 +4728,15 @@ updateStopButton();
 <script>
   const sobWords = [
     "Explicit!",
-    "Redact this!",
+    "Unredacted!",
     "Amen!",
-    "Prophetic?",
-    "Unreleased!"
+    "Prophetic!",
+	"Rejoice!",
+    "Unreleased!",
+	"Censored!",
+	"Don't tell!",
+	"Cheaper than meds!",
+	"Freedom!"
   ];
 
   const sobWordEl = document.getElementById("sobWord");
@@ -4733,6 +4761,41 @@ updateStopButton();
   }
 </script>
   
+  <script>
+const arrow = document.querySelector(".sob-arrow");
+const button = document.querySelector(".btn-buy");
+
+document.addEventListener("mousemove", (e) => {
+
+  if(!arrow || !button) return;
+
+  const rect = button.getBoundingClientRect();
+
+  const centerX = rect.left + rect.width/2;
+  const centerY = rect.top + rect.height/2;
+
+  const dx = e.clientX - centerX;
+  const dy = e.clientY - centerY;
+
+  const distance = Math.sqrt(dx*dx + dy*dy);
+
+  if(distance < 220){
+
+    const pullX = -dx * 0.05;
+    const pullY = -dy * 0.03;
+
+    arrow.style.transform =
+      `translate(${pullX}px, ${pullY}px) scale(1.15)`;
+
+  } else {
+
+    arrow.style.transform = "translate(0,0) scale(1)";
+
+  }
+
+});
+</script>
+
   <div class="modal" id="photoModal" aria-hidden="true">
   <div class="modal-backdrop" data-close="1"></div>
 
