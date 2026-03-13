@@ -318,6 +318,59 @@ body{
   }
 }
 
+.sob-offer-wrap{
+  position:relative;
+  display:inline-flex;
+  flex-direction:column;
+}
+
+.sob-offer-pop{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  width:280px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(20,20,20,.92);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 14px 30px rgba(0,0,0,.24);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(4px);
+  transition:opacity .18s ease, transform .18s ease;
+  z-index:30;
+}
+
+.sob-offer-wrap:hover .sob-offer-pop,
+.sob-offer-wrap:focus-within .sob-offer-pop{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+.sob-offer-mini-title{
+  font-weight:800;
+  font-size:13px;
+  margin-bottom:6px;
+  color:#fff;
+}
+
+.sob-offer-mini-list{
+  margin:0;
+  padding-left:18px;
+  line-height:1.55;
+  font-size:13px;
+  color:rgba(255,255,255,.92);
+}
+
+.sob-offer-mini-note{
+  margin-top:8px;
+  font-size:12px;
+  color:rgba(255,255,255,.78);
+}
+
 /* Brand container */
 .brand{
   display:flex;
@@ -2515,45 +2568,58 @@ html{
   <div class="mm-cursor" id="mmCursor" aria-hidden="true"><img id="mmCursorImg" alt="" /></div>
   <div class="grain"></div>
 
-  <header>
-    <div class="wrap">
-<div class="topbar">
+<header>
+  <div class="wrap">
+    <div class="topbar">
 
-  <!-- LEFT: Bird logo -->
-  <div class="logo-mark">
-    <a href="/">
-      <img src="assets/Official%20Logo%20NoTest%20Transparent.png" alt="Magpie Menace logo">
-    </a>
-  </div>
-
-  <!-- CENTER AREA -->
-  <div class="header-center">
-    <div class="brand-text">
-      <a href="/">
-        <img src="assets/magpie%20menace%20text%20only.png" alt="Magpie Menace">
-      </a>
-    </div>
-
-    <div class="sob-callout" aria-label="SOB teaser">
-      <div class="sob-words">
-        <span id="sobWord">Explicit!</span>
+      <!-- LEFT: Bird logo -->
+      <div class="logo-mark">
+        <a href="/">
+          <img src="assets/Official%20Logo%20NoTest%20Transparent.png" alt="Magpie Menace logo">
+        </a>
       </div>
-      <div class="sob-arrow" aria-hidden="true">➜</div>
-    </div>
-  </div>
 
-  <!-- RIGHT: Buttons -->
-  <div class="actions">
-    <a class="btn btn-buy" href="https://buy.stripe.com/aFa4gBgsF0k375W5zE9Zm02" target="_blank" rel="noopener">
-      Unlock SOB – $1
-    </a>
-    <a class="pill" href="#" id="tipLink" target="_blank" rel="noopener">Tip Jar</a>
-    <a class="pill" href="#" id="bookUs">Hit Us Up</a>
-  </div>
+      <!-- CENTER AREA -->
+      <div class="header-center">
+        <div class="brand-text">
+          <a href="/">
+            <img src="assets/magpie%20menace%20text%20only.png" alt="Magpie Menace">
+          </a>
+        </div>
 
+        <div class="sob-callout" aria-label="SOB teaser">
+          <div class="sob-words">
+            <span id="sobWord">Explicit!</span>
+          </div>
+          <div class="sob-arrow" aria-hidden="true">➜</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Buttons -->
+      <div class="actions">
+        <div class="sob-offer-wrap">
+  <a class="btn btn-buy" href="https://buy.stripe.com/aFa4gBgsF0k375W5zE9Zm02" target="_blank" rel="noopener">
+    Unlock SOB – $1
+  </a>
+
+  <div class="sob-offer-pop" aria-label="SOB offer details">
+    <div class="sob-offer-mini-title">Your $1 unlock includes:</div>
+    <ul class="sob-offer-mini-list">
+      <li>SOB audio download (.mp3)</li>
+      <li>Official SOB video (.mp4)</li>
+      <li>Instant YouTube access</li>
+    </ul>
+    <div class="sob-offer-mini-note">Instant download after payment</div>
+  </div>
 </div>
+
+        <a class="pill" href="#" id="tipLink" target="_blank" rel="noopener">Tip Jar</a>
+        <a class="pill" href="#" id="bookUs">Hit Us Up</a>
+      </div>
+
     </div>
-  </header>
+  </div>
+</header>
 
 
   <main class="stage" id="stageRoot">
