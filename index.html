@@ -4365,7 +4365,7 @@ else if (section.id === "releases") {
 // =========================
 // EMBED (catch-all for non-music sections like Videos, etc.)
 // =========================
-else if (section.embed) {
+else if (section.embed && section.id !== "music") {
   const embedWrap = document.createElement('div');
   embedWrap.className = 'embed-wrap';
   embedWrap.innerHTML = section.embed;
