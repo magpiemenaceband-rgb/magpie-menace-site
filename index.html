@@ -99,7 +99,7 @@ body{
 
     .wrap{ max-width:1100px; margin:0 auto; padding:18px 18px; }
 
-    /* Top header layout */
+/* Top header layout */
 
 .topbar{
   display:grid;
@@ -137,7 +137,7 @@ body{
   gap:18px;
 }
 
-	/* Left logo */
+/* Left logo */
 .logo-mark{
   height:90px;
 }
@@ -188,7 +188,7 @@ body{
   color: rgba(0,0,0,.75);
 }
 
-    .logo{
+ .logo{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -2295,6 +2295,46 @@ html{
     box-shadow:
       0 0 12px rgba(255,255,255,.25),
       0 0 22px rgba(57,255,20,.25);
+  }
+}
+
+/* ===== iPhone / Mobile Header Fix ===== */
+@media (max-width: 768px){
+
+  .topbar{
+    grid-template-columns: 70px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* shrink left bird logo */
+  .logo-mark{
+    height: 54px;
+  }
+
+  /* allow center area to actually shrink */
+  .brand-text{
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* shrink the Magpie Menace logo */
+  .brand-text img{
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+  }
+
+  /* smaller buttons */
+  .actions{
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .actions .pill{
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 }
 
